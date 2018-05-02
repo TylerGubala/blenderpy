@@ -8,10 +8,15 @@ TODO: Work on other flavors of linux
 import os
 import subprocess
 
-import apt
 import cmake
 
 import common_utils
+
+# Import apt cannot happen on non linux os, but mac may be able to share some
+# common functions with linux for the purposes of building, so we need to 
+# check for it so when mac imports, it does not fail
+if common_utils.is_linux():
+    import apt
 
 BLENDER_BUILD_DEPENDENCIES = ['git', 'build-essential', 'cmake',
                               'cmake-curses-gui']
