@@ -4,8 +4,11 @@ Cross platform utilities for building blender
 
 import os
 import shutil
+import subprocess
+import struct
 import sys
 
+import cmake
 from git import Repo
 
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
@@ -18,6 +21,15 @@ def is_windows():
 
 def is_mac():
     return sys.platform == 'darwin'
+
+def archetecture_bit_width() -> int:
+    return struct.calcsize("P") * 8
+
+def is_32_bit() -> bool:
+    return archetecture_bit_width == 32
+
+def is_64_bit() -> bool:
+    return archetecture_bit_width == 64
 
 def get_blender_git_sources(root_dir: str):
     """
@@ -45,7 +57,7 @@ def get_blender_git_sources(root_dir: str):
     # GitPython's implimentation of submodule_update (derived from the 
     # RootModule object's update command) automatically is recursive 
     # and autoinits, so we don't have to worry about that
-    blender_git_repo.submodule_update()
+    blender_git_repo.git.submodule('update', '--init', '--recursive')
 
     print(f"Submodules updated!")
 
@@ -53,7 +65,7 @@ def get_blender_git_sources(root_dir: str):
 
     for submodule in blender_git_repo.submodules:
 
-        submodule_repo = Repo(submodule)
+        submodule_repo = submodule.module()
 
         submodule_repo.heads.master.checkout()
 
