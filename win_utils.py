@@ -8,7 +8,7 @@ import shutil
 import site
 import subprocess
 import sys
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 import winreg
 
 # site-packages dependencies imports
@@ -85,38 +85,46 @@ def get_vs_version():
 
 VS_VERSION =  get_vs_version()
 
-VS_DEV_TOOLS_KNOWN_DIRS = ["C:\\Program Files (x86)\\Microsoft Visual Studio"
-                             "\\2017\\BuildTools"]
+VS_DEV_TOOLS_KNOWN_DIRS = {14.0: ["C:\\Program Files (x86)\\Microsoft Visual Studio"
+                             "\\2017\\BuildTools"]}
 
 VS_DEV_TOOLS_KNOWN_COMMANDS = ['VsDevCmd.bat', 'vcvarsall.bat']
 
 def find_vs_dev_tools_in_dir(base_dir_path: str) -> List[str]:
     """
-    find all of the build tools environments from the dir
+    Find all of the build tools environments from the dir
     """
+
+    dev_tools = None
 
     for dir_path, dir_names, file_names in os.walk(base_dir_path):
 
         for tool in VS_DEV_TOOLS_KNOWN_COMMANDS:
 
-            if tool.upper() in [file_name.upper() for file_name in file_names]:
+            for file_name in file_names:
 
-                # The tool is there
+                if tool.upper() == file_name.upper():
 
-                pass
+                    if dev_tools is None:
+
+                        dev_tools = []
+
+                    dev_tools.append(os.path.join(dir_path, file_name))
+
+    return dev_tools
 
 def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[str]]:
     """
-    Find build tools from the basekey that are specific to different vs versions
+    Find dev tools from the basekey that are specific to different vs versions
 
     Because there are different key locations and paths depending on the vs
     version, it can be highly version specific; this function wrangles the
     specificness for each of the cases.
     """
 
-    build_tools = {}
+    dev_tools = {}
 
-    for i in winreg.QueryInfoKey(base_key)[0]:
+    for i in range(winreg.QueryInfoKey(base_key)[0]):
 
         sub_key_name = winreg.EnumKey(base_key, i)
 
@@ -124,7 +132,7 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
 
             vs2017_key_root = winreg.OpenKey(base_key, sub_key_name)
 
-            for j in winreg.QueryInfoKey(vs2017_key_root)[0]:
+            for j in range(winreg.QueryInfoKey(vs2017_key_root)[0]):
 
                 final_key_name = winreg.EnumKey(vs2017_key_root, j)
 
@@ -132,13 +140,15 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
 
                     final_key = winreg.OpenKey(vs2017_key_root, final_key_name)
 
-                    for k in winreg.QueryInfoKey(final_key)[1]:
+                    for k in range(winreg.QueryInfoKey(final_key)[1]):
 
-                        value_name = winreg.EnumValue(final_key, k)
+                        value_tuple = winreg.EnumValue(final_key, k)
 
                         try:
 
-                            value = winreg.QueryValue(final_key, value_name)
+                            value = value_tuple[1]
+
+                            dict_key_name = float(value_tuple[0])
 
                         except:
 
@@ -146,21 +156,27 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
 
                         else:
 
-                            build_tool = find_vs_build_tools_in_dir(value)
+                            found_dev_tools = find_vs_dev_tools_in_dir(value)
 
-                            if build_tool is not None:
+                            if found_dev_tools is not None:
 
-                                if build_tools[value_name] is None: 
+                                try:
 
-                                    build_tools[value_name] = []
+                                    ver_dev_tools = dev_tools[dict_key_name]
 
-                                build_tools[value_name].append(build_tool)
+                                except KeyError:
+
+                                    dev_tools[dict_key_name] = [found_dev_tools]
+
+                                else:
+
+                                    ver_dev_tools += found_dev_tools
 
         elif sub_key_name == '14.0': # Because VS2015
 
             vs2015_key_root = winreg.OpenKey(base_key, sub_key_name)
 
-            for j in winreg.QueryInfoKey(vs2015_key_root)[0]:
+            for j in range(winreg.QueryInfoKey(vs2015_key_root)[0]):
 
                 vs2015_subkey_name = winreg.EnumKey(vs2015_key_root, j)
 
@@ -169,7 +185,7 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
                     setup_key = winreg.OpenKey(vs2015_key_root,
                                                vs2015_subkey_name)
 
-                    for k in winreg.QueryInfoKey(setup_key)[0]:
+                    for k in range(winreg.QueryInfoKey(setup_key)[0]):
 
                         setup_subkey_name = winreg.EnumKey(setup_key, k)
 
@@ -178,29 +194,37 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
                             vc_key = winreg.OpenKey(setup_key, 
                                                     setup_subkey_name)
 
-                            for h in winreg.QueryInfoKey(vc_key)[1]:
+                            for h in range(winreg.QueryInfoKey(vc_key)[1]):
 
-                                value_name = winreg.EnumValue(vc_key, h)
+                                value_tuple = winreg.EnumValue(vc_key, h)
 
-                                if value_name.upper() == 'PRODUCTDIR':
+                                if value_tuple[0].upper() == 'PRODUCTDIR':
 
-                                    value = winreg.QueryValue(vc_key, value_name)
+                                    value = value_tuple[1]
 
-                                    build_tool = find_vs_build_tools_in_dir(value)
+                                    found_dev_tools = find_vs_dev_tools_in_dir(value)
 
-                                    if build_tool is not None:
+                                    if found_dev_tools is not None:
 
-                                        if build_tools[value_name] is None: 
+                                        dict_key_name = float(sub_key_name)
 
-                                            build_tools[value_name] = []
+                                        try:
 
-                                        build_tools[sub_key_name].append(build_tool)
+                                            ver_dev_tools = dev_tools[dict_key_name]
+
+                                        except KeyError:
+
+                                            dev_tools[dict_key_name] = [found_dev_tools]
+
+                                        else:
+
+                                            dev_tools[dict_key_name] += found_dev_tools
 
         elif sub_key_name == '12.0': # Because VS2013
 
             vs2013_key_root = winreg.OpenKey(base_key, sub_key_name)
 
-            for j in winreg.QueryInfoKey(vs2013_key_root)[0]:
+            for j in range(winreg.QueryInfoKey(vs2013_key_root)[0]):
 
                 vs2013_subkey_name = winreg.EnumKey(vs2013_key_root, j)
 
@@ -209,7 +233,7 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
                     setup_key = winreg.OpenKey(vs2013_key_root,
                                                vs2013_subkey_name)
 
-                    for k in winreg.QueryInfoKey(setup_key)[0]:
+                    for k in range(winreg.QueryInfoKey(setup_key)[0]):
 
                         setup_subkey_name = winreg.EnumKey(setup_key, k)
 
@@ -218,25 +242,33 @@ def find_vs_dev_tools_from_subkeys(base_key: winreg.HKEYType) -> Dict[str, List[
                             vc_key = winreg.OpenKey(setup_key, 
                                                     setup_subkey_name)
 
-                            for h in winreg.QueryInfoKey(vc_key)[1]:
+                            for h in range(winreg.QueryInfoKey(vc_key)[1]):
 
-                                value_name = winreg.EnumValue(vc_key, h)
+                                value_tuple = winreg.EnumValue(vc_key, h)
 
-                                if value_name.upper() == 'PRODUCTDIR':
+                                if value_tuple[0].upper() == 'PRODUCTDIR':
 
-                                    value = winreg.QueryValue(vc_key, value_name)
+                                    value = value_tuple[1]
 
-                                    build_tool = find_vs_build_tools_in_dir(value)
+                                    found_dev_tools = find_vs_dev_tools_in_dir(value)
 
-                                    if build_tool is not None:
+                                    if found_dev_tools is not None:
 
-                                        if build_tools[value_name] is None: 
+                                        dict_key_name = float(sub_key_name)
 
-                                            build_tools[value_name] = []
+                                        try:
 
-                                        build_tools[sub_key_name].append(build_tool)
+                                            ver_dev_tools = dev_tools[dict_key_name]
 
-    return build_tools
+                                        except KeyError:
+
+                                            dev_tools[dict_key_name] = [found_dev_tools]
+
+                                        else:
+
+                                            dev_tools[dict_key_name] += found_dev_tools
+
+    return dev_tools
 
 def find_vs_dev_tools_from_keys() -> List[str]:
     """
@@ -250,8 +282,7 @@ def find_vs_dev_tools_from_keys() -> List[str]:
         try:
             
             base_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 
-                                      "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
-                                      "Microsoft\\VisualStudio")
+                                      "SOFTWARE\\Microsoft\\VisualStudio")
 
         except:
 
@@ -263,15 +294,15 @@ def find_vs_dev_tools_from_keys() -> List[str]:
             print(f"Found {data_size}bit Visual Studio installed, searching "
                   f"for C/C++ build tools...")
 
-            return find_vs_build_tools_from_subkeys(base_key)
+            return find_vs_dev_tools_from_subkeys(base_key)
             
     elif data_size == 64:
 
         try:
 
             base_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 
-                                      "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
-                                      "Wow6432Node\\Microsoft\\VisualStudio")
+                                      "SOFTWARE\\WOW6432Node\\Microsoft\\"
+                                      "VisualStudio")
 
         except:
 
@@ -283,7 +314,7 @@ def find_vs_dev_tools_from_keys() -> List[str]:
             print(f"Found {data_size}bit Visual Studio installed, searching "
                   f"for C/C++ build tools...")
 
-            return find_vs_build_tools_from_subkeys(base_key)
+            return find_vs_dev_tools_from_subkeys(base_key)
 
     else:
 
@@ -294,23 +325,85 @@ def find_vs_dev_tools_from_known_dirs() -> List[str]:
     Finds build tools based on guesses about the system archetecture
     """
 
-    for root_dir_path in VS_BUILD_TOOLS_KNOWN_DIRS:
+    dev_tools = {}
 
-        find_vs_build_tools_in_dir(root_dir_path)
+    for version in VS_DEV_TOOLS_KNOWN_DIRS:
 
-def get_all_vc_dev_tools() -> str:
+        for root_dir_path in VS_DEV_TOOLS_KNOWN_DIRS[version]:
+
+            found_dev_tools = find_vs_dev_tools_in_dir(root_dir_path)
+
+            if found_dev_tools is not None:
+
+                try:
+
+                    ver_dev_tools = dev_tools[version]
+
+                except KeyError:
+
+                    dev_tools[version] = []
+
+                else:
+
+                    ver_dev_tools += found_dev_tools
+
+    return dev_tools
+
+def get_all_vc_dev_tools() -> Dict[float, Set[str]]:
     """
     Find the directory from which we can execute vcvarsall
 
     Vcvars all is the build setup for c/c++ on windows
     """
 
-    pass
+    all_dev_tools = {}
 
+    dev_tools_from_keys = find_vs_dev_tools_from_keys()
 
-VC_BUILD_TOOLS_DIR = get_vc_build_tools_dir()
+    dev_tools_from_known_dirs = find_vs_dev_tools_from_known_dirs()
 
-VS_LIBS = "lib/win64_vc12" if VS_VERSION == 2013 else "lib/win64_vc14"
+    for dev_tool_version in dev_tools_from_keys:
+
+        try:
+
+            ver_dev_tool = all_dev_tools[dev_tool_version]
+
+        except KeyError:
+
+            all_dev_tools[dev_tool_version] = set()
+
+            ver_dev_tool = all_dev_tools[dev_tool_version]
+
+        finally:
+
+            for dev_tool in dev_tools_from_keys[dev_tool_version]:
+
+                ver_dev_tool.update(dev_tool)
+
+    for dev_tool_version in dev_tools_from_known_dirs:
+
+        try:
+
+            ver_dev_tool = all_dev_tools[dev_tool_version]
+
+        except KeyError:
+
+            all_dev_tools[dev_tool_version] = set()
+
+            ver_dev_tool = all_dev_tools[dev_tool_version]
+
+        finally:
+
+            for dev_tool in dev_tools_from_known_dirs[dev_tool_version]:
+
+                ver_dev_tool.update(dev_tool)
+
+    return all_dev_tools
+
+ALL_VC_DEV_TOOLS = get_all_vc_dev_tools()
+
+VS_LIBS = (f"lib/win{common_utils.PLATFORM}_vc12" if 
+           VS_VERSION == 2013 else f"lib/win{common_utils.PLATFORM}_vc14")
 
 BLENDER_SVN_REPO_URL = (f"https://svn.blender.org/svnroot/bf-blender/trunk/"
                         f"{VS_LIBS}")
@@ -331,7 +424,8 @@ def get_blender_sources(root_dir: str):
 
     print(f"Getting svn code modules from {BLENDER_SVN_REPO_URL}")
 
-    lib_dir = os.path.join(root_dir, VS_LIBS)
+    lib_dir = os.path.join(root_dir, 'lib/windows_vc12' if 
+                           VS_VERSION == 2013 else 'lib/windows_vc14')
 
     blender_svn_repo = svn.remote.RemoteClient(BLENDER_SVN_REPO_URL)
 
@@ -339,27 +433,30 @@ def get_blender_sources(root_dir: str):
 
     print(f"Svn code modules checked out successfully into {lib_dir}")
 
+    # lib_dir2 = os.path.join(root_dir, ("windows_"))
+
+    # print(f"Copying svn libs to ")
+
 def configure_blender_as_python_module(root_dir: str):
     """
     using a call to cmake, set the blender project to build as a python module
 
-    DEPRECIATED: we can now simply call 'make bpy <version>'; do not use this
-    function
+    We need to call this because make.bpy does not work currently...
     """
 
     print("Configuring Blender project as python module...")
 
     try:
 
-        build_dir_name = ("build_windows_Release_x64_vc15_Release")
+        blender_dir = os.path.join(root_dir, 'blender')
 
-        build_dir = os.path.join(root_dir, build_dir_name)
+        build_dir = os.path.join(root_dir, 'build')
 
-        os.makedirs(build_dir)
+        print(f"Creating solution in {build_dir}")
 
-        subprocess.call(["cmake", "-D", "CMAKE_BUILD_TYPE=RELEASE", "-D",
-                         "WITH_PYTHON_INSTALL=OFF", "-D", "WITH_PLAYER=OFF", 
-                         "-D", "WITH_PYTHON_MODULE=ON", build_dir])
+        subprocess.call(['cmake', '-H'+blender_dir, '-B'+build_dir,
+                        '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
+                        '-DWITH_PYTHON_MODULE=ON'])
 
     except Exception as e:
 
@@ -376,17 +473,32 @@ def make_blender_python(root_dir: str) -> str:
     Using the automated build script, make bpy with the correct C++ build utils
     """
 
-    blender_dir = os.path.join(root_dir, 'blender')
-
-    build_dir = os.path.join(root_dir, 'build')
-
-    print(f"Creating solution in {build_dir}")
-
-    subprocess.call(['cmake', '-H'+blender_dir, '-B'+build_dir,
-                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                     '-DWITH_PYTHON_MODULE=ON'])
-
     print("Making Blender from sources...")
+
+    configure_blender_as_python_module(root_dir)
+
+    # How to best determine the best dev tools to use?
+
+    vc_dev_tools = get_all_vc_dev_tools()
+
+    if not vc_dev_tools:
+
+        raise Exception("Visual Studio 13 (or higher) and c++ build tools are "
+                        "required to build blender as a module, please "
+                        "install Visual Studio and the c++ build tools too")
+
+    best_dev_tool = None
+
+    for dev_tool in vc_dev_tools[max(vc_dev_tools)]:
+
+        # Get the first in the list
+        # Easy, but is it the best?
+        best_dev_tool = dev_tool
+        break
+
+    if best_dev_tool is None:
+
+        raise Exception("Could not determine the best dev tool")
 
     try:
 
@@ -396,7 +508,23 @@ def make_blender_python(root_dir: str) -> str:
         # subprocess.call([os.path.join(root_dir, 'blender/make.bat'), 'bpy', 
         #                  str(VS_VERSION)])
 
-        subprocess.call([])
+        subprocess.call([best_dev_tool])
+
+        blender_solution = os.path.join(root_dir, 'build', 'Blender.sln')
+        platform = 'x' + str(common_utils.archetecture_bit_width())
+
+        os.system('where msbuild')
+
+        subprocess.call(['msbuild', blender_solution, '/target:build',
+                         '/property:Configuration=Release',
+                         f"/p:platform={platform}",
+                         '/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log'])
+
+        install_solution = os.path.join(root_dir, 'build', 'INSTALL.vcxproj')
+
+        subprocess.call(['msbuild', install_solution,
+                         '/property:Configuration=Release',
+                         f"/p:platform={platform}"])
 
     except Exception as e:
 

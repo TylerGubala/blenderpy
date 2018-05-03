@@ -31,6 +31,8 @@ def is_32_bit() -> bool:
 def is_64_bit() -> bool:
     return archetecture_bit_width == 64
 
+PLATFORM = archetecture_bit_width()
+
 def get_blender_git_sources(root_dir: str):
     """
     Check out the most up to date blender sources
