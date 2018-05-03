@@ -10,6 +10,20 @@ import sys
 # Tempfile will be used to create a temporary directory to build Blender in
 import tempfile
 
+class CustomInstallHandler(install_command):
+    """
+    Custom install command handler for pip install
+
+    Allows for custom install routine
+    """
+
+    def run(self):
+        """
+        Make a temporary folder containing blender sources, then build blender
+        """
+
+        pass # TODO: Create a blender_build package on pypi that setup_requires
+
 from common_utils import is_linux, is_mac, is_windows
 
 if is_linux():
@@ -24,51 +38,38 @@ elif is_mac():
 else:
     raise OSError(f"This module does not support {sys.platform}")
 
-class CustomInstallHandler(install_command):
-    """
-    Custom install command handler for pip install
+if os.path.basename(os.path.realpath(sys.executable)).startswith('blender'):
 
-    Allows for custom install routine
-    """
+    raise Exception("You are already in blender, you do not need to build bpy!")
 
-    def run(self):
-        """
-        Make a temporary folder containing blender sources, then build blender
-        """
+with tempfile.TemporaryDirectory() as root_dir:
 
-        if os.path.basename(os.path.realpath(sys.executable)).startswith('blender'):
+    print(f"Created temporary directory {root_dir}")
 
-            raise Exception("You are already in blender, you do not need to build bpy!")
+    get_blender_sources(root_dir)
 
-        with tempfile.TemporaryDirectory() as root_dir:
+    make_blender_python(root_dir)
 
-            print(f"Created temporary directory {root_dir}")
+    print("Make process complete, installing...")
 
-            get_blender_sources(root_dir)
+    # TODO: Here, how to make an extension library that grabs the built 
+    # blender libs and pyd/so file? Right now install blender python does
+    # this manually
 
-            make_blender_python(root_dir)
+    install_blender_python(root_dir)
 
-            print("Make process complete, installing...")
-
-            # TODO: Here, how to make an extension library that grabs the built 
-            # blender libs and pyd/so file? Right now install blender python does
-            # this manually
-
-            install_blender_python(root_dir)
-
-if __name__ == "__main__":
-
-    setup(name='bpy',
-          version='0.0.1',
-          packages=find_packages(),
-          description='Blender as a python module',
-          long_description=open('README.md').read(),
-          author='Tyler Gubala',
-          author_email='gubalatyler@gmail.com',
-          license='GPL-3.0',
-          install_requires=open('requirements.txt').readlines() +
-                                ['python-apt'] if is_linux() else [],
-          cmd_class={
-            'install': CustomInstallHandler
-          }
-         )
+setup(name='bpy',
+      version='0.0.1',
+      packages=find_packages(),
+      description='Blender as a python module',
+      long_description=open('README.md').read(),
+      author='Tyler Gubala',
+      author_email='gubalatyler@gmail.com',
+      license='GPL-3.0',
+      setup_requires=[
+          'python-apt;platform_system=="Linux"'
+      ],                   
+      cmd_class={
+          'install': CustomInstallHandler
+      }
+)
