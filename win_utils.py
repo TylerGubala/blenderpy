@@ -433,11 +433,15 @@ def get_blender_sources(root_dir: str):
 
     print(f"Svn code modules checked out successfully into {lib_dir}")
 
-    # lib_dir2 = os.path.join(root_dir, ("windows_"))
+    print(f"Copying svn libs to the other directory blender wants...")
 
-    # print(f"Copying svn libs to ")
+    vc_ver = str(int(max(ALL_VC_DEV_TOOLS)))
 
-def configure_blender_as_python_module(root_dir: str):
+    lib_dir2 = os.path.join(root_dir, f"lib/win{common_utils.PLATFORM}_vc{vc_ver}")
+
+    common_utils.recursive_copy(lib_dir, lib_dir2)
+
+def configure_blender_as_python_module(root_dir: str, version: int):
     """
     using a call to cmake, set the blender project to build as a python module
 
@@ -454,9 +458,13 @@ def configure_blender_as_python_module(root_dir: str):
 
         print(f"Creating solution in {build_dir}")
 
+
+        # Most of this is hard-coded for now
+        # TODO: replace static calls with something we know is best...
         subprocess.call(['cmake', '-H'+blender_dir, '-B'+build_dir,
                         '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                        '-DWITH_PYTHON_MODULE=ON'])
+                        '-DWITH_PYTHON_MODULE=ON', f"-GVisual Studio {version} 2017 "
+                        f"Win{common_utils.PLATFORM}"])
 
     except Exception as e:
 
@@ -473,15 +481,14 @@ def make_blender_python(root_dir: str) -> str:
     Using the automated build script, make bpy with the correct C++ build utils
     """
 
-    print("Making Blender from sources...")
+    install_solution = os.path.join(root_dir, 'build', 'INSTALL.vcxproj')
 
-    configure_blender_as_python_module(root_dir)
+    blender_solution = os.path.join(root_dir, 'build', 'Blender.sln')
+    platform = 'x' + str(common_utils.archetecture_bit_width())
 
     # How to best determine the best dev tools to use?
 
-    vc_dev_tools = get_all_vc_dev_tools()
-
-    if not vc_dev_tools:
+    if not ALL_VC_DEV_TOOLS:
 
         raise Exception("Visual Studio 13 (or higher) and c++ build tools are "
                         "required to build blender as a module, please "
@@ -489,7 +496,7 @@ def make_blender_python(root_dir: str) -> str:
 
     best_dev_tool = None
 
-    for dev_tool in vc_dev_tools[max(vc_dev_tools)]:
+    for dev_tool in ALL_VC_DEV_TOOLS[max(ALL_VC_DEV_TOOLS)]:
 
         # Get the first in the list
         # Easy, but is it the best?
@@ -500,6 +507,10 @@ def make_blender_python(root_dir: str) -> str:
 
         raise Exception("Could not determine the best dev tool")
 
+    print("Making Blender from sources...")
+
+    configure_blender_as_python_module(root_dir, int(max(ALL_VC_DEV_TOOLS)))
+
     try:
 
         # I did not have much luck using the make.bat file; it was easier to
@@ -508,23 +519,23 @@ def make_blender_python(root_dir: str) -> str:
         # subprocess.call([os.path.join(root_dir, 'blender/make.bat'), 'bpy', 
         #                  str(VS_VERSION)])
 
-        subprocess.call([best_dev_tool])
-
-        blender_solution = os.path.join(root_dir, 'build', 'Blender.sln')
-        platform = 'x' + str(common_utils.archetecture_bit_width())
-
-        os.system('where msbuild')
-
-        subprocess.call(['msbuild', blender_solution, '/target:build',
+        subprocess.call([best_dev_tool, 'amd64&&',
+                         'msbuild', blender_solution, '/target:build',
                          '/property:Configuration=Release',
                          f"/p:platform={platform}",
-                         '/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log'])
-
-        install_solution = os.path.join(root_dir, 'build', 'INSTALL.vcxproj')
-
-        subprocess.call(['msbuild', install_solution,
+                         '/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log',
+                         '&&','msbuild', install_solution,
                          '/property:Configuration=Release',
                          f"/p:platform={platform}"])
+
+        # subprocess.call(['msbuild', blender_solution, '/target:build',
+        #                  '/property:Configuration=Release',
+        #                  f"/p:platform={platform}",
+        #                  '/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log'])
+
+        # subprocess.call(['msbuild', install_solution,
+        #                  '/property:Configuration=Release',
+        #                  f"/p:platform={platform}"])
 
     except Exception as e:
 
