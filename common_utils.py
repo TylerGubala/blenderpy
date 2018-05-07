@@ -42,15 +42,29 @@ def get_blender_git_sources(root_dir: str):
 
     repo_directory = os.path.join(root_dir, 'blender')
 
-    os.makedirs(repo_directory)
+    try:
 
-    print(f"Cloning blender from {BLENDER_GIT_REPO_URL}")
+        blender_git_repo = Repo(repo_directory)
 
-    Repo.clone_from(BLENDER_GIT_REPO_URL, repo_directory)
+    except:
 
-    print(f"Blender successfully cloned into {repo_directory}")
+        if not os.path.isdir(repo_directory):
+        
+            os.makedirs(repo_directory)
 
-    blender_git_repo = Repo(repo_directory)
+        print(f"Cloning blender from {BLENDER_GIT_REPO_URL}")
+
+        Repo.clone_from(BLENDER_GIT_REPO_URL, repo_directory)
+
+        print(f"Blender successfully cloned into {repo_directory}")
+
+        blender_git_repo = Repo(repo_directory)
+
+    finally:
+
+        blender_git_repo.heads.master.checkout()
+
+        blender_git_repo.remotes.origin.pull()
 
     print("Updating submodules...")
 

@@ -424,8 +424,8 @@ def get_blender_sources(root_dir: str):
 
     print(f"Getting svn code modules from {BLENDER_SVN_REPO_URL}")
 
-    lib_dir = os.path.join(root_dir, 'lib/windows_vc12' if 
-                           VS_VERSION == 2013 else 'lib/windows_vc14')
+    lib_dir = os.path.join(root_dir, 'lib', 'windows_vc12' if 
+                           VS_VERSION == 2013 else 'windows_vc14')
 
     blender_svn_repo = svn.remote.RemoteClient(BLENDER_SVN_REPO_URL)
 
@@ -433,13 +433,19 @@ def get_blender_sources(root_dir: str):
 
     print(f"Svn code modules checked out successfully into {lib_dir}")
 
-    print(f"Copying svn libs to the other directory blender wants...")
+    # print(f"Copying svn libs to the other directory blender wants...")
 
-    vc_ver = str(int(max(ALL_VC_DEV_TOOLS)))
+    vc_ver = str(int(max(ALL_VC_DEV_TOOLS))) # I would rather find the version and use it below
 
-    lib_dir2 = os.path.join(root_dir, f"lib/win{common_utils.PLATFORM}_vc{vc_ver}")
+    lib_dir2 = os.path.join(root_dir, "lib", f"win{common_utils.PLATFORM}_vc14")
 
-    common_utils.recursive_copy(lib_dir, lib_dir2)
+    if not os.path.isdir(lib_dir2):
+
+        os.makedirs(lib_dir2)
+
+    # common_utils.recursive_copy(lib_dir, lib_dir2) instead of copy, let's just checkout
+
+    blender_svn_repo.checkout(lib_dir2)
 
 def configure_blender_as_python_module(root_dir: str, version: int):
     """
@@ -519,7 +525,7 @@ def make_blender_python(root_dir: str) -> str:
         # subprocess.call([os.path.join(root_dir, 'blender/make.bat'), 'bpy', 
         #                  str(VS_VERSION)])
 
-        subprocess.call([best_dev_tool, 'amd64&&',
+        subprocess.call(['C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat', '&&',
                          'msbuild', blender_solution, '/target:build',
                          '/property:Configuration=Release',
                          f"/p:platform={platform}",
@@ -527,6 +533,15 @@ def make_blender_python(root_dir: str) -> str:
                          '&&','msbuild', install_solution,
                          '/property:Configuration=Release',
                          f"/p:platform={platform}"])
+
+        #subprocess.call([best_dev_tool, '&&',
+        #                 'msbuild', blender_solution, '/target:build',
+        #                 '/property:Configuration=Release',
+        #                 f"/p:platform={platform}",
+        #                 '/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log',
+        #                 '&&','msbuild', install_solution,
+        #                 '/property:Configuration=Release',
+        #                 f"/p:platform={platform}"])
 
         # subprocess.call(['msbuild', blender_solution, '/target:build',
         #                  '/property:Configuration=Release',
@@ -573,7 +588,7 @@ def install_blender_python(root_dir: str):
 
         raise Exception('Could not find the build dir')
 
-    bin_dir = os.path.join(build_dir, 'bin/Release')
+    bin_dir = os.path.join(build_dir, 'bin', 'Release')
 
     init_to_copy = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 "__init__.py")

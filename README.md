@@ -16,11 +16,9 @@ Python starts by opening a temporary directory on the computer
 
 Then, using Gitpython, this setup will download the git repository of blender into the temporary directory, along the way attempting to install dependencies
 
-After downloading the files into ```TEMP_DIR/blender``` (where temp dir is the name of the temp directory) the program attempts to run the "make" command which exists inside the ```TEMP_DIR/blender``` directory.
+After downloading the files into ```~/.blenderpy``` the program attempts to walk you through the build process for blender. Results are created in the ```~/.blenderpy/build``` directory.
 
-```make bpy <OPTIONS>```
-
-This will typically result in built files
+It does this by going and making sure that the VC build t
 
 
 ### Installing after build
