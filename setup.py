@@ -23,17 +23,16 @@ class CustomInstallHandler(install_command):
         bpybuild.create_python_module()
 
 setup(name='bpy',
-      version='0.0.2',
+      version='1.0.0',
       packages=find_packages(),
       description='Blender as a python module',
-      long_description=open('README.md').read(),
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       setup_requires=[
           'bpybuild'
       ],                   
-      cmd_class={
+      cmdclass={
           'install': CustomInstallHandler
       },
       url="https://github.com/TylerGubala/blenderpy"
