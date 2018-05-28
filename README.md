@@ -18,7 +18,7 @@ Then, using Gitpython, this setup will download the git repository of blender in
 
 After downloading the files into ```~/.blenderpy``` the program attempts to walk you through the build process for blender. Results are created in the ```~/.blenderpy/build``` directory.
 
-It does this by going and making sure that the VC build t
+It does this by going and making sure that the VC build tools are installed, and then crawling the registry for the best build tool to use.
 
 
 ### Installing after build
