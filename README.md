@@ -3,7 +3,7 @@ Blender as a python module with easy-install
 
 ## Installation
 
-```py -m pip install blenderpy```
+```py -m pip install bpy```
 
 ## How it works
 
