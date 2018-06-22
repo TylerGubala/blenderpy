@@ -23,7 +23,7 @@ class CustomInstallHandler(install_command):
         bpybuild.create_python_module()
 
 setup(name='bpy',
-      version='1.0.0a0',
+      version='1.0.1',
       packages=find_packages(),
       description='Blender as a python module',
       author='Tyler Gubala',
