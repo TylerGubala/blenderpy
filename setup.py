@@ -23,14 +23,14 @@ class CustomInstallHandler(install_command):
         bpybuild.create_python_module()
 
 setup(name='bpy',
-      version='1.0.0',
+      version='1.0.0a0',
       packages=find_packages(),
       description='Blender as a python module',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       setup_requires=[
-          'bpybuild@1.0.0a0'
+          'bpybuild == 1.0.0a0'
       ],                   
       cmdclass={
           'install': CustomInstallHandler
