@@ -82,7 +82,7 @@ def get_include_dirs() -> List[str]:
     return result
 
 setup(name='bpy',
-      version='1.0.0',
+      version='1.1.0a0',
       packages=find_packages(),
       ext_modules={'bpy': Extension(name="bpy", sources=get_sources(), 
                    include_dirs=get_include_dirs(), library_dirs=['./lib'])},
@@ -90,9 +90,6 @@ setup(name='bpy',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
-      setup_requires=[
-          "GitPython", 'cmake', 'svn;platform_system=="Windows"',
-          'python-apt;platform_system=="Linux"'
-      ],
+      setup_requires=[],
       url="https://github.com/TylerGubala/blenderpy"
 )
