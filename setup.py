@@ -30,7 +30,7 @@ setup(name='bpy',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       setup_requires=[
-          'bpybuild'
+          'bpybuild@1.0.0a0'
       ],                   
       cmdclass={
           'install': CustomInstallHandler
