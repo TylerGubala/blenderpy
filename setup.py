@@ -21,109 +21,113 @@ class CMakeExtension(Extension):
 
     def __init__(self, name, sources=[]):
 
-        self.name = name
-        self.sources = sources
-
-        super().__init__(name = self.name, sources = sources)
+        super().__init__(name = name, sources = sources)
 
 class BuildCMakeExt(build_ext):
     """
     Builds using cmake instead of the python setuptools implicit build
     """
 
-    def build_extension(self, extension: Extension):
+    def run(self):
+        """
+        Perform build_cmake before doing the 'normal' stuff
+        """
+
+        for extension in self.extensions:
+
+            if extension.name == "bpy":
+
+                self.build_cmake(extension)
+
+        super().run()
+
+    def build_cmake(self, extension: Extension):
         """
         The steps required to build the extension
         """
 
-        if extension == "bpy": # Only run if the extension is blender
+        from git import Repo
 
-            from git import Repo
+        blenderpy_dir = os.path.join(pathlib.Path.home, ".blenderpy")
+        blender_dir = os.path.join(blenderpy_dir, "blender")
 
-            blenderpy_dir = os.path.join(pathlib.Path.home, ".blenderpy")
-            blender_dir = os.path.join(blenderpy_dir, "blender")
+        build_dir = pathlib.Path(self.build_temp)
+        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
 
-            build_dir = pathlib.Path(self.build_temp)
-            extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
+        os.makedirs(blender_dir, exist_ok=True)
+        os.makedirs(build_dir, exist_ok=True)
+        os.makedirs(extension_dir, exist_ok=True)
 
-            os.makedirs(blender_dir, exist_ok=True)
-            os.makedirs(build_dir, exist_ok=True)
-            os.makedirs(extension_dir, exist_ok=True)
+        try:
 
-            try:
+            blender_git_repo = Repo(blender_dir)
 
-                blender_git_repo = Repo(blender_dir)
+        except:
 
-            except:
+            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
+            blender_git_repo = Repo(blender_dir)
 
-                Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
-                blender_git_repo = Repo(blender_dir)
-
-            finally:
+        finally:
                 
-                blender_git_repo.heads.master.checkout()
-                blender_git_repo.remotes.origin.pull()
+            blender_git_repo.heads.master.checkout()
+            blender_git_repo.remotes.origin.pull()
 
-            blender_git_repo.git.submodule('update', '--init', '--recursive')
+        blender_git_repo.git.submodule('update', '--init', '--recursive')
 
-            for submodule in blender_git_repo.submodules:
+        for submodule in blender_git_repo.submodules:
                 
-                submodule_repo = submodule.module()
-                submodule_repo.heads.master.checkout()
-                submodule_repo.remotes.origin.pull()
+            submodule_repo = submodule.module()
+            submodule_repo.heads.master.checkout()
+            submodule_repo.remotes.origin.pull()
 
-            if sys.platform == "win32":
+        if sys.platform == "win32":
                 
-                import svn.remote
-                import winreg
+            import svn.remote
+            import winreg
 
-                vs_versions = []
+            vs_versions = []
 
-                for version in [12, 14, 15]:
+            for version in [12, 14, 15]:
 
-                    try:
+                try:
 
-                        winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
-                                       f"VisualStudio.DTE.{version}.0")
+                    winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
+                                   f"VisualStudio.DTE.{version}.0")
 
-                    except:
+                except:
 
-                        pass
+                    pass
                     
-                    else:
+                else:
 
-                        vs_versions.append(version)
+                    vs_versions.append(version)
 
-                if not vs_versions:
+            if not vs_versions:
 
-                    raise Exception("Windows users must have "
-                                    "Visual Studio installed")
+                raise Exception("Windows users must have "
+                                "Visual Studio installed")
 
-                svn_url = (f"https://svn.blender.org/svnroot/bf-blender/trunk/"
-                           f"lib/{'windows_vc12' if max(vs_versions) == 12 else 'win_vc14'}")
+            svn_url = (f"https://svn.blender.org/svnroot/bf-blender/trunk/lib/"
+                       f"{'windows_vc12' if max(vs_versions) == 12 else 'win_vc14'}")
 
-                svn_dir = os.path.join(blenderpy_dir, "lib",
-                                       f"windows_vc{max(vs_versions)}")
+            svn_dir = os.path.join(blenderpy_dir, "lib",
+                                   f"windows_vc{max(vs_versions)}")
 
-                os.makedirs(svn_dir, exist_ok=True)
+            os.makedirs(svn_dir, exist_ok=True)
 
-                blender_svn_repo = svn.remote.RemoteClient(svn_url)
-                blender_svn_repo.checkout(svn_dir)
+            blender_svn_repo = svn.remote.RemoteClient(svn_url)
+            blender_svn_repo.checkout(svn_dir)
 
-            self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
-                        '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                        '-DWITH_PYTHON_MODULE=ON'])
-            self.spawn(["cmake", "--build", self.build_temp, "--target build",
-                        "--config Release"])
-
-        else:
-
-            super.build_extension(extension)
+        self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
+                    '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
+                    '-DWITH_PYTHON_MODULE=ON'])
+        self.spawn(["cmake", "--build", self.build_temp, "--target build",
+                    "--config Release"])
 
 setup(name='bpy',
       version='1.2.0a0',
       packages=find_packages(),
-      ext_modules={'bpy': CMakeExtension(name="bpy")},
+      ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
