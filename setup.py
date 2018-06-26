@@ -8,8 +8,11 @@ import os
 import pathlib
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
+import struct
 import sys
 from typing import List
+
+BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
 
 class CMakeExtension(Extension):
     """
@@ -21,75 +24,109 @@ class CMakeExtension(Extension):
         self.name = name
         self.sources = sources
 
-        super().__init__(name = self.name, sources = [])
+        super().__init__(name = self.name, sources = sources)
 
 class BuildCMakeExt(build_ext):
     """
     Builds using cmake instead of the python setuptools implicit build
     """
 
-    def build_extension(self, extension):
+    def build_extension(self, extension: Extension):
         """
         The steps required to build the extension
         """
 
-        print(f"Reached the build entrypoint for {extension}")
+        if extension == "bpy": # Only run if the extension is blender
 
-        if not extension == "bpy":
+            from git import Repo
 
-            super().build_extension(extension)
+            blenderpy_dir = os.path.join(pathlib.Path.home, ".blenderpy")
+            blender_dir = os.path.join(blenderpy_dir, "blender")
 
-            return
+            build_dir = pathlib.Path(self.build_temp)
+            extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
 
-        print(f"Performing special bpy build steps!")
+            os.makedirs(blender_dir, exist_ok=True)
+            os.makedirs(build_dir, exist_ok=True)
+            os.makedirs(extension_dir, exist_ok=True)
 
-        import cmake
-        import git
-        if sys.platform == 'win32': import svn
+            try:
 
-def get_sources() -> List[str]:
-    """
-    Get the complete list of sources for blender
-    """
+                blender_git_repo = Repo(blender_dir)
 
-    result = []
+            except:
 
-    for directory_name, subdirectory_names, file_names in os.walk('./blender'):
+                Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
+                blender_git_repo = Repo(blender_dir)
 
-        for file_name in file_names:
+            finally:
+                
+                blender_git_repo.heads.master.checkout()
+                blender_git_repo.remotes.origin.pull()
 
-            if os.path.splitext(file_name)[1] in ['.c', '.cpp']:
+            blender_git_repo.git.submodule('update', '--init', '--recursive')
 
-                result.append(os.path.abspath(file_name))
+            for submodule in blender_git_repo.submodules:
+                
+                submodule_repo = submodule.module()
+                submodule_repo.heads.master.checkout()
+                submodule_repo.remotes.origin.pull()
 
-    return result
+            if sys.platform == "win32":
+                
+                import svn.remote
+                import winreg
 
-def get_include_dirs() -> List[str]:
-    """
-    Get the complete list of the include directories for blender
-    """
+                vs_versions = []
 
-    result = []
+                for version in [12, 14, 15]:
 
-    for directory_name, subdirectory_names, file_names in os.walk('./blender'):
+                    try:
 
-        for file_name in file_names:
+                        winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
+                                       f"VisualStudio.DTE.{version}.0")
 
-            if os.path.splitext(file_name)[1] in ['.h', '.hpp']:
+                    except:
 
-                result.append(os.path.abspath(directory_name))
+                        pass
+                    
+                    else:
 
-    return result
+                        vs_versions.append(version)
+
+                if not vs_versions:
+
+                    raise Exception("Windows users must have "
+                                    "Visual Studio installed")
+
+                svn_url = (f"https://svn.blender.org/svnroot/bf-blender/trunk/"
+                           f"lib/{'windows_vc12' if max(vs_versions) == 12 else 'win_vc14'}")
+
+                svn_dir = os.path.join(blenderpy_dir, "lib",
+                                       f"windows_vc{max(vs_versions)}")
+
+                os.makedirs(svn_dir, exist_ok=True)
+
+                blender_svn_repo = svn.remote.RemoteClient(svn_url)
+                blender_svn_repo.checkout(svn_dir)
+
+            self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
+                        '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
+                        '-DWITH_PYTHON_MODULE=ON'])
+            self.spawn(["cmake", "--build", self.build_temp, "--target build",
+                        "--config Release"])
+
+        else:
+
+            super.build_extension(extension)
 
 setup(name='bpy',
-      version='1.1.0a0',
+      version='1.2.0a0',
       packages=find_packages(),
-      ext_modules={'bpy': Extension(name="bpy", sources=get_sources(), 
-                   include_dirs=get_include_dirs(), library_dirs=['./lib'])},
+      ext_modules={'bpy': CMakeExtension(name="bpy")},
       description='Blender as a python module',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
-      setup_requires=[],
-      url="https://github.com/TylerGubala/blenderpy"
-)
+      setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
+      url="https://github.com/TylerGubala/blenderpy")
