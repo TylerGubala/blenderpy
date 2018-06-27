@@ -7,7 +7,6 @@ Depends upon the bpybuild package
 import os
 import pathlib
 from setuptools import find_packages, setup, Extension
-from setuptools.command.install import install
 from setuptools.command.build_ext import build_ext
 import shutil
 import struct
@@ -89,7 +88,7 @@ class BuildCMakeExt(build_ext):
         blender_dir = os.path.join(blenderpy_dir, "blender")
 
         build_dir = pathlib.Path(self.build_temp)
-        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
+        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name)).parent.parent.absolute()
 
         os.makedirs(blender_dir, exist_ok=True)
         os.makedirs(build_dir, exist_ok=True)
@@ -231,7 +230,7 @@ class BuildCMakeExt(build_ext):
             recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.0a2',
+      version='1.2.0a1',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
