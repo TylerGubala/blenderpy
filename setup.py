@@ -7,12 +7,32 @@ Depends upon the bpybuild package
 import os
 import pathlib
 from setuptools import find_packages, setup, Extension
+from setuptools.command.install import install
 from setuptools.command.build_ext import build_ext
+import shutil
 import struct
 import sys
 from typing import List
 
+PYTHON_EXE_DIR = os.path.dirname(sys.executable)
+
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
+
+BITS = struct.calcsize("P") * 8
+
+def recursive_copy(src: str, dst: str):
+
+    for shortname in os.listdir(src):
+
+        fullname = os.path.join(src, shortname)
+
+        if os.path.isfile(fullname):
+            shutil.copy(fullname, dst)
+
+        elif os.path.isdir(fullname):
+            new_dst = os.path.join(dst, shortname)
+            os.mkdir(new_dst)
+            recursive_copy(os.path.abspath(fullname), new_dst)
 
 class CMakeExtension(Extension):
     """
@@ -47,8 +67,25 @@ class BuildCMakeExt(build_ext):
         """
 
         from git import Repo
+        from git import RemoteProgress
 
-        blenderpy_dir = os.path.join(pathlib.Path.home, ".blenderpy")
+        class MyProgressPrinter(RemoteProgress):
+
+            def __init__(self, parent: Extension):
+
+                self.parent = parent
+                super().__init__()
+
+            def update(self, op_code, cur_count, max_count=None, message=''):
+
+                announcement = (f"{op_code}{cur_count}{max_count}"
+                                f"{cur_count / (max_count or 100.0)}"
+                                f"{message or 'NO MESSAGE'}")
+                self.parent.announce(announcement, level=3)
+
+        self.announce("Preparing the build environment", level=3)
+
+        blenderpy_dir = os.path.join(pathlib.Path.home(), ".blenderpy")
         blender_dir = os.path.join(blenderpy_dir, "blender")
 
         build_dir = pathlib.Path(self.build_temp)
@@ -58,19 +95,27 @@ class BuildCMakeExt(build_ext):
         os.makedirs(build_dir, exist_ok=True)
         os.makedirs(extension_dir, exist_ok=True)
 
+        self.announce("Done.", level=3)
+        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}...",
+                      level=3)
+
         try:
 
             blender_git_repo = Repo(blender_dir)
 
         except:
 
-            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
+            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir, 
+                            progress=MyProgressPrinter(self))
             blender_git_repo = Repo(blender_dir)
 
         finally:
                 
             blender_git_repo.heads.master.checkout()
             blender_git_repo.remotes.origin.pull()
+
+        self.announce("Done.", level=3)
+        self.announce(f"Updating Blender git submodules...", level=3)
 
         blender_git_repo.git.submodule('update', '--init', '--recursive')
 
@@ -80,7 +125,9 @@ class BuildCMakeExt(build_ext):
             submodule_repo.heads.master.checkout()
             submodule_repo.remotes.origin.pull()
 
-        if sys.platform == "win32":
+        self.announce("Done.", level=3)
+
+        if sys.platform == "win32": # Windows only steps
                 
             import svn.remote
             import winreg
@@ -107,25 +154,84 @@ class BuildCMakeExt(build_ext):
                 raise Exception("Windows users must have "
                                 "Visual Studio installed")
 
+            svn_lib = (f"win{'dows' if BITS == 32 else '64'}"
+                       f"{'_vc12' if max(vs_versions) == 12 else '_vc14'}")
             svn_url = (f"https://svn.blender.org/svnroot/bf-blender/trunk/lib/"
-                       f"{'windows_vc12' if max(vs_versions) == 12 else 'win_vc14'}")
-
-            svn_dir = os.path.join(blenderpy_dir, "lib",
-                                   f"windows_vc{max(vs_versions)}")
+                       f"{svn_lib}")
+            svn_dir = os.path.join(blenderpy_dir, "lib", svn_lib)
 
             os.makedirs(svn_dir, exist_ok=True)
+
+            self.announce(f"Checking out svn libs from {svn_url}")
 
             blender_svn_repo = svn.remote.RemoteClient(svn_url)
             blender_svn_repo.checkout(svn_dir)
 
+            self.announce("Done.")
+
+        self.announce("Configuring cmake project", level=3)
+
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                    '-DWITH_PYTHON_MODULE=ON'])
-        self.spawn(["cmake", "--build", self.build_temp, "--target build",
-                    "--config Release"])
+                    '-DWITH_PYTHON_MODULE=ON',
+                    f"-DCMAKE_GENERATOR_PLATFORM=x"
+                    f"{'86' if BITS == 32 else '64'}"])
+
+        self.announce("Done.", level=3)
+        self.announce("Building cmake project", level=3)
+
+        self.spawn(["cmake", "--build", self.build_temp, "--target", "INSTALL",
+                    "--config", "Release"])
+
+        self.announce("Done.", level=3)
+
+        # Build finished, now copy the files into the extension directory
+
+        bin_dir = os.path.join(build_dir, 'bin', 'Release')
+
+        bpy_to_copy = [os.path.join(bin_dir, bpy) for bpy in
+                       os.listdir(bin_dir) if
+                       os.path.isfile(os.path.join(bin_dir, bpy)) and
+                       os.path.splitext(bpy)[0] == "bpy" and
+                       os.path.splitext(bpy)[1] in [".pyd", ".so"]][0]
+        
+        shutil.copy(bpy_to_copy, extension_dir)
+
+        libs_to_copy = [os.path.join(bin_dir, lib) for lib in 
+                        os.listdir(bin_dir) if 
+                        os.path.isfile(os.path.join(bin_dir, lib)) and 
+                        os.path.splitext(lib)[1] in [".dll", ".so"] and not
+                        lib.startswith("python") and not lib.startswith("bpy")]
+
+        for lib in libs_to_copy:
+
+            shutil.copy(lib, extension_dir)
+        
+        dirs_to_copy = [os.path.join(bin_dir, folder) for folder in 
+                        os.listdir(bin_dir) if 
+                        os.path.isdir(os.path.join(bin_dir, folder))]
+        
+        for dir_name in dirs_to_copy:
+
+            dir_basename = os.path.basename(dir_name)
+            dir_newname = os.path.join(PYTHON_EXE_DIR, dir_basename)
+
+            try:
+        
+                os.makedirs(dir_newname)
+
+            except FileExistsError:
+
+                pass
+
+            else:
+
+                pass
+
+            recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.0a0',
+      version='1.2.0a2',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -133,4 +239,5 @@ setup(name='bpy',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
-      url="https://github.com/TylerGubala/blenderpy")
+      url="https://github.com/TylerGubala/blenderpy",
+      cmdclass={'build_ext': BuildCMakeExt})
