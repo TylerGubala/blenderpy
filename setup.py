@@ -73,13 +73,18 @@ class BuildCMakeExt(build_ext):
         blender_dir = os.path.join(blenderpy_dir, "blender")
 
         build_dir = pathlib.Path(self.build_temp)
+
+        # It may seem redundant, as we never actually use extension_dir
+        # but creating extension_dir prevents the superclass from __also__
+        # running `build_ext` on the bpy extension, so we must ensure that
+        # this step takes place
+
         extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
         os.makedirs(build_dir, exist_ok=True)
         os.makedirs(extension_dir, exist_ok=True)
 
-        self.announce("Done.", level=3)
         self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}...",
                       level=3)
 
@@ -97,7 +102,6 @@ class BuildCMakeExt(build_ext):
             blender_git_repo.heads.master.checkout()
             blender_git_repo.remotes.origin.pull()
 
-        self.announce("Done.", level=3)
         self.announce(f"Updating Blender git submodules...", level=3)
 
         blender_git_repo.git.submodule('update', '--init', '--recursive')
@@ -107,8 +111,6 @@ class BuildCMakeExt(build_ext):
             submodule_repo = submodule.module()
             submodule_repo.heads.master.checkout()
             submodule_repo.remotes.origin.pull()
-
-        self.announce("Done.", level=3)
 
         if sys.platform == "win32": # Windows only steps
                 
@@ -145,54 +147,45 @@ class BuildCMakeExt(build_ext):
 
             os.makedirs(svn_dir, exist_ok=True)
 
-            self.announce(f"Checking out svn libs from {svn_url}")
+            self.announce(f"Checking out svn libs from {svn_url}...", level=3)
 
             blender_svn_repo = svn.remote.RemoteClient(svn_url)
             blender_svn_repo.checkout(svn_dir)
 
-            self.announce("Done.")
-
-        self.announce("Configuring cmake project", level=3)
+        self.announce("Configuring cmake project...", level=3)
 
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
                     '-DWITH_PYTHON_MODULE=ON',
                     f"-DCMAKE_GENERATOR_PLATFORM=x"
                     f"{'86' if BITS == 32 else '64'}"])
-
-        self.announce("Done.", level=3)
-        self.announce("Building cmake project", level=3)
+        
+        self.announce("Building binaries...", level=3)
 
         self.spawn(["cmake", "--build", self.build_temp, "--target", "INSTALL",
                     "--config", "Release"])
 
-        self.announce("Done.", level=3)
-
         # Build finished, now copy the files into the copy directory
         # The copy directory must be one level up from the extension directory
-        # This is to resolve import errors
+        # This is to ensure the package imports successfully
+        # If copied into the extension_dir, you will get .dll load failed
+        # access denied errors
+
+        self.announce("Copying files and cleaning up...", level=3)
 
         copy_dir = extension_dir.parent.absolute()
 
         bin_dir = os.path.join(build_dir, 'bin', 'Release')
 
-        bpy_to_copy = [os.path.join(bin_dir, bpy) for bpy in
-                       os.listdir(bin_dir) if
-                       os.path.isfile(os.path.join(bin_dir, bpy)) and
-                       os.path.splitext(bpy)[0] == "bpy" and
-                       os.path.splitext(bpy)[1] in [".pyd", ".so"]][0]
-        
-        shutil.copy(bpy_to_copy, copy_dir)
-
-        libs_to_copy = [os.path.join(bin_dir, lib) for lib in 
+        bins_to_copy = [os.path.join(bin_dir, _bin) for _bin in 
                         os.listdir(bin_dir) if 
-                        os.path.isfile(os.path.join(bin_dir, lib)) and 
-                        os.path.splitext(lib)[1] in [".dll", ".so"] and not
-                        lib.startswith("python") and not lib.startswith("bpy")]
+                        os.path.isfile(os.path.join(bin_dir, _bin)) and 
+                        os.path.splitext(_bin)[1] in [".pyd", ".dll", ".so"]
+                        and not _bin.startswith("python")]
 
-        for lib in libs_to_copy:
+        for _bin in bins_to_copy:
 
-            shutil.copy(lib, copy_dir)
+            shutil.copy(_bin, copy_dir)
         
         dirs_to_copy = [os.path.join(bin_dir, folder) for folder in 
                         os.listdir(bin_dir) if 
@@ -205,7 +198,7 @@ class BuildCMakeExt(build_ext):
 
             try:
         
-                os.makedirs(dir_newname)
+                os.makedirs(dir_newname, exist_ok=True)
 
             except FileExistsError:
 
@@ -218,7 +211,7 @@ class BuildCMakeExt(build_ext):
             recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.0',
+      version='1.2.1a0',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
