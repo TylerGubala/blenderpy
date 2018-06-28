@@ -22,7 +22,7 @@ It does this by going and making sure that the VC build tools are installed, and
 
 ### Installing after build
 
-The blender python module expects all of the .dll files created (windows only) to be installed as siblings of the bpy.pyd file, so those must be in the same directory, and can be safely installed in site-packages; the only caveat being that __these files are untracked by pip and must be removed manually__. A directory reflecting the version of the bpy module can also be found as a sibling of the python executible your environment is running in.
+The blender python module expects all of the .dll files created (windows only) to be installed as siblings of the bpy.pyd file, so those must be in the same directory, and can be safely installed in site-packages. A directory reflecting the version of the bpy module can also be found as a sibling of the python executible your environment is running in.
 
 The resultant version folder (matches the version of blender) must be installed as a sibling of the executable file. You must put this folder as a sibling (in the same folder) of the python.exe that you are running from. In a venv, this is under the Scripts directory of the venv.
 
