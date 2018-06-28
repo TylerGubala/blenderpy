@@ -211,7 +211,7 @@ class BuildCMakeExt(build_ext):
             recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.1a0',
+      version='1.2.1',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
