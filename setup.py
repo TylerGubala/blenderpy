@@ -66,21 +66,6 @@ class BuildCMakeExt(build_ext):
         """
 
         from git import Repo
-        from git import RemoteProgress
-
-        class MyProgressPrinter(RemoteProgress):
-
-            def __init__(self, parent: Extension):
-
-                self.parent = parent
-                super().__init__()
-
-            def update(self, op_code, cur_count, max_count=None, message=''):
-
-                announcement = (f"{op_code}{cur_count}{max_count}"
-                                f"{cur_count / (max_count or 100.0)}"
-                                f"{message or 'NO MESSAGE'}")
-                self.parent.announce(announcement, level=3)
 
         self.announce("Preparing the build environment", level=3)
 
@@ -88,7 +73,7 @@ class BuildCMakeExt(build_ext):
         blender_dir = os.path.join(blenderpy_dir, "blender")
 
         build_dir = pathlib.Path(self.build_temp)
-        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name)).parent.parent.absolute()
+        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
         os.makedirs(build_dir, exist_ok=True)
@@ -104,8 +89,7 @@ class BuildCMakeExt(build_ext):
 
         except:
 
-            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir, 
-                            progress=MyProgressPrinter(self))
+            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
             blender_git_repo = Repo(blender_dir)
 
         finally:
@@ -184,7 +168,11 @@ class BuildCMakeExt(build_ext):
 
         self.announce("Done.", level=3)
 
-        # Build finished, now copy the files into the extension directory
+        # Build finished, now copy the files into the copy directory
+        # The copy directory must be one level up from the extension directory
+        # This is to resolve import errors
+
+        copy_dir = extension_dir.parent.absolute()
 
         bin_dir = os.path.join(build_dir, 'bin', 'Release')
 
@@ -194,7 +182,7 @@ class BuildCMakeExt(build_ext):
                        os.path.splitext(bpy)[0] == "bpy" and
                        os.path.splitext(bpy)[1] in [".pyd", ".so"]][0]
         
-        shutil.copy(bpy_to_copy, extension_dir)
+        shutil.copy(bpy_to_copy, copy_dir)
 
         libs_to_copy = [os.path.join(bin_dir, lib) for lib in 
                         os.listdir(bin_dir) if 
@@ -204,7 +192,7 @@ class BuildCMakeExt(build_ext):
 
         for lib in libs_to_copy:
 
-            shutil.copy(lib, extension_dir)
+            shutil.copy(lib, copy_dir)
         
         dirs_to_copy = [os.path.join(bin_dir, folder) for folder in 
                         os.listdir(bin_dir) if 
@@ -230,7 +218,7 @@ class BuildCMakeExt(build_ext):
             recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.0a1',
+      version='1.2.0',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
