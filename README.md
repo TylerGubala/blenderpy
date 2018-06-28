@@ -1,30 +1,26 @@
 # blenderpy
 Blender as a python module with easy-install
 
+## Prerequisites
+
+1) Windows users must have Visual Studio 2013 or later and C++ build tools installed
+2) All users must `py -m pip install cmake` in their python environment (currently adding it as a `setup_requires` does not install it properly); after build it may be uninstalled with `py -m pip uninstall cmake`
+
 ## Installation
 
-```py -m pip install bpy```
+`py -m pip install bpy`
 
 ## How it works
 
-
-### building: 
-
-This is a setup.py file for easy installation of the blender python pyd or so file
-
-Python starts by opening a directory on the computer in the user's home folder (```~/blenderpy```)
-
-Then, using Gitpython, this setup will download the git repository of blender into the directory, along the way attempting to install dependencies (such as cmake, svn and GitPython which are transient dependencies)
-
-After downloading the files into ```~/.blenderpy``` the program attempts to walk you through the build process for blender. Results are created in the ```~/.blenderpy/build``` directory.
-
-It does this by going and making sure that the VC build tools are installed, and then crawling the registry for the best build tool to use. Usually we are just able to use the generator for Windows 2017.
-
-### Installing after build
-
-The blender python module expects all of the .dll files created (windows only) to be installed as siblings of the bpy.pyd file, so those must be in the same directory, and can be safely installed in site-packages. A directory reflecting the version of the bpy module can also be found as a sibling of the python executible your environment is running in.
-
-The resultant version folder (matches the version of blender) must be installed as a sibling of the executable file. You must put this folder as a sibling (in the same folder) of the python.exe that you are running from. In a venv, this is under the Scripts directory of the venv.
+0) Create overriding classes CMakeExtension & BuildCMake, which inheirit from the setuptools classes; bpy is a python extension (.pyd) and an instance of CMakeExtension, BuildCMake is the command that is run when installing the extension from pip (or running setup.py)
+1) Using GitPython, clone Blender sources from https://git.blender.org/
+2) If on Windows, detect the installed version of Visual Studio and 64bit vs 32bit, and download the appropriate svn library based on that
+3) Using cmake, configure blender as a python module per the Ideasman42 wiki page (now defunct) https://wiki.blender.org/wiki//User:Ideasman42/BlenderAsPyModule; configure this build solution in the build_temp directory of the bpy package
+4) Using cmake, build the configured solution
+5) Place the built binaries in the built extension parent directory (important!)
+6) Relocate the /<Version> directory (i.e: /2.79) into the directory containing the executable from which this installation was spawned (where 'python.exe' is)
+7) Clean up using the remaining functionality from the superclasses `build_ext` and `Extension`
+8) bpy.pyd/ .so should now be installed into the site-packages
 
 ## Gotchas
 
