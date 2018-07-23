@@ -12,6 +12,15 @@
             "program": "${file}"
         },
         {
+            "name": "Install package",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "install"
+            ]
+        },
+        {
             "name": "Python: Attach",
             "type": "python",
             "request": "attach",
