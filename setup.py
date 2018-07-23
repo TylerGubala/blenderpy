@@ -1,13 +1,12 @@
 """
 Build blender into a python module
-
-Depends upon the bpybuild package
 """
 
 import os
 import pathlib
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.dist import Distribution
 import shutil
 import struct
 import sys
@@ -85,7 +84,7 @@ class BuildCMakeExt(build_ext):
         os.makedirs(build_dir, exist_ok=True)
         os.makedirs(extension_dir, exist_ok=True)
 
-        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}...",
+        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}",
                       level=3)
 
         try:
@@ -102,7 +101,7 @@ class BuildCMakeExt(build_ext):
             blender_git_repo.heads.master.checkout()
             blender_git_repo.remotes.origin.pull()
 
-        self.announce(f"Updating Blender git submodules...", level=3)
+        self.announce(f"Updating Blender git submodules", level=3)
 
         blender_git_repo.git.submodule('update', '--init', '--recursive')
 
@@ -147,12 +146,24 @@ class BuildCMakeExt(build_ext):
 
             os.makedirs(svn_dir, exist_ok=True)
 
-            self.announce(f"Checking out svn libs from {svn_url}...", level=3)
+            self.announce(f"Checking out svn libs from {svn_url}", level=3)
 
-            blender_svn_repo = svn.remote.RemoteClient(svn_url)
-            blender_svn_repo.checkout(svn_dir)
+            try:
 
-        self.announce("Configuring cmake project...", level=3)
+                blender_svn_repo = svn.remote.RemoteClient(svn_url)
+                blender_svn_repo.checkout(svn_dir)
+
+            except WindowsError as e:
+
+                print("Windows users must have the svn executable available "
+                      "from the command line")
+                print("Please install Tortoise SVN with \"command line client "
+                      "tools\" as described here")
+                print("https://stackoverflow.com/questions/1625406/using-"
+                      "tortoisesvn-via-the-command-line")
+                raise e
+
+        self.announce("Configuring cmake project", level=3)
 
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
@@ -160,7 +171,7 @@ class BuildCMakeExt(build_ext):
                     f"-DCMAKE_GENERATOR_PLATFORM=x"
                     f"{'86' if BITS == 32 else '64'}"])
         
-        self.announce("Building binaries...", level=3)
+        self.announce("Building binaries", level=3)
 
         self.spawn(["cmake", "--build", self.build_temp, "--target", "INSTALL",
                     "--config", "Release"])
@@ -211,7 +222,7 @@ class BuildCMakeExt(build_ext):
             recursive_copy(dir_name, dir_newname)
 
 setup(name='bpy',
-      version='1.2.1',
+      version='1.2.2a0',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
