@@ -6,7 +6,8 @@ import os
 import pathlib
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
-from setuptools.dist import Distribution
+from setuptools.command.install_lib import install_lib
+from setuptools.command.install_scripts import install_scripts
 import shutil
 import struct
 import sys
@@ -15,6 +16,7 @@ from typing import List
 PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
+BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
 
@@ -40,6 +42,75 @@ class CMakeExtension(Extension):
     def __init__(self, name, sources=[]):
 
         super().__init__(name = name, sources = sources)
+
+class InstallCMakeLibs(install_lib):
+    """
+    Get the libraries from the parent distribution, use those as the outfiles
+
+    Skip building anything; everything is already built, forward libraries to
+    the installation step
+    """
+
+    def run(self):
+        """
+        Copy libraries from the bin directory and place them as appropriate
+        """
+
+        self.announce("Moving library files", level=3)
+
+        self.skip_build = True
+
+        bin_dir = self.distribution.bin_dir
+
+        libs = [os.path.join(bin_dir, _lib) for _lib in 
+                os.listdir(bin_dir) if 
+                os.path.isfile(os.path.join(bin_dir, _lib)) and 
+                os.path.splitext(_lib)[1] in [".dll", ".so"]
+                and not (_lib.startswith("python") or _lib.startswith("bpy"))]
+
+        for lib in libs:
+
+            shutil.move(lib, os.path.join(self.build_dir,
+                                          os.path.basename(lib)))
+
+        self.distribution.libraries = [(os.path.basename(lib), lib) for lib in libs]
+
+        super().run()
+
+class InstallBlenderScripts(install_scripts):
+    """
+    Install the scripts available from the "version folder" in the build dir
+    """
+
+    def run(self):
+        """
+        Copy the required directory to the build directory and let setuptools take over
+        """
+
+        self.announce("Moving scripts files", level=3)
+
+        self.skip_build = True
+
+        bin_dir = self.distribution.bin_dir
+
+        self.announce(f"{os.path.abspath(bin_dir)}", level=3)
+
+        for item in os.listdir(bin_dir):
+
+            self.announce(f"{item}\t{'Directory' if os.path.isdir(item) else 'File'}", level=3)
+
+        scripts_dirs = [os.path.join(bin_dir, _dir) for _dir in
+                        os.listdir(bin_dir) if
+                        os.path.isdir(os.path.join(bin_dir, _dir))]
+
+        for scripts_dir in scripts_dirs:
+
+            shutil.move(scripts_dir, os.path.join(self.build_dir,
+                                                  os.path.basename(scripts_dir)))
+
+        self.distribution.scripts = scripts_dirs
+
+        super().run()
 
 class BuildCMakeExt(build_ext):
     """
@@ -68,8 +139,7 @@ class BuildCMakeExt(build_ext):
 
         self.announce("Preparing the build environment", level=3)
 
-        blenderpy_dir = os.path.join(pathlib.Path.home(), ".blenderpy")
-        blender_dir = os.path.join(blenderpy_dir, "blender")
+        blender_dir = os.path.join(BLENDERPY_DIR, "blender")
 
         build_dir = pathlib.Path(self.build_temp)
 
@@ -78,14 +148,13 @@ class BuildCMakeExt(build_ext):
         # running `build_ext` on the bpy extension, so we must ensure that
         # this step takes place
 
-        extension_dir = pathlib.Path(self.get_ext_fullpath(extension.name))
+        extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
         os.makedirs(build_dir, exist_ok=True)
-        os.makedirs(extension_dir, exist_ok=True)
+        os.makedirs(extension_path.parent.absolute(), exist_ok=True)
 
-        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}",
-                      level=3)
+        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}", level=3)
 
         try:
 
@@ -142,7 +211,7 @@ class BuildCMakeExt(build_ext):
                        f"{'_vc12' if max(vs_versions) == 12 else '_vc14'}")
             svn_url = (f"https://svn.blender.org/svnroot/bf-blender/trunk/lib/"
                        f"{svn_lib}")
-            svn_dir = os.path.join(blenderpy_dir, "lib", svn_lib)
+            svn_dir = os.path.join(BLENDERPY_DIR, "lib", svn_lib)
 
             os.makedirs(svn_dir, exist_ok=True)
 
@@ -182,47 +251,24 @@ class BuildCMakeExt(build_ext):
         # If copied into the extension_dir, you will get .dll load failed
         # access denied errors
 
-        self.announce("Copying files and cleaning up...", level=3)
-
-        copy_dir = extension_dir.parent.absolute()
+        self.announce("Moving Blender python module", level=3)
 
         bin_dir = os.path.join(build_dir, 'bin', 'Release')
+        self.distribution.bin_dir = bin_dir
 
-        bins_to_copy = [os.path.join(bin_dir, _bin) for _bin in 
-                        os.listdir(bin_dir) if 
-                        os.path.isfile(os.path.join(bin_dir, _bin)) and 
-                        os.path.splitext(_bin)[1] in [".pyd", ".dll", ".so"]
-                        and not _bin.startswith("python")]
+        bpy_path = [os.path.join(bin_dir, _bpy) for _bpy in
+                    os.listdir(bin_dir) if
+                    os.path.isfile(os.path.join(bin_dir, _bpy)) and
+                    os.path.splitext(_bpy)[0].startswith('bpy') and
+                    os.path.splitext(_bpy)[1] in [".pyd", ".so"]][0]
 
-        for _bin in bins_to_copy:
+        shutil.move(bpy_path, extension_path)
 
-            shutil.copy(_bin, copy_dir)
-        
-        dirs_to_copy = [os.path.join(bin_dir, folder) for folder in 
-                        os.listdir(bin_dir) if 
-                        os.path.isdir(os.path.join(bin_dir, folder))]
-        
-        for dir_name in dirs_to_copy:
-
-            dir_basename = os.path.basename(dir_name)
-            dir_newname = os.path.join(PYTHON_EXE_DIR, dir_basename)
-
-            try:
-        
-                os.makedirs(dir_newname, exist_ok=True)
-
-            except FileExistsError:
-
-                pass
-
-            else:
-
-                pass
-
-            recursive_copy(dir_name, dir_newname)
+        self.distribution.run_command('install_lib')
+        self.distribution.run_command('install_scripts')
 
 setup(name='bpy',
-      version='1.2.2a0',
+      version='1.2.2a9',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -231,4 +277,6 @@ setup(name='bpy',
       license='GPL-3.0',
       setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
       url="https://github.com/TylerGubala/blenderpy",
-      cmdclass={'build_ext': BuildCMakeExt})
+      cmdclass={'build_ext': BuildCMakeExt,
+                'install_lib': InstallCMakeLibs,
+                'install_scripts': InstallBlenderScripts})
