@@ -21,20 +21,6 @@ BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
 
-def recursive_copy(src: str, dst: str):
-
-    for shortname in os.listdir(src):
-
-        fullname = os.path.join(src, shortname)
-
-        if os.path.isfile(fullname):
-            shutil.copy(fullname, dst)
-
-        elif os.path.isdir(fullname):
-            new_dst = os.path.join(dst, shortname)
-            os.mkdir(new_dst)
-            recursive_copy(os.path.abspath(fullname), new_dst)
-
 class CMakeExtension(Extension):
     """
     An extension to run the cmake build
@@ -107,8 +93,9 @@ class InstallBlenderScripts(install_scripts):
 
         for scripts_dir in scripts_dirs:
 
-            shutil.move(scripts_dir, os.path.join(self.build_dir,
-                                                  os.path.basename(scripts_dir)))
+            shutil.move(scripts_dir,
+                        os.path.join(self.build_dir,
+                                     os.path.basename(scripts_dir)))
 
         self.distribution.scripts = scripts_dirs
 
@@ -268,6 +255,7 @@ class BuildCMakeExt(build_ext):
 
         self.distribution.run_command('install_lib')
         self.distribution.run_command('install_scripts')
+        self.distribution.run_command('install_egg_info')
 
 class BuildCMakeLibs(build_clib):
     """
@@ -290,7 +278,7 @@ class BuildCMakeLibs(build_clib):
         Waste everyone's time with a pointless docstring
         """
 
-        # If anyone knows a better way to avoid the error above while I'd love
+        # If anyone knows a better way to avoid the error above I'd love
         # to hear it
 
         pass
@@ -298,7 +286,7 @@ class BuildCMakeLibs(build_clib):
     build_libraries = run
 
 setup(name='bpy',
-      version='1.2.2a14',
+      version='1.2.2a17',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
