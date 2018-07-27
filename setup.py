@@ -2,6 +2,7 @@
 Build blender into a python module
 """
 
+from distutils.command.build_clib import build_clib
 import os
 import pathlib
 from setuptools import find_packages, setup, Extension
@@ -73,7 +74,8 @@ class InstallCMakeLibs(install_lib):
             shutil.move(lib, os.path.join(self.build_dir,
                                           os.path.basename(lib)))
 
-        self.distribution.libraries = [(os.path.basename(lib), lib) for lib in libs]
+        self.distribution.libraries = [(os.path.basename(lib), {'sources': []})
+                                       for lib in libs]
 
         super().run()
 
@@ -84,7 +86,7 @@ class InstallBlenderScripts(install_scripts):
 
     def run(self):
         """
-        Copy the required directory to the build directory and let setuptools take over
+        Copy the required directory to the build directory and super().run()
         """
 
         self.announce("Moving scripts files", level=3)
@@ -97,7 +99,7 @@ class InstallBlenderScripts(install_scripts):
 
         for item in os.listdir(bin_dir):
 
-            self.announce(f"{item}\t{'Directory' if os.path.isdir(item) else 'File'}", level=3)
+            self.announce(f"{item}\t{'Directory' if os.path.isdir(os.path.join(bin_dir, item)) else 'File'}", level=3)
 
         scripts_dirs = [os.path.join(bin_dir, _dir) for _dir in
                         os.listdir(bin_dir) if
@@ -222,14 +224,14 @@ class BuildCMakeExt(build_ext):
                 blender_svn_repo = svn.remote.RemoteClient(svn_url)
                 blender_svn_repo.checkout(svn_dir)
 
-            except WindowsError as e:
+            except Exception as e:
 
-                print("Windows users must have the svn executable available "
-                      "from the command line")
-                print("Please install Tortoise SVN with \"command line client "
-                      "tools\" as described here")
-                print("https://stackoverflow.com/questions/1625406/using-"
-                      "tortoisesvn-via-the-command-line")
+                self.warn("Windows users must have the svn executable "
+                          "available from the command line")
+                self.warn("Please install Tortoise SVN with \"command line "
+                          "client tools\" as described here")
+                self.warn("https://stackoverflow.com/questions/1625406/using-"
+                          "tortoisesvn-via-the-command-line")
                 raise e
 
         self.announce("Configuring cmake project", level=3)
@@ -267,8 +269,36 @@ class BuildCMakeExt(build_ext):
         self.distribution.run_command('install_lib')
         self.distribution.run_command('install_scripts')
 
+class BuildCMakeLibs(build_clib):
+    """
+    A command that suppresses the distutils.command.build_clib class
+
+    Really, that's all it does. It is only there to catch the case where
+    install_lib attempts to build a library from scratch using a compiler.
+    """
+
+    # This had to be made because otherwise setup.py kept complaining about
+    # how the second element in the of each tuple in 'libraries' must be a
+    # dictionary (build info)
+    # 
+    # it was expecting a set of macros to be defined I guess...? Help please
+
+    def run(self):
+        """
+        Do absolutely nothing
+
+        Waste everyone's time with a pointless docstring
+        """
+
+        # If anyone knows a better way to avoid the error above while I'd love
+        # to hear it
+
+        pass
+
+    build_libraries = run
+
 setup(name='bpy',
-      version='1.2.2a9',
+      version='1.2.2a14',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -277,6 +307,10 @@ setup(name='bpy',
       license='GPL-3.0',
       setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
       url="https://github.com/TylerGubala/blenderpy",
-      cmdclass={'build_ext': BuildCMakeExt,
-                'install_lib': InstallCMakeLibs,
-                'install_scripts': InstallBlenderScripts})
+      cmdclass={
+          'build_clib': BuildCMakeLibs,
+          'build_ext': BuildCMakeExt,
+          'install_lib': InstallCMakeLibs,
+          'install_scripts': InstallBlenderScripts
+          }
+    )
