@@ -118,6 +118,10 @@ class InstallCMakeLibs(install_lib):
                                                      os.path.basename(lib))
                                         for lib in libs]
 
+        # Must be forced to run after adding the libs to data_files
+
+        self.distribution.run_command("install_data")
+
         super().run()
 
 class InstallBlenderScripts(install_scripts):
@@ -391,7 +395,6 @@ class BuildCMakeExt(build_ext):
         # 
         # install_lib
         # install_scripts
-        # install_data
         # 
         # These commands are subclassed above to avoid pitfalls that
         # setuptools tries to impose when installing these, as it usually
@@ -399,12 +402,30 @@ class BuildCMakeExt(build_ext):
         # different place. See comments above for additional information
 
 setup(name='bpy',
-      version='1.2.2b2',
+      version='1.2.2b5',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
       long_description=open("./README.md", 'r').read(),
       long_description_content_type="text/markdown",
+      keywords="Blender, 3D, Animation, Renderer, Rendering",
+      classifiers=["Development Status :: 3 - Alpha",
+                   "Environment :: Win32 (MS Windows)",
+                   "Intended Audience :: Developers",
+                   "License :: OSI Approved :: "
+                   "GNU Lesser General Public License v3 (LGPLv3)",
+                   "Natural Language :: English",
+                   "Operating System :: Microsoft :: Windows :: Windows 10",
+                   "Programming Language :: C",
+                   "Programming Language :: C++",
+                   "Programming Language :: Python :: 3.6",
+                   "Topic :: Artistic Software",
+                   "Topic :: Education",
+                   "Topic :: Multimedia",
+                   "Topic :: Multimedia :: Graphics",
+                   "Topic :: Multimedia :: Graphics :: 3D Modeling",
+                   "Topic :: Multimedia :: Graphics :: 3D Rendering",
+                   "Topic :: Games/Entertainment"],
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
