@@ -1,16 +1,31 @@
 # blenderpy
 Blender as a python module with easy-install
 
-## Prerequisites
+Meant for installation into a virtualenv or wherever, for unit testing of Blender extensions being authored, or developement of a Blender 3d-enabled Python application.
 
-1) Windows users must have Visual Studio 2013 or later and C++ build tools installed
-2) All users must `py -m pip install cmake` in their python environment (currently adding it as a `setup_requires` does not install it properly); after build it may be uninstalled with `py -m pip uninstall cmake`
+## Option 1 - Get prebuilt bdist_wheel from pypi
 
-## Installation
+### Prerequisites
+
+1) A supported python installation with pip installed
+
+### Installation
 
 `py -m pip install bpy`
 
-## How it works
+## Option 2 - Build from sources using pypi
+
+### Prerequisites
+
+1) Windows users must have Visual Studio 2013 or later and C++ build tools installed to build from sources
+2) Windows users must have an SVN provider to build from sources
+3) All users must `py -m pip install cmake` in their python environment to build from sources (currently adding it as a `setup_requires` does not install it properly); after build it may be uninstalled with `py -m pip uninstall cmake`
+
+### Installation
+
+`py -m pip install bpy`
+
+### How it works
 
 0) Create overriding classes CMakeExtension & BuildCMake, which inheirit from the setuptools classes; bpy is a python extension (.pyd) and an instance of CMakeExtension, BuildCMake is the command that is run when installing the extension from pip (or running setup.py)
 1) Using GitPython, clone Blender sources from https://git.blender.org/
@@ -22,6 +37,6 @@ Blender as a python module with easy-install
 7) Clean up using the remaining functionality from the superclasses `build_ext` and `Extension`
 8) bpy.pyd/ .so should now be installed into the site-packages
 
-## Gotchas
+### Gotchas
 
 I have not tested this for platforms other than windows at the moment. More to come soon.
