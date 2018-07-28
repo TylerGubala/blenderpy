@@ -402,7 +402,7 @@ class BuildCMakeExt(build_ext):
         # different place. See comments above for additional information
 
 setup(name='bpy',
-      version='1.2.2b5',
+      version='1.2.2',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -418,7 +418,9 @@ setup(name='bpy',
                    "Operating System :: Microsoft :: Windows :: Windows 10",
                    "Programming Language :: C",
                    "Programming Language :: C++",
+                   "Programming Language :: Python",
                    "Programming Language :: Python :: 3.6",
+                   "Programming Language :: Python :: Implementation :: CPython",
                    "Topic :: Artistic Software",
                    "Topic :: Education",
                    "Topic :: Multimedia",
