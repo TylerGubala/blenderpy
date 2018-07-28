@@ -2,10 +2,9 @@
 Build blender into a python module
 """
 
-from distutils.command.build_clib import build_clib
 import os
 import pathlib
-from setuptools import find_packages, setup, Extension
+from setuptools import find_packages, setup, Extension, Distribution
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
 from setuptools.command.install_scripts import install_scripts
@@ -20,6 +19,9 @@ BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
 BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
+
+MYDIST = Distribution()
+MYDIST.data_files
 
 class CMakeExtension(Extension):
     """
@@ -60,8 +62,9 @@ class InstallCMakeLibs(install_lib):
             shutil.move(lib, os.path.join(self.build_dir,
                                           os.path.basename(lib)))
 
-        self.distribution.libraries = [(os.path.basename(lib), {'sources': []})
-                                       for lib in libs]
+        self.distribution.data_files = [os.path.join(self.install_dir, 
+                                                     os.path.basename(lib))
+                                        for lib in libs]
 
         super().run()
 
@@ -255,48 +258,20 @@ class BuildCMakeExt(build_ext):
 
         self.distribution.run_command('install_lib')
         self.distribution.run_command('install_scripts')
-        self.distribution.run_command('install_egg_info')
-
-class BuildCMakeLibs(build_clib):
-    """
-    A command that suppresses the distutils.command.build_clib class
-
-    Really, that's all it does. It is only there to catch the case where
-    install_lib attempts to build a library from scratch using a compiler.
-    """
-
-    # This had to be made because otherwise setup.py kept complaining about
-    # how the second element in the of each tuple in 'libraries' must be a
-    # dictionary (build info)
-    # 
-    # it was expecting a set of macros to be defined I guess...? Help please
-
-    def run(self):
-        """
-        Do absolutely nothing
-
-        Waste everyone's time with a pointless docstring
-        """
-
-        # If anyone knows a better way to avoid the error above I'd love
-        # to hear it
-
-        pass
-
-    build_libraries = run
 
 setup(name='bpy',
-      version='1.2.2a17',
+      version='1.2.2a19',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
+      long_description=open("./README.md", 'r').read(),
+      long_description_content_type="text/markdown",
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
-          'build_clib': BuildCMakeLibs,
           'build_ext': BuildCMakeExt,
           'install_lib': InstallCMakeLibs,
           'install_scripts': InstallBlenderScripts
