@@ -250,7 +250,7 @@ class BuildCMakeExt(build_ext):
                           "tortoisesvn-via-the-command-line")
                 raise e
 
-        if sys.platform == "linux": # Linux only steps
+        elif sys.platform == "linux": # Linux only steps
 
             # TODO: Test linux environment, issue #1
 
@@ -323,7 +323,7 @@ class BuildCMakeExt(build_ext):
                 self.announce("Blender additional dependencies installed "
                               "automatically", level=3)
 
-        if sys.platform == "darwin": # MacOS only steps
+        elif sys.platform == "darwin": # MacOS only steps
 
             # TODO: Test MacOS environment, issue #2
 
@@ -399,7 +399,7 @@ class BuildCMakeExt(build_ext):
         # different place. See comments above for additional information
 
 setup(name='bpy',
-      version='1.2.2b1',
+      version='1.2.2b2',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
