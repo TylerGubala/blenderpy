@@ -2,9 +2,10 @@
 Build blender into a python module
 """
 
+from distutils.command.install_data import install_data
 import os
 import pathlib
-from setuptools import find_packages, setup, Extension, Distribution
+from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
 from setuptools.command.install_scripts import install_scripts
@@ -20,8 +21,27 @@ BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
 
-MYDIST = Distribution()
-MYDIST.data_files
+LINUX_BLENDER_BUILD_DEPENDENCIES = ['build-essential']
+
+LINUX_BLENDER_ADDTL_DEPENDENCIES = ['libfreetype6-dev', 'libglew-dev',
+                                    'libglu1-mesa-dev', 'libjpeg-dev',
+                                    'libpng12-dev', 'libsndfile1-dev',
+                                    'libx11-dev', 'libxi-dev',
+                                    # How to find current Python version best 
+                                    # guess and install the right one?
+                                    'python3.5-dev',
+                                    # TODO: Update the above for a more 
+                                    # maintainable way of getting correct 
+                                    # Python version
+                                    'libalut-dev', 'libavcodec-dev', 
+                                    'libavdevice-dev', 'libavformat-dev', 
+                                    'libavutil-dev', 'libfftw3-dev',
+                                    'libjack-dev', 'libmp3lame-dev',
+                                    'libopenal-dev', 'libopenexr-dev',
+                                    'libopenjpeg-dev', 'libsdl1.2-dev',
+                                    'libswscale-dev', 'libtheora-dev',
+                                    'libtiff5-dev', 'libvorbis-dev',
+                                    'libx264-dev', 'libspnav-dev']
 
 class CMakeExtension(Extension):
     """
@@ -31,6 +51,24 @@ class CMakeExtension(Extension):
     def __init__(self, name, sources=[]):
 
         super().__init__(name = name, sources = sources)
+
+class InstallCMakeLibsData(install_data):
+    """
+    Just a wrapper to get the install data into the egg-info
+    """
+
+    def run(self):
+        """
+        Outfiles are the libraries that were built using cmake
+        """
+
+        # There seems to be no other way to do this; I tried listing the
+        # libraries during the execution of the InstallCMakeLibs.run() but
+        # setuptools never tracked them, seems like setuptools wants to
+        # track the libraries through package data more than anything...
+        # help would be appriciated
+
+        self.outfiles = self.distribution.data_files
 
 class InstallCMakeLibs(install_lib):
     """
@@ -47,6 +85,8 @@ class InstallCMakeLibs(install_lib):
 
         self.announce("Moving library files", level=3)
 
+        # We have already built the libraries in the previous build_ext step
+
         self.skip_build = True
 
         bin_dir = self.distribution.bin_dir
@@ -61,6 +101,18 @@ class InstallCMakeLibs(install_lib):
 
             shutil.move(lib, os.path.join(self.build_dir,
                                           os.path.basename(lib)))
+
+        # Mark the libs for installation, adding them to 
+        # distribution.data_files seems to ensure that setuptools' record 
+        # writer appends them to installed-files.txt in the package's egg-info
+        #
+        # Also tried adding the libraries to the distribution.libraries list, 
+        # but that never seemed to add them to the installed-files.txt in the 
+        # egg-info, and the online recommendation seems to be adding libraries 
+        # into eager_resources in the call to setup(), which I think puts them 
+        # in data_files anyways. 
+        # 
+        # What is the best way?
 
         self.distribution.data_files = [os.path.join(self.install_dir, 
                                                      os.path.basename(lib))
@@ -84,12 +136,6 @@ class InstallBlenderScripts(install_scripts):
 
         bin_dir = self.distribution.bin_dir
 
-        self.announce(f"{os.path.abspath(bin_dir)}", level=3)
-
-        for item in os.listdir(bin_dir):
-
-            self.announce(f"{item}\t{'Directory' if os.path.isdir(os.path.join(bin_dir, item)) else 'File'}", level=3)
-
         scripts_dirs = [os.path.join(bin_dir, _dir) for _dir in
                         os.listdir(bin_dir) if
                         os.path.isdir(os.path.join(bin_dir, _dir))]
@@ -99,6 +145,10 @@ class InstallBlenderScripts(install_scripts):
             shutil.move(scripts_dir,
                         os.path.join(self.build_dir,
                                      os.path.basename(scripts_dir)))
+
+        # Mark the scripts for installation, adding them to 
+        # distribution.scripts seems to ensure that the setuptools' record 
+        # writer appends them to installed-files.txt in the package's egg-info
 
         self.distribution.scripts = scripts_dirs
 
@@ -127,6 +177,9 @@ class BuildCMakeExt(build_ext):
         The steps required to build the extension
         """
 
+        # We import the setup_requires modules here because if we import them
+        # at the top this script will always fail as they won't be present
+
         from git import Repo
 
         self.announce("Preparing the build environment", level=3)
@@ -135,42 +188,15 @@ class BuildCMakeExt(build_ext):
 
         build_dir = pathlib.Path(self.build_temp)
 
-        # It may seem redundant, as we never actually use extension_dir
-        # but creating extension_dir prevents the superclass from __also__
-        # running `build_ext` on the bpy extension, so we must ensure that
-        # this step takes place
-
         extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
         os.makedirs(build_dir, exist_ok=True)
         os.makedirs(extension_path.parent.absolute(), exist_ok=True)
 
-        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}", level=3)
-
-        try:
-
-            blender_git_repo = Repo(blender_dir)
-
-        except:
-
-            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
-            blender_git_repo = Repo(blender_dir)
-
-        finally:
-                
-            blender_git_repo.heads.master.checkout()
-            blender_git_repo.remotes.origin.pull()
-
-        self.announce(f"Updating Blender git submodules", level=3)
-
-        blender_git_repo.git.submodule('update', '--init', '--recursive')
-
-        for submodule in blender_git_repo.submodules:
-                
-            submodule_repo = submodule.module()
-            submodule_repo.heads.master.checkout()
-            submodule_repo.remotes.origin.pull()
+        # Now that the necessary directories are created, ensure that OS 
+        # specific steps are performed; a good example is checking on linux 
+        # that the required build libraries are in place.
 
         if sys.platform == "win32": # Windows only steps
                 
@@ -196,8 +222,8 @@ class BuildCMakeExt(build_ext):
 
             if not vs_versions:
 
-                raise Exception("Windows users must have "
-                                "Visual Studio installed")
+                raise Exception("Windows users must have Visual Studio 2013 "
+                                "or later installed")
 
             svn_lib = (f"win{'dows' if BITS == 32 else '64'}"
                        f"{'_vc12' if max(vs_versions) == 12 else '_vc14'}")
@@ -224,6 +250,114 @@ class BuildCMakeExt(build_ext):
                           "tortoisesvn-via-the-command-line")
                 raise e
 
+        if sys.platform == "linux": # Linux only steps
+
+            # TODO: Test linux environment, issue #1
+
+            import apt
+
+            apt_cache = apt.cache.Cache()
+
+            apt_cache.update()
+
+            # We need to re-open the apt-cache after performing the update to use the
+            # Updated cache, otherwise we will still be using the old cache see: 
+            # https://stackoverflow.com/questions/17537390/how-to-install-a-package-using-the-python-apt-api
+            apt_cache.open()
+
+            for build_requirement in LINUX_BLENDER_BUILD_DEPENDENCIES:
+
+                required_package = apt_cache[build_requirement]
+
+                if not required_package.is_installed:
+
+                    required_package.mark_install()
+
+                    # Committing the changes to the cache could fail due to 
+                    # privilages; maybe we could try-catch this exception to 
+                    # elevate the privilages
+                    apt_cache.commit()
+
+                    self.announce(f"Build requirement {build_requirement} "
+                                  f"installed", level=3)
+
+            self.announce("Installing linux additional Blender build "
+                          "dependencies as necessary", level=3)
+
+            try:
+
+                automated_deps_install_script = os.path.join(BLENDERPY_DIR, 
+                                                     'blender/build_files/'
+                                                     'build_environment/'
+                                                     'install_deps.sh')
+
+                self.spawn([automated_deps_install_script])
+
+            except:
+
+                self.warn("Could not automatically install linux additional "
+                          "Blender build dependencies, attempting manual "
+                          "installation")
+
+                for addtl_requirement in LINUX_BLENDER_ADDTL_DEPENDENCIES:
+
+                    required_package = apt_cache[addtl_requirement]
+
+                    if not required_package.is_installed:
+
+                        required_package.mark_install()
+
+                        # Committing the changes to the cache could fail due to privilages
+                        # Maybe we could try-catch this exception to elevate the privilages
+                        apt_cache.commit()
+
+                        self.announce(f"Additional requirement "
+                                      f"{addtl_requirement} installed",
+                                      level=3)
+
+                self.announce("Blender additional dependencies installed "
+                              "manually", level=3)
+
+            else:
+        
+                self.announce("Blender additional dependencies installed "
+                              "automatically", level=3)
+
+        if sys.platform == "darwin": # MacOS only steps
+
+            # TODO: Test MacOS environment, issue #2
+
+            pass
+
+        # Perform relatively common build steps
+
+        self.announce(f"Cloning Blender source from {BLENDER_GIT_REPO_URL}",
+                      level=3)
+
+        try:
+
+            blender_git_repo = Repo(blender_dir)
+
+        except:
+
+            Repo.clone_from(BLENDER_GIT_REPO_URL, blender_dir)
+            blender_git_repo = Repo(blender_dir)
+
+        finally:
+                
+            blender_git_repo.heads.master.checkout()
+            blender_git_repo.remotes.origin.pull()
+
+        self.announce(f"Updating Blender git submodules", level=3)
+
+        blender_git_repo.git.submodule('update', '--init', '--recursive')
+
+        for submodule in blender_git_repo.submodules:
+                
+            submodule_repo = submodule.module()
+            submodule_repo.heads.master.checkout()
+            submodule_repo.remotes.origin.pull()
+
         self.announce("Configuring cmake project", level=3)
 
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
@@ -238,10 +372,7 @@ class BuildCMakeExt(build_ext):
                     "--config", "Release"])
 
         # Build finished, now copy the files into the copy directory
-        # The copy directory must be one level up from the extension directory
-        # This is to ensure the package imports successfully
-        # If copied into the extension_dir, you will get .dll load failed
-        # access denied errors
+        # The copy directory is the parent directory of the extension (.pyd)
 
         self.announce("Moving Blender python module", level=3)
 
@@ -256,11 +387,19 @@ class BuildCMakeExt(build_ext):
 
         shutil.move(bpy_path, extension_path)
 
-        self.distribution.run_command('install_lib')
-        self.distribution.run_command('install_scripts')
+        # After build_ext is run, the following commands will run:
+        # 
+        # install_lib
+        # install_scripts
+        # install_data
+        # 
+        # These commands are subclassed above to avoid pitfalls that
+        # setuptools tries to impose when installing these, as it usually
+        # wants to build those libs and scripts as well or move them to a
+        # different place. See comments above for additional information
 
 setup(name='bpy',
-      version='1.2.2a19',
+      version='1.2.2b1',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -269,10 +408,12 @@ setup(name='bpy',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
-      setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"'],
+      setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"',
+                      'apt;platform_system=="Linux"'],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
           'build_ext': BuildCMakeExt,
+          'install_data': InstallCMakeLibsData,
           'install_lib': InstallCMakeLibs,
           'install_scripts': InstallBlenderScripts
           }
