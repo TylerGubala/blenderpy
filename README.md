@@ -23,7 +23,7 @@ Meant for installation into a virtualenv or wherever, for unit testing of Blende
 
 ### Installation
 
-`py -m pip install bpy`
+`py -m pip install bpy --no-binary`
 
 ### How it works
 
