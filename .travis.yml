@@ -7,13 +7,7 @@ python:
   - "3.7"
 os:
   - linux
-  - osx
-# osx deps
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list python &>/dev/null || brew install python; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list python3 &>/dev/null || brew install python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
+# - osx (PYTHON NOT AVAILABLE ON TRAVIS CI)
 # command to install dependencies
 install:
   - pip install -r requirements.txt
@@ -23,7 +17,8 @@ script:
 deploy:
   provider: pypi
   user: "TylerGubala"
-  password: "6364Hyscule07"
+  password: 
+    secure: 
   on:
     tags: true
     branch: master
