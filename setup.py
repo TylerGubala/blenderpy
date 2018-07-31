@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: future_fstrings -*-
 """
 Build blender into a python module
 """
@@ -432,7 +434,8 @@ setup(name='bpy',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       python_requires=">=3.6.0",
-      setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"',
+      setup_requires=["cmake", "future-fstrings", "GitPython", 
+                      'svn;platform_system=="Windows"',
                       'apt;platform_system=="Linux"'],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
