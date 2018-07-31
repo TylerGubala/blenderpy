@@ -260,74 +260,7 @@ class BuildCMakeExt(build_ext):
 
             # TODO: Test linux environment, issue #1
 
-            import apt
-
-            apt_cache = apt.cache.Cache()
-
-            apt_cache.update()
-
-            # We need to re-open the apt-cache after performing the update to use the
-            # Updated cache, otherwise we will still be using the old cache see: 
-            # https://stackoverflow.com/questions/17537390/how-to-install-a-package-using-the-python-apt-api
-            apt_cache.open()
-
-            for build_requirement in LINUX_BLENDER_BUILD_DEPENDENCIES:
-
-                required_package = apt_cache[build_requirement]
-
-                if not required_package.is_installed:
-
-                    required_package.mark_install()
-
-                    # Committing the changes to the cache could fail due to 
-                    # privilages; maybe we could try-catch this exception to 
-                    # elevate the privilages
-                    apt_cache.commit()
-
-                    self.announce(f"Build requirement {build_requirement} "
-                                  f"installed", level=3)
-
-            self.announce("Installing linux additional Blender build "
-                          "dependencies as necessary", level=3)
-
-            try:
-
-                automated_deps_install_script = os.path.join(BLENDERPY_DIR, 
-                                                     'blender/build_files/'
-                                                     'build_environment/'
-                                                     'install_deps.sh')
-
-                self.spawn([automated_deps_install_script])
-
-            except:
-
-                self.warn("Could not automatically install linux additional "
-                          "Blender build dependencies, attempting manual "
-                          "installation")
-
-                for addtl_requirement in LINUX_BLENDER_ADDTL_DEPENDENCIES:
-
-                    required_package = apt_cache[addtl_requirement]
-
-                    if not required_package.is_installed:
-
-                        required_package.mark_install()
-
-                        # Committing the changes to the cache could fail due to privilages
-                        # Maybe we could try-catch this exception to elevate the privilages
-                        apt_cache.commit()
-
-                        self.announce(f"Additional requirement "
-                                      f"{addtl_requirement} installed",
-                                      level=3)
-
-                self.announce("Blender additional dependencies installed "
-                              "manually", level=3)
-
-            else:
-        
-                self.announce("Blender additional dependencies installed "
-                              "automatically", level=3)
+            pass
 
         elif sys.platform == "darwin": # MacOS only steps
 
@@ -435,8 +368,7 @@ setup(name='bpy',
       license='GPL-3.0',
       python_requires=">=3.6.0",
       setup_requires=["cmake", "future-fstrings", "GitPython", 
-                      'svn;platform_system=="Windows"',
-                      'apt;platform_system=="Linux"'],
+                      'svn;platform_system=="Windows"'],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
           'build_ext': BuildCMakeExt,
