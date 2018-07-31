@@ -1,1 +1,25 @@
 language: python
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+os:
+  - linux
+  - osx
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script:
+  - setup.py install
+deploy:
+  provider: pypi
+  user: TylerGubala
+  password:
+    secure: ""
+  on:
+    tags: true
+    branch: master
+  
