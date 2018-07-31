@@ -1,6 +1,5 @@
 language: python
 python:
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -9,7 +8,39 @@ os:
   - linux
 # - osx (PYTHON NOT AVAILABLE ON TRAVIS CI)
 # command to install dependencies
+addons:
+  apt:
+    packages:
+      - build-essential
+      - libfreetype6-dev
+      - libglew-dev
+      - libglu1-mesa-dev
+      - libjpeg-dev
+      - libx11-dev
+      - libxi-dev
+      - libalut-dev
+      - libavcodec-dev
+      - libavdevice-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libfftw3-dev
+      - libjack-dev
+      - libmp3lame-dev
+      - libopenal-dev
+      - libopenexr-dev
+      - libopenjpeg-dev
+      - libsdl1.2-dev
+      - libswscale-dev
+      - libtheora-dev
+      - libtiff5-dev
+      - libvorbis-dev
+      - libx264-dev
+      - libspnav-dev
 install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]]; then sudo apt-get install python3.4-dev; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then sudo apt-get install python3.5-dev; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then sudo apt-get install python3.6-dev; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then sudo apt-get install python3.7-dev; fi
   - pip install -r requirements.txt
 # command to run tests
 script:
