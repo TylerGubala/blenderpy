@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: future_fstrings -*-
+# coding: future_fstrings
 """
 Build blender into a python module
 """

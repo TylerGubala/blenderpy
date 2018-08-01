@@ -39,7 +39,7 @@ addons:
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]]; then sudo apt-get install python3.4-dev; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then sudo apt-get install python3.5-dev; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then sudo apt-get install python3.6-dev; sudo add-apt-repository ppa:deadsnakes/ppa; sudo apt-get update; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then sudo add-apt-repository ppa:deadsnakes/ppa; sudo apt-get update; sudo apt-get install python3.6-dev; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then sudo apt-get install python3.7-dev; fi
   - pip install -r requirements.txt
 # command to run tests
