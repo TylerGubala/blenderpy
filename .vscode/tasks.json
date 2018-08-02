@@ -6,7 +6,22 @@
         {
             "label": "Publish to PyPI",
             "type": "shell",
-            "command": "py setup.py sdist bdist_wheel && twine upload"
+            "command": ".vscode/tasks/publish.bat"
+        },
+        {
+            "label": "Install Dev Dependencies",
+            "type": "shell",
+            "command": ".vscode/tasks/dev_install.bat",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build All",
+            "type": "shell",
+            "command": ".vscode/tasks/build_all.bat",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }

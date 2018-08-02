@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# coding: future_fstrings
+#! /usr/bin/python
+# -*- coding: future_fstrings -*-
 """
 Build blender into a python module
 """
@@ -19,31 +19,9 @@ from typing import List
 PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
-BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
+BLENDERPY_DIR = os.path.join(str(pathlib.Path.home()), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
-
-LINUX_BLENDER_BUILD_DEPENDENCIES = ['build-essential']
-
-LINUX_BLENDER_ADDTL_DEPENDENCIES = ['libfreetype6-dev', 'libglew-dev',
-                                    'libglu1-mesa-dev', 'libjpeg-dev',
-                                    'libpng12-dev', 'libsndfile1-dev',
-                                    'libx11-dev', 'libxi-dev',
-                                    # How to find current Python version best 
-                                    # guess and install the right one?
-                                    'python3.5-dev',
-                                    # TODO: Update the above for a more 
-                                    # maintainable way of getting correct 
-                                    # Python version
-                                    'libalut-dev', 'libavcodec-dev', 
-                                    'libavdevice-dev', 'libavformat-dev', 
-                                    'libavutil-dev', 'libfftw3-dev',
-                                    'libjack-dev', 'libmp3lame-dev',
-                                    'libopenal-dev', 'libopenexr-dev',
-                                    'libopenjpeg-dev', 'libsdl1.2-dev',
-                                    'libswscale-dev', 'libtheora-dev',
-                                    'libtiff5-dev', 'libvorbis-dev',
-                                    'libx264-dev', 'libspnav-dev']
 
 class CMakeExtension(Extension):
     """
@@ -148,6 +126,20 @@ class InstallBlenderScripts(install_scripts):
 
         for scripts_dir in scripts_dirs:
 
+            dst_dir = os.path.join(self.build_dir,
+                                   os.path.basename(scripts_dir))
+
+            # Mostly in case of weird things happening during build
+            if os.path.exists(dst_dir):
+                
+                if os.path.isdir(dst_dir): 
+
+                    shutil.rmtree(dst_dir)
+
+                elif os.path.isfile(dst_dir):
+
+                    os.remove(dst_dir)
+
             shutil.move(scripts_dir,
                         os.path.join(self.build_dir,
                                      os.path.basename(scripts_dir)))
@@ -204,6 +196,8 @@ class BuildCMakeExt(build_ext):
         # specific steps are performed; a good example is checking on linux 
         # that the required build libraries are in place.
 
+        os_build_args = []
+
         if sys.platform == "win32": # Windows only steps
                 
             import svn.remote
@@ -230,6 +224,21 @@ class BuildCMakeExt(build_ext):
 
                 raise Exception("Windows users must have Visual Studio 2013 "
                                 "or later installed")
+
+            if max(vs_versions) == 15:
+
+                os_build_args += ["-G", f"Visual Studio 15 2017"
+                                        f"{' Win64' if BITS == 64 else ''}"]
+
+            elif max(vs_versions) == 14:
+
+                os_build_args += ["-G", f"Visual Studio 14 2015"
+                                        f"{' Win64' if BITS == 64 else ''}"]
+
+            elif max(vs_versions) == 12:
+
+                os_build_args += ["-G", f"Visual Studio 12 2013"
+                                        f"{' Win64' if BITS == 64 else ''}"]
 
             svn_lib = (f"win{'dows' if BITS == 32 else '64'}"
                        f"{'_vc12' if max(vs_versions) == 12 else '_vc14'}")
@@ -301,9 +310,7 @@ class BuildCMakeExt(build_ext):
 
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                    '-DWITH_PYTHON_MODULE=ON',
-                    f"-DCMAKE_GENERATOR_PLATFORM=x"
-                    f"{'86' if BITS == 32 else '64'}"])
+                    '-DWITH_PYTHON_MODULE=ON'] + os_build_args)
         
         self.announce("Building binaries", level=3)
 
