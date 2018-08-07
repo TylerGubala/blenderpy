@@ -16,6 +16,16 @@ import struct
 import sys
 from typing import List
 
+# Monkey-patch 3.4 and below
+
+if sys.version_info < (3,5):
+
+    def home_path() -> pathlib.Path:
+
+        return pathlib.Path(os.path.expanduser("~"))
+
+    pathlib.Path.home = home_path
+
 PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
@@ -189,8 +199,8 @@ class BuildCMakeExt(build_ext):
         extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
-        os.makedirs(build_dir, exist_ok=True)
-        os.makedirs(extension_path.parent.absolute(), exist_ok=True)
+        os.makedirs(str(build_dir), exist_ok=True)
+        os.makedirs(str(extension_path.parent.absolute()), exist_ok=True)
 
         # Now that the necessary directories are created, ensure that OS 
         # specific steps are performed; a good example is checking on linux 
@@ -322,7 +332,7 @@ class BuildCMakeExt(build_ext):
 
         self.announce("Moving Blender python module", level=3)
 
-        bin_dir = os.path.join(build_dir, 'bin', 'Release')
+        bin_dir = os.path.join(str(build_dir), 'bin', 'Release')
         self.distribution.bin_dir = bin_dir
 
         bpy_path = [os.path.join(bin_dir, _bpy) for _bpy in
@@ -331,7 +341,7 @@ class BuildCMakeExt(build_ext):
                     os.path.splitext(_bpy)[0].startswith('bpy') and
                     os.path.splitext(_bpy)[1] in [".pyd", ".so"]][0]
 
-        shutil.move(bpy_path, extension_path)
+        shutil.move(str(bpy_path), str(extension_path))
 
         # After build_ext is run, the following commands will run:
         # 
@@ -361,7 +371,10 @@ setup(name='bpy',
                    "Programming Language :: C",
                    "Programming Language :: C++",
                    "Programming Language :: Python",
+                   "Programming Language :: Python :: 3.4",
+                   "Programming Language :: Python :: 3.5",
                    "Programming Language :: Python :: 3.6",
+                   "Programming Language :: Python :: 3.7",
                    "Programming Language :: Python :: Implementation :: CPython",
                    "Topic :: Artistic Software",
                    "Topic :: Education",
