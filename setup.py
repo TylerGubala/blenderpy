@@ -1,3 +1,5 @@
+#! /usr/bin/python
+# -*- coding: future_fstrings -*-
 """
 Build blender into a python module
 """
@@ -14,34 +16,22 @@ import struct
 import sys
 from typing import List
 
+# Monkey-patch 3.4 and below
+
+if sys.version_info < (3,5):
+
+    def home_path() -> pathlib.Path:
+
+        return pathlib.Path(os.path.expanduser("~"))
+
+    pathlib.Path.home = home_path
+
 PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 
 BLENDER_GIT_REPO_URL = 'git://git.blender.org/blender.git'
-BLENDERPY_DIR = os.path.join(pathlib.Path.home(), ".blenderpy")
+BLENDERPY_DIR = os.path.join(str(pathlib.Path.home()), ".blenderpy")
 
 BITS = struct.calcsize("P") * 8
-
-LINUX_BLENDER_BUILD_DEPENDENCIES = ['build-essential']
-
-LINUX_BLENDER_ADDTL_DEPENDENCIES = ['libfreetype6-dev', 'libglew-dev',
-                                    'libglu1-mesa-dev', 'libjpeg-dev',
-                                    'libpng12-dev', 'libsndfile1-dev',
-                                    'libx11-dev', 'libxi-dev',
-                                    # How to find current Python version best 
-                                    # guess and install the right one?
-                                    'python3.5-dev',
-                                    # TODO: Update the above for a more 
-                                    # maintainable way of getting correct 
-                                    # Python version
-                                    'libalut-dev', 'libavcodec-dev', 
-                                    'libavdevice-dev', 'libavformat-dev', 
-                                    'libavutil-dev', 'libfftw3-dev',
-                                    'libjack-dev', 'libmp3lame-dev',
-                                    'libopenal-dev', 'libopenexr-dev',
-                                    'libopenjpeg-dev', 'libsdl1.2-dev',
-                                    'libswscale-dev', 'libtheora-dev',
-                                    'libtiff5-dev', 'libvorbis-dev',
-                                    'libx264-dev', 'libspnav-dev']
 
 class CMakeExtension(Extension):
     """
@@ -146,6 +136,20 @@ class InstallBlenderScripts(install_scripts):
 
         for scripts_dir in scripts_dirs:
 
+            dst_dir = os.path.join(self.build_dir,
+                                   os.path.basename(scripts_dir))
+
+            # Mostly in case of weird things happening during build
+            if os.path.exists(dst_dir):
+                
+                if os.path.isdir(dst_dir): 
+
+                    shutil.rmtree(dst_dir)
+
+                elif os.path.isfile(dst_dir):
+
+                    os.remove(dst_dir)
+
             shutil.move(scripts_dir,
                         os.path.join(self.build_dir,
                                      os.path.basename(scripts_dir)))
@@ -195,12 +199,14 @@ class BuildCMakeExt(build_ext):
         extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
 
         os.makedirs(blender_dir, exist_ok=True)
-        os.makedirs(build_dir, exist_ok=True)
-        os.makedirs(extension_path.parent.absolute(), exist_ok=True)
+        os.makedirs(str(build_dir), exist_ok=True)
+        os.makedirs(str(extension_path.parent.absolute()), exist_ok=True)
 
         # Now that the necessary directories are created, ensure that OS 
         # specific steps are performed; a good example is checking on linux 
         # that the required build libraries are in place.
+
+        os_build_args = []
 
         if sys.platform == "win32": # Windows only steps
                 
@@ -228,6 +234,21 @@ class BuildCMakeExt(build_ext):
 
                 raise Exception("Windows users must have Visual Studio 2013 "
                                 "or later installed")
+
+            if max(vs_versions) == 15:
+
+                os_build_args += ["-G", f"Visual Studio 15 2017"
+                                        f"{' Win64' if BITS == 64 else ''}"]
+
+            elif max(vs_versions) == 14:
+
+                os_build_args += ["-G", f"Visual Studio 14 2015"
+                                        f"{' Win64' if BITS == 64 else ''}"]
+
+            elif max(vs_versions) == 12:
+
+                os_build_args += ["-G", f"Visual Studio 12 2013"
+                                        f"{' Win64' if BITS == 64 else ''}"]
 
             svn_lib = (f"win{'dows' if BITS == 32 else '64'}"
                        f"{'_vc12' if max(vs_versions) == 12 else '_vc14'}")
@@ -258,74 +279,7 @@ class BuildCMakeExt(build_ext):
 
             # TODO: Test linux environment, issue #1
 
-            import apt
-
-            apt_cache = apt.cache.Cache()
-
-            apt_cache.update()
-
-            # We need to re-open the apt-cache after performing the update to use the
-            # Updated cache, otherwise we will still be using the old cache see: 
-            # https://stackoverflow.com/questions/17537390/how-to-install-a-package-using-the-python-apt-api
-            apt_cache.open()
-
-            for build_requirement in LINUX_BLENDER_BUILD_DEPENDENCIES:
-
-                required_package = apt_cache[build_requirement]
-
-                if not required_package.is_installed:
-
-                    required_package.mark_install()
-
-                    # Committing the changes to the cache could fail due to 
-                    # privilages; maybe we could try-catch this exception to 
-                    # elevate the privilages
-                    apt_cache.commit()
-
-                    self.announce(f"Build requirement {build_requirement} "
-                                  f"installed", level=3)
-
-            self.announce("Installing linux additional Blender build "
-                          "dependencies as necessary", level=3)
-
-            try:
-
-                automated_deps_install_script = os.path.join(BLENDERPY_DIR, 
-                                                     'blender/build_files/'
-                                                     'build_environment/'
-                                                     'install_deps.sh')
-
-                self.spawn([automated_deps_install_script])
-
-            except:
-
-                self.warn("Could not automatically install linux additional "
-                          "Blender build dependencies, attempting manual "
-                          "installation")
-
-                for addtl_requirement in LINUX_BLENDER_ADDTL_DEPENDENCIES:
-
-                    required_package = apt_cache[addtl_requirement]
-
-                    if not required_package.is_installed:
-
-                        required_package.mark_install()
-
-                        # Committing the changes to the cache could fail due to privilages
-                        # Maybe we could try-catch this exception to elevate the privilages
-                        apt_cache.commit()
-
-                        self.announce(f"Additional requirement "
-                                      f"{addtl_requirement} installed",
-                                      level=3)
-
-                self.announce("Blender additional dependencies installed "
-                              "manually", level=3)
-
-            else:
-        
-                self.announce("Blender additional dependencies installed "
-                              "automatically", level=3)
+            pass
 
         elif sys.platform == "darwin": # MacOS only steps
 
@@ -366,9 +320,7 @@ class BuildCMakeExt(build_ext):
 
         self.spawn(['cmake', '-H'+blender_dir, '-B'+self.build_temp,
                     '-DWITH_PLAYER=OFF', '-DWITH_PYTHON_INSTALL=OFF',
-                    '-DWITH_PYTHON_MODULE=ON',
-                    f"-DCMAKE_GENERATOR_PLATFORM=x"
-                    f"{'86' if BITS == 32 else '64'}"])
+                    '-DWITH_PYTHON_MODULE=ON'] + os_build_args)
         
         self.announce("Building binaries", level=3)
 
@@ -380,7 +332,7 @@ class BuildCMakeExt(build_ext):
 
         self.announce("Moving Blender python module", level=3)
 
-        bin_dir = os.path.join(build_dir, 'bin', 'Release')
+        bin_dir = os.path.join(str(build_dir), 'bin', 'Release')
         self.distribution.bin_dir = bin_dir
 
         bpy_path = [os.path.join(bin_dir, _bpy) for _bpy in
@@ -389,7 +341,7 @@ class BuildCMakeExt(build_ext):
                     os.path.splitext(_bpy)[0].startswith('bpy') and
                     os.path.splitext(_bpy)[1] in [".pyd", ".so"]][0]
 
-        shutil.move(bpy_path, extension_path)
+        shutil.move(str(bpy_path), str(extension_path))
 
         # After build_ext is run, the following commands will run:
         # 
@@ -402,7 +354,7 @@ class BuildCMakeExt(build_ext):
         # different place. See comments above for additional information
 
 setup(name='bpy',
-      version='1.2.2',
+      version='1.2.3',
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       description='Blender as a python module',
@@ -419,7 +371,10 @@ setup(name='bpy',
                    "Programming Language :: C",
                    "Programming Language :: C++",
                    "Programming Language :: Python",
+                   "Programming Language :: Python :: 3.4",
+                   "Programming Language :: Python :: 3.5",
                    "Programming Language :: Python :: 3.6",
+                   "Programming Language :: Python :: 3.7",
                    "Programming Language :: Python :: Implementation :: CPython",
                    "Topic :: Artistic Software",
                    "Topic :: Education",
@@ -431,9 +386,9 @@ setup(name='bpy',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
-      python_requires=">=3.6.0",
-      setup_requires=["cmake", "GitPython", 'svn;platform_system=="Windows"',
-                      'apt;platform_system=="Linux"'],
+      python_requires=">=3.4.0",
+      setup_requires=["cmake", "future-fstrings", "GitPython", 
+                      'svn;platform_system=="Windows"'],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
           'build_ext': BuildCMakeExt,

@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "${workspaceFolder}\\venv\\Scripts\\python.exe"
+    "python.venvPath": "${workspaceFolder}\\venv",
+    "python.pythonPath": "${workspaceFolder}\\venv\\3.4-32\\Scripts\\python.exe"
 }
