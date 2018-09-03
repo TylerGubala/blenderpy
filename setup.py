@@ -7,7 +7,7 @@ Build blender into a python module
 from setuptools import find_packages, setup
 
 setup(name='bpy',
-      version='1.2.4a0',
+      version='1.2.4a1',
       packages=find_packages(),
       description='Blender as a python module',
       long_description=open("./README.md", 'r').read(),
