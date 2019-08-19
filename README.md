@@ -11,6 +11,16 @@ For more information, please see:
 
 [bpy-ensure repository](https://github.com/TylerGubala/bpy-ensure)
 
+## FAQ
+
+### Q. How do I import addons?
+
+A. Addons (Blender internal and third party) can be imported using the code [referenced here](https://github.com/TylerGubala/blenderpy/wiki/Caveat---Importing-Addons).
+
+### Q. How can I use Blender in `multiprocessing`?
+
+A. Blender runtime usage and compatibility with `multiprocessing` is limited, see [the documentation](https://github.com/TylerGubala/blenderpy/wiki/Caveat---Usage-with-multiprocessing).
+
 ## Gotchas
 
 I have not tested this for platforms other than Windows at the moment. More to come soon.
