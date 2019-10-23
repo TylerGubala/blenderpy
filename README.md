@@ -21,9 +21,17 @@ A. Addons (Blender internal and third party) can be imported using the code [ref
 
 A. Blender runtime usage and compatibility with `multiprocessing` is limited, see [the documentation](https://github.com/TylerGubala/blenderpy/wiki/Caveat---Usage-with-multiprocessing).
 
+### Q. What about my operating system of choice?
+
+A. [MacOS support is on its way](https://github.com/TylerGubala/blenderpy/wiki/Platform---MacoOS#build-script). After that is Ubuntu.
+
+### Q. What about my Python version of choice?
+
+A. More work is being done in `bpy-make`, another repo. In there, we search for the appropriate Python/OS combination based on what we know about the currently running executable, but it's far from perfect, and is WIP. Help is needed in handling `svn` repo traversal.
+
 ## Gotchas
 
-I have not tested this for platforms other than Windows at the moment. More to come soon.
+I have not tested this for platforms other than Windows Python 3.6.x at the moment. More to come soon.
 
 ## Support this project
 
