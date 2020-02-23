@@ -13,6 +13,14 @@ For more information, please see:
 
 ## FAQ
 
+### Q. I am getting `failed to find 'bpy_types' module`
+
+A. Please see [issue #13](https://github.com/TylerGubala/blenderpy/issues/13)
+
+### Q. I am getting `ImportError: DLL load failed: The specified module could not be found`
+
+A. Please see [issue #15](https://github.com/TylerGubala/blenderpy/issues/15)
+
 ### Q. How do I import addons?
 
 A. Addons (Blender internal and third party) can be imported using the code [referenced here](https://github.com/TylerGubala/blenderpy/wiki/Caveat---Importing-Addons).
