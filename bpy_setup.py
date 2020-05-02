@@ -192,8 +192,8 @@ class BuildCMakeExt(build_ext):
         # Import bpy-make here because otherwise the script will 
         # fail before bpy-make is retrieved
 
-        import bpymake.sources
-        import bpymake.make
+        import bpybuild.sources
+        import bpybuild.make
 
         self.announce("Preparing the build environment", level=3)
 
