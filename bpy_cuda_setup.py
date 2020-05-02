@@ -247,12 +247,9 @@ class BuildCMakeExt(build_ext):
                       "and building binaries "
                       "(this will take a while)", level=3)
 
-        configure_commands = bpybuild.make.get_make_commands(source_location= blender_path,
-                                                            build_location= build_path)
-
-        configure_commands[-1] += ["-DWITH_CYCLES_CUDA_BINARIES=ON"]
-
-        for command in configure_commands:
+        for command in bpybuild.make.get_make_commands(source_location= blender_path,
+                                                       build_location= build_path,
+                                                       with_cuda= True):
 
             self.spawn(command)
 

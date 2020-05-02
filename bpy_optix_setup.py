@@ -244,9 +244,6 @@ class BuildCMakeExt(build_ext):
         self.announce(" Configuring cmake project "
                       "and building binaries", level=3)
 
-        configure_commands = bpybuild.make.get_make_commands(source_location= blender_path,
-                                                            build_location= build_path)
-                      
         optix_root = None
 
         if platform.system() == "Windows":
@@ -260,11 +257,11 @@ class BuildCMakeExt(build_ext):
         if optix_root is None:
 
             raise Exception("Could not guess where Optix SDK is.")
-
-        configure_commands[-1] += ["-DWITH_CYCLES_DEVICE_OPTIX=ON",
-                                   f"-DOPTIX_ROOT_DIR={optix_root}"]
-
-        for command in configure_commands:
+                      
+        for command in bpybuild.make.get_make_commands(source_location= blender_path,
+                                                       build_location= build_path, 
+                                                       with_optix=True,
+                                                       optix_sdk_path= optix_root):
 
             self.spawn(command)
 
