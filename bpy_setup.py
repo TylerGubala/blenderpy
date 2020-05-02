@@ -225,16 +225,19 @@ class BuildCMakeExt(build_ext):
         svn_repo = compatible_bpy[VERSION_TUPLE][1][0]
         # When using compatible_sources you always get a git and svn repo object
 
-        self.announce(f"Cloning Blender source from git", level=3)
+        self.announce("Cloning Blender source from git "
+                      "(this will take a while)", level=3)
 
         git_repo.checkout(blender_path) # Clones into 'blender'
 
-        self.announce(f"Cloning precompiled libs from svn", level=3)
+        self.announce("Cloning precompiled libs from svn "
+                      "(this will take a while)", level=3)
 
         svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
 
-        self.announce(" Configuring cmake project "
-                      "and building binaries", level=3)
+        self.announce("Configuring cmake project "
+                      "and building binaries "
+                      "(this will take a while)", level=3)
 
         for command in bpybuild.make.get_make_commands(source_location= blender_path,
                                                       build_location= build_path):

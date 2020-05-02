@@ -313,7 +313,7 @@ setup(name='bpy-optix',
               "blenderpy.post_install.post_install"
           ]
       },
-      description='Blender as a python module',
+      description='Blender with Optix support as a python module',
       long_description=open("./README.md", 'r').read(),
       long_description_content_type="text/markdown",
       keywords="Blender, 3D, Animation, Renderer, Rendering",

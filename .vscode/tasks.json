@@ -35,7 +35,8 @@
             "label": "Build CUDA",
             "type": "shell",
             "command": ".vscode/tasks/windows/build_cuda.bat",
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         },
         {
             "label": "Build Optix",
