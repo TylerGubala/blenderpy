@@ -1,15 +1,57 @@
 # blenderpy
 Blender as a python module with easy-install
 
+## About
+
 Meant for installation into a virtualenv or wherever, for unit testing of Blender extensions being authored, or developement of a Blender 3d-enabled Python application.
 
-Depends upon the `bpy-build` and `bpy-ensure` modules to make sure the Blender `bpy` module environment is correct.
+Depends upon the `bpy-build` module to make sure the Blender `bpy` module environment is correct.
 
 For more information, please see:
 
 [bpy-build repository](https://github.com/TylerGubala/bpy-build)
 
-[bpy-ensure repository](https://github.com/TylerGubala/bpy-ensure)
+## Getting Started
+
+Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and Ubuntu). Prebuilds include "normal" installation (`bpy`), CUDA (`bpy-cuda`) and Optix (`bpy-optix`). Choosing the correct version depends on your use-case and hardware but in general `bpy` should be just fine for non-rendering automation tasks while `bpy-optix` has the best performance but requires a NVIDIA RTX Card and up to date drivers.
+
+### Installing
+
+Installing a prebuilt on these platforms is simple.
+
+#### Windows and MacOS
+
+`py -m pip install bpy && bpy_post_install`
+
+#### Other
+
+`python3 -m pip install bpy`
+
+### Self Building
+
+Building the Blender API for your own platform can be difficult, however this repo should make it easy enough for you to create your own builds by hand.
+
+#### Prerequisites
+
+```bash
+python3 -m pip install --upgrade pip wheel
+git clone https://github.com/TylerGubala/blenderpy.git
+```
+
+#### Build
+
+If you have a specific version of `bpy` you want, you have to change the `VERSION` string at the beginning of the `bpy_<optional extra>_setup.py` file.
+
+To build, run the below command.
+
+**Windows**
+`py bpy_setup.py sdist bdist_wheel`
+**Other**
+`python3 bpy_setup.py sdist bdist_wheel`
+
+The resultant wheel in the dist folder can be installed using pip.
+
+Post any errors you have as an issue.
 
 ## FAQ
 
@@ -27,16 +69,8 @@ A. [MacOS support is on its way](https://github.com/TylerGubala/blenderpy/wiki/P
 
 ### Q. What about my Python version of choice?
 
-A. More work is being done in `bpy-make`, another repo. In there, we search for the appropriate Python/OS combination based on what we know about the currently running executable, but it's far from perfect, and is WIP. Help is needed in handling `svn` repo traversal.
+A. Some builds you will have to make yourself if you have a specific version of the API you want. Likewise, if you are contrained to a specific Python version (especially those that aren't shipped by python.org) then you may have to try and build yourself.
 
 ## Gotchas
 
 I have not tested this for platforms other than Windows Python 3.6.x at the moment. More to come soon.
-
-## Support this project
-
-By supporting this project you are validating the time, mental effort and computer downtime that I face when providing wheels for this project. Thanks in advance for any donation you give, no matter how small.
-
-<a href="https://www.patreon.com/bePatron?u=3979551" data-patreon-widget-type="become-patron-button"><img src="https://cloakandmeeple.files.wordpress.com/2017/06/become_a_patron_button3x.png?w=610" width="180px"></a>
-
-[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/tylergubala/)
