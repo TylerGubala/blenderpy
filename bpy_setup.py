@@ -317,7 +317,7 @@ setup(name='bpy',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       python_requires=">=3.4.0",
-      setup_requires=["bpy-make", "future-fstrings"],
+      setup_requires=["bpy-build", "future-fstrings"],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
           'build_ext': BuildCMakeExt,
