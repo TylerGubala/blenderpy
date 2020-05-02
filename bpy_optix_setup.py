@@ -200,8 +200,8 @@ class BuildCMakeExt(build_ext):
         # Import bpy-make here because otherwise the script will 
         # fail before bpy-make is retrieved
 
-        import bpymake.sources
-        import bpymake.make
+        import bpybuild.sources
+        import bpybuild.make
 
         self.announce("Preparing the build environment", level=3)
 
@@ -219,13 +219,13 @@ class BuildCMakeExt(build_ext):
         self.announce("Searching for compatible Blender online "
                       "(this will take a while)", level=3)
 
-        compatible_bpy = bpymake.sources.get_compatible_sources()
+        compatible_bpy = bpybuild.sources.get_compatible_sources()
 
         if not VERSION_TUPLE in compatible_bpy:
 
             raise Exception(f"{VERSION} bpy is not compatible with "
                             f"{platform.system()} Python {sys.version} "
-                            f"{bpymake.BITNESS}bit")
+                            f"{bpybuild.BITNESS}bit")
 
         self.announce(f"Found compatible Blender version {VERSION}", level=3)
 
@@ -244,7 +244,7 @@ class BuildCMakeExt(build_ext):
         self.announce(" Configuring cmake project "
                       "and building binaries", level=3)
 
-        configure_commands = bpymake.make.get_make_commands(source_location= blender_path,
+        configure_commands = bpybuild.make.get_make_commands(source_location= blender_path,
                                                             build_location= build_path)
                       
         optix_root = None
