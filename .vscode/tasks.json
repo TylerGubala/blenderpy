@@ -42,7 +42,8 @@
             "label": "Build Optix",
             "type": "shell",
             "command": ".vscode/tasks/windows/build_optix.bat",
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }
