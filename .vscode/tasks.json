@@ -6,13 +6,13 @@
         {
             "label": "Publish to PyPI",
             "type": "shell",
-            "command": ".vscode/tasks/publish.bat",
+            "command": ".vscode/tasks/windows/publish.bat",
             "problemMatcher": []
         },
         {
             "label": "Install Dev Dependencies",
             "type": "shell",
-            "command": ".vscode/tasks/dev_install.bat",
+            "command": ".vscode/tasks/windows/dev_install.bat",
             "problemMatcher": []
         },
         {

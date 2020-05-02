@@ -290,7 +290,7 @@ class BuildCMakeExt(build_ext):
 
 setup(name='bpy-cuda',
       version=VERSION,
-      packages=find_packages(),
+      packages=find_packages(where=".."),
       ext_modules=[CMakeExtension(name="bpy")],
       entry_points={
           "console_scripts": [
