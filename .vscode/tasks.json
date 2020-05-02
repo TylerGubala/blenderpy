@@ -18,11 +18,30 @@
         {
             "label": "Build All",
             "type": "shell",
-            "command": ".vscode/tasks/build_all.bat",
+            "command": ".vscode/tasks/windows/build_all.bat",
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build Normal",
+            "type": "shell",
+            "command": ".vscode/tasks/windows/build_normal.bat",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build CUDA",
+            "type": "shell",
+            "command": ".vscode/tasks/windows/build_cuda.bat",
+            "group": "build"
+        },
+        {
+            "label": "Build Optix",
+            "type": "shell",
+            "command": ".vscode/tasks/windows/build_optix.bat",
+            "group": "build"
         }
     ]
 }
