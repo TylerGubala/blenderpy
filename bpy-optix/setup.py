@@ -241,7 +241,7 @@ class BuildCMakeExt(build_ext):
 
         svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
 
-        self.announce(" Configuring cmake project "
+        self.announce("Configuring cmake project "
                       "and building binaries", level=3)
 
         optix_root = None
@@ -302,7 +302,7 @@ class BuildCMakeExt(build_ext):
 
 setup(name='bpy-optix',
       version=VERSION,
-      packages=find_packages(where=".."),
+      packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       entry_points={
           "console_scripts": [

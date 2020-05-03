@@ -243,7 +243,7 @@ class BuildCMakeExt(build_ext):
 
         svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
 
-        self.announce(" Configuring cmake project "
+        self.announce("Configuring cmake project "
                       "and building binaries "
                       "(this will take a while)", level=3)
 
@@ -290,7 +290,7 @@ class BuildCMakeExt(build_ext):
 
 setup(name='bpy-cuda',
       version=VERSION,
-      packages=find_packages(where=".."),
+      packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       entry_points={
           "console_scripts": [
