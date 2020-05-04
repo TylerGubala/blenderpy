@@ -205,6 +205,8 @@ class BuildCMakeExt(build_ext):
         import bpybuild.sources
         import bpybuild.make
 
+        from bpybuild import BITNESS
+
         self.announce("Preparing the build environment", level=3)
 
         setup_root_path = pathlib.Path(self.build_temp)
@@ -260,7 +262,7 @@ class BuildCMakeExt(build_ext):
 
         else:
 
-            pass # TODO: Need help with other platforms
+            os.path.join(pathlib.Path.home(), f"NVIDIA-OptiX-SDK-7.0.0-{SYSTEM_OS_NAME.lower()}{str(BITNESS)}/SDK")
 
         if optix_root is None:
 
