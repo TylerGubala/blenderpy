@@ -6,19 +6,58 @@
         {
             "label": "Publish to PyPI",
             "type": "shell",
-            "command": ".vscode/tasks/windows/publish.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/publish.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/publish.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/publish.bat"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Publish to PyPI [TEST]",
+            "type": "shell",
+            "linux":{
+                "command": ".vscode/tasks/unix/publish_test.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/publish_test.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/publish_test.bat"
+            },
             "problemMatcher": []
         },
         {
             "label": "Install Dev Dependencies",
             "type": "shell",
-            "command": ".vscode/tasks/windows/dev_install.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/dev_install.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/dev_install.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/dev_install.bat"
+            },
             "problemMatcher": []
         },
         {
             "label": "Build All",
             "type": "shell",
-            "command": ".vscode/tasks/windows/build_all.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/build_all.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/build_all.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/build_all.bat"
+            },
+            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -27,21 +66,45 @@
         {
             "label": "Build Normal",
             "type": "shell",
-            "command": ".vscode/tasks/windows/build_normal.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/build_normal.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/build_normal.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/build_normal.bat"
+            },
             "group": "build",
             "problemMatcher": []
         },
         {
             "label": "Build CUDA",
             "type": "shell",
-            "command": ".vscode/tasks/windows/build_cuda.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/build_cuda.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/build_cuda.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/build_cuda.bat"
+            },
             "group": "build",
             "problemMatcher": []
         },
         {
             "label": "Build Optix",
             "type": "shell",
-            "command": ".vscode/tasks/windows/build_optix.bat",
+            "linux":{
+                "command": ".vscode/tasks/unix/build_optix.sh"
+            },
+            "osx":{
+                "command": ".vscode/tasks/unix/build_optix.sh"
+            },
+            "windows":{
+                "command": ".vscode/tasks/windows/build_optix.bat"
+            },
             "group": "build",
             "problemMatcher": []
         }

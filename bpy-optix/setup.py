@@ -32,6 +32,8 @@ if sys.version_info < (3,5):
 
 PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 
+SYSTEM_OS_NAME = platform.system()
+
 # Change the Blender desired API version variable to build different versions
 # of the Blender API. For instance, 'v2.79b' is the same version of the API
 # as you would get when opening the Blender application at v2.79b
@@ -224,7 +226,7 @@ class BuildCMakeExt(build_ext):
         if not VERSION_TUPLE in compatible_bpy:
 
             raise Exception(f"{VERSION} bpy is not compatible with "
-                            f"{platform.system()} Python {sys.version} "
+                            f"{SYSTEM_OS_NAME} Python {sys.version} "
                             f"{bpybuild.BITNESS}bit")
 
         self.announce(f"Found compatible Blender version {VERSION}", level=3)
@@ -237,16 +239,22 @@ class BuildCMakeExt(build_ext):
 
         git_repo.checkout(blender_path) # Clones into 'blender'
 
-        self.announce(f"Cloning precompiled libs from svn", level=3)
+        if SYSTEM_OS_NAME == "Windows": # Only use svn on windows 
+                                        # (other platforms have 
+                                        # `make update` command)
 
-        svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
+            svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
+
+            self.announce("Configuring cmake project "
+                          "and building binaries "
+                          "(this will take a while)", level=3)
 
         self.announce("Configuring cmake project "
                       "and building binaries", level=3)
 
         optix_root = None
 
-        if platform.system() == "Windows":
+        if SYSTEM_OS_NAME == "Windows":
 
             optix_root = r"C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.0.0\SDK"
 
@@ -260,6 +268,7 @@ class BuildCMakeExt(build_ext):
                       
         for command in bpybuild.make.get_make_commands(source_location= blender_path,
                                                        build_location= build_path, 
+                                                       with_cuda=True,
                                                        with_optix=True,
                                                        optix_sdk_path= optix_root):
 
@@ -272,7 +281,7 @@ class BuildCMakeExt(build_ext):
 
         bin_dir = None
 
-        if platform.system() == "Windows":
+        if SYSTEM_OS_NAME == "Windows":
 
             bin_dir = os.path.join(str(build_path), 'bin', 'Release')
 
