@@ -1,6 +1,6 @@
 # setup.py is copied from bpy, bpy-cuda or bpy-optix just for build
 # setup.py in the root dir is not valid
-./setup.py
+setup.py
 
 # VSCode stuff people will probably find annoying
 .vscode/settings.json
