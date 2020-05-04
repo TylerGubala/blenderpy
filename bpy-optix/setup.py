@@ -248,7 +248,7 @@ class BuildCMakeExt(build_ext):
 
         if platform.system() == "Windows":
 
-            optix_root = r"C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.0.0"
+            optix_root = r"C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.0.0\SDK"
 
         else:
 
