@@ -302,7 +302,7 @@ setup(name='bpy-cuda',
       entry_points={
           "console_scripts": [
               "bpy_post_install = "
-              "blenderpy.post_install.post_install"
+              "blenderpy.post_install:post_install"
           ]
       },
       description='Blender with CUDA support as a python module',

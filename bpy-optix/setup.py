@@ -316,7 +316,7 @@ setup(name='bpy-optix',
       entry_points={
           "console_scripts": [
               "bpy_post_install = "
-              "blenderpy.post_install.post_install"
+              "blenderpy.post_install:post_install"
           ]
       },
       description='Blender with Optix support as a python module',

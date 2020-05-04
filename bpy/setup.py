@@ -292,7 +292,7 @@ setup(name='bpy',
       entry_points={
           "console_scripts": [
               "bpy_post_install = "
-              "blenderpy.post_install.post_install"
+              "blenderpy.post_install:post_install"
           ]
       },
       description='Blender as a python module',
