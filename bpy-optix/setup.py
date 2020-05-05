@@ -262,7 +262,7 @@ class BuildCMakeExt(build_ext):
 
         else:
 
-            os.path.join(pathlib.Path.home(), f"NVIDIA-OptiX-SDK-7.0.0-{SYSTEM_OS_NAME.lower()}{str(BITNESS)}/SDK")
+            optix_root = os.path.join(pathlib.Path.home(), f"NVIDIA-OptiX-SDK-7.0.0-{SYSTEM_OS_NAME.lower()}{str(BITNESS)}/SDK")
 
         if optix_root is None:
 
