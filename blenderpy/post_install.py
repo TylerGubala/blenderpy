@@ -115,3 +115,4 @@ def install_scripts_directory():
 def post_install():
 
     install_scripts_directory()
+    print("Configuration complete, enjoy using Blender as a Python module!")
