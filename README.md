@@ -35,14 +35,46 @@ Installing a prebuilt on these platforms is simple.
 
 Building the Blender API for your own platform can be difficult, however this repo should make it easy enough for you to create your own builds by hand.
 
-#### Prerequisites
+#### Build from `sdist`
+
+You can build from a source distribution using `pip`.
+
+##### Prerequisites
+
+**Windows**
+```bash
+py -3.7-64 -m pip install --upgrade pip wheel future-fstrings
+```
+
+**Other**
+```bash
+python3.7 -m pip install --upgrade pip wheel future-fstrings
+```
+
+##### Build
+
+**Windows**
+```bash
+py -3.7-64 -m pip install bpy --no-binary
+```
+
+**Other**
+```bash
+python3.7 -m pip install bpy --no-binary
+```
+
+#### Build from repo
+
+You can also build after cloning the repository, this is helpful during development.
+
+##### Prerequisites
 
 ```bash
-python3 -m pip install --upgrade pip wheel
+python3 -m pip install --upgrade pip wheel future-fstrings
 git clone https://github.com/TylerGubala/blenderpy.git
 ```
 
-#### Build
+##### Build
 
 If you have a specific version of `bpy` you want, you have to change the `VERSION` string at the beginning of the `bpy_<optional extra>_setup.py` file.
 
