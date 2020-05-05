@@ -58,7 +58,7 @@ def move_to_macos_release_dir(path: pathlib.Path):
 
     else:
 
-        print("Moving "+path+" to "+destination)
+        print("Moving "+str(path)+" to "+destination)
 
         shutil.move(str(path.absolute()), str(destination))
 
