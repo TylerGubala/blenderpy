@@ -36,7 +36,7 @@ def move_to_executable_dir(path: pathlib.Path):
 
         # Do not need to move path, it already exists alongside executable
 
-        print(path+" already direct child of "+destination)
+        print(str(path)+" already direct child of "+destination)
 
     else:
 
@@ -54,7 +54,7 @@ def move_to_macos_release_dir(path: pathlib.Path):
 
         # Do not need to move path, it already exists at MacOS specific location
 
-        print(path+" already direct child of "+destination)
+        print(str(path)+" already direct child of "+destination)
 
     else:
 
