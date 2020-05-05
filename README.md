@@ -25,7 +25,7 @@ Installing a prebuilt on these platforms is simple.
 
 #### MacOS
 
-`python33 -m pip install bpy && bpy_post_install`
+`python3 -m pip install bpy && bpy_post_install`
 
 #### Other
 
