@@ -1,1 +1,1 @@
-.\venv\3.7-64\Scripts\twine.exe upload --repository testpypi dist/*
+.\venv\3.7-64\Scripts\twine.exe upload --repository pypitest dist/*

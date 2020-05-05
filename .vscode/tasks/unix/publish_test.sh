@@ -1,1 +1,1 @@
-./venv/3.7-64/bin/twine upload --repository testpypi dist/*
+./venv/3.7-64/bin/twine upload --repository pypitest dist/*
