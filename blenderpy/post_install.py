@@ -26,7 +26,7 @@ BLENDER_SCRIPTS_DIR_REGEX = re.compile(BLENDER_SCRIPTS_DIR_PATTERN)
 EXECUTABLE_DIR = pathlib.Path(sys.executable).parent
 
 BLENDER_SCRIPTS_INSTALL_DIR_LINUX = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "site-packages")
-BLENDER_SCRIPTS_INSTALL_DIR_MACOS = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "Release")
+BLENDER_SCRIPTS_INSTALL_DIR_MACOS = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "Resources")
 BLENDER_SCRIPTS_INSTALL_DIR_WINDOWS = str(EXECUTABLE_DIR.absolute())
 
 SYSTEM_NAME = platform.system()
