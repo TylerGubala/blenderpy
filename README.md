@@ -19,17 +19,7 @@ Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and Ubuntu).
 
 Installing a prebuilt on these platforms is simple.
 
-#### Windows
-
-`py -m pip install bpy && bpy_post_install`
-
-#### MacOS
-
-`python3 -m pip install bpy && bpy_post_install`
-
-#### Other
-
-`python3 -m pip install bpy`
+`pip install bpy && bpy_post_install`
 
 ### Self Building
 

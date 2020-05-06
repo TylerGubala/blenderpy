@@ -10,10 +10,24 @@ import sys
 import typing
 from typing import Optional
 
+# Monkey-patch 3.4 and below
+
+if sys.version_info < (3,5):
+
+    def home_path() -> pathlib.Path:
+
+        return pathlib.Path(os.path.expanduser("~"))
+
+    pathlib.Path.home = home_path
+
 BLENDER_SCRIPTS_DIR_PATTERN = r"\d\.\d\d"
 BLENDER_SCRIPTS_DIR_REGEX = re.compile(BLENDER_SCRIPTS_DIR_PATTERN)
 
 EXECUTABLE_DIR = pathlib.Path(sys.executable).parent
+
+BLENDER_SCRIPTS_INSTALL_DIR_LINUX = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "site-packages")
+BLENDER_SCRIPTS_INSTALL_DIR_MACOS = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "Release")
+BLENDER_SCRIPTS_INSTALL_DIR_WINDOWS = str(EXECUTABLE_DIR.absolute())
 
 SYSTEM_NAME = platform.system()
 
@@ -28,89 +42,63 @@ def find_blender_scripts_directory(search_root: str) -> Optional[str]:
 
     return None
 
-def move_to_executable_dir(path: pathlib.Path):
-
-    destination = str(EXECUTABLE_DIR.absolute())
-
-    if str(path.parent.absolute()).casefold() == destination.casefold():
-
-        # Do not need to move path, it already exists alongside executable
-
-        print(str(path)+" already direct child of "+destination)
-
-    else:
-
-        print("Moving "+str(path)+" to "+destination)
-
-        shutil.move(str(path.absolute()), str(destination))
-
-def move_to_macos_release_dir(path: pathlib.Path):
-
-    destination = os.path.join(str(EXECUTABLE_DIR.parent.parent.absolute()), "lib", "Release")
-
-    os.makedirs(destination, exist_ok=True)
-
-    if str(path.parent.absolute()).casefold() == destination.casefold():
-
-        # Do not need to move path, it already exists at MacOS specific location
-
-        print(str(path)+" already direct child of "+destination)
-
-    else:
-
-        print("Moving "+str(path)+" to "+destination)
-
-        shutil.move(str(path.absolute()), str(destination))
-
 def install_scripts_directory():
+
+    blender_scripts_search_root_dir = None
+    blender_scripts_install_dir = None
 
     if SYSTEM_NAME == "Linux":
 
-        print("No need to move scripts on Linux, skipping")
+        blender_scripts_search_root_dir = str(EXECUTABLE_DIR.parent.parent.absolute())
+        blender_scripts_install_dir = BLENDER_SCRIPTS_INSTALL_DIR_LINUX
 
     elif SYSTEM_NAME == "Windows":
 
-        blender_scripts_directory = None
+        blender_scripts_install_dir = BLENDER_SCRIPTS_INSTALL_DIR_WINDOWS
 
         if os.path.basename(str(EXECUTABLE_DIR)).casefold() \
            == "scripts".casefold():
 
            # User is in venv (probably)
 
-           blender_scripts_directory = find_blender_scripts_directory(str(EXECUTABLE_DIR.parent.parent.absolute()))
+           blender_scripts_search_root_dir = str(EXECUTABLE_DIR.parent.parent.absolute())
 
         else:
 
             # User is in system python (probably)
 
-            blender_scripts_directory = find_blender_scripts_directory(str(EXECUTABLE_DIR.parent.absolute()))
-
-        if blender_scripts_directory is None:
-
-            raise Exception("Cannot find Blender scripts directory, "
-                            "cannot continue")
-
-        else:
-
-            move_to_executable_dir(pathlib.Path(blender_scripts_directory))
+            blender_scripts_search_root_dir = str(EXECUTABLE_DIR.parent.absolute())
 
     elif SYSTEM_NAME == "Darwin":
 
-        blender_scripts_directory = find_blender_scripts_directory(str(EXECUTABLE_DIR.parent.parent.absolute()))
+        blender_scripts_search_root_dir = str(EXECUTABLE_DIR.parent.parent.absolute())
 
-        if blender_scripts_directory is None:
-
-            raise Exception("Cannot find Blender scripts directory, "
-                            "cannot continue")
-
-        else:
-
-            move_to_macos_release_dir(pathlib.Path(blender_scripts_directory))
+        blender_scripts_install_dir = BLENDER_SCRIPTS_INSTALL_DIR_MACOS
 
     else:
 
         print("Cannot determine system type, "
               "skipping move of scripts directory")
+
+    blender_scripts_current_dir = find_blender_scripts_directory(blender_scripts_search_root_dir)
+
+    if blender_scripts_current_dir is not None:
+
+        print("Found Blender scripts directory at " + blender_scripts_current_dir)
+
+        if str(pathlib.Path(blender_scripts_current_dir).parent.absolute()).casefold() == blender_scripts_install_dir.casefold():
+
+            print(blender_scripts_current_dir+" already direct child of "+blender_scripts_install_dir)
+
+        else:
+
+            print("Moving "+blender_scripts_current_dir+" to "+blender_scripts_install_dir)
+
+            shutil.move(blender_scripts_current_dir, blender_scripts_install_dir)
+
+    else:
+
+        raise Exception("Could not find Blender scripts directory in "+blender_scripts_search_root_dir)
 
 def post_install():
 
