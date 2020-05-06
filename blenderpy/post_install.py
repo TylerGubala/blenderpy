@@ -31,6 +31,17 @@ BLENDER_SCRIPTS_INSTALL_DIR_WINDOWS = str(EXECUTABLE_DIR.absolute())
 
 SYSTEM_NAME = platform.system()
 
+class OSIsUnknownError(Exception):
+    """Error for when we cannot determine the OS
+    """
+    pass
+
+class BlenderScriptsDirUnknownError(Exception):
+    """Error for when we can't find the Blender scripts dir
+    """
+
+    pass
+
 def find_blender_scripts_directory(search_root: str) -> Optional[str]:
 
     for _dir, _dirs, _files in os.walk(search_root):
@@ -77,8 +88,8 @@ def install_scripts_directory():
 
     else:
 
-        print("Cannot determine system type, "
-              "skipping move of scripts directory")
+        raise OSIsUnknownError("Cannot determine system type, "
+                               "skipping move of scripts directory")
 
     blender_scripts_current_dir = find_blender_scripts_directory(blender_scripts_search_root_dir)
 
@@ -100,7 +111,9 @@ def install_scripts_directory():
 
     else:
 
-        raise Exception("Could not find Blender scripts directory in "+blender_scripts_search_root_dir)
+        raise BlenderScriptsDirUnknownError("Could not find Blender scripts "
+                                            "directory in "
+                                            +blender_scripts_search_root_dir)
 
 def post_install():
 
