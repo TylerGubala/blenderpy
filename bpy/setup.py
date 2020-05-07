@@ -292,7 +292,9 @@ setup(name='bpy',
       entry_points={
           "console_scripts": [
               "bpy_post_install = "
-              "blenderpy.post_install:post_install"
+              "blenderpy.post_install:post_install",
+              "bpy_pre_uninstall = "
+              "blenderpy.pre_uninstall:pre_uninstall"
           ]
       },
       description='Blender as a python module',
