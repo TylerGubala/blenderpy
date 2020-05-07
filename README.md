@@ -31,6 +31,8 @@ You can build from a source distribution using `pip`.
 
 ##### Prerequisites
 
+Performing a build from `sdist` requires at least the prerequisites for building Blender. See the wiki for [the list of prerequisite applications](https://github.com/TylerGubala/blenderpy/wiki#prerequisites-1).
+
 **Windows**
 ```bash
 py -3.7-64 -m pip install --upgrade pip wheel future-fstrings
