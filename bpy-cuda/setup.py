@@ -334,7 +334,7 @@ setup(name='bpy-cuda',
       author='Tyler Gubala',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
-      python_requires=">=3.4.0",
+      python_requires=">=3.7, <3.8",
       setup_requires=["bpy-build", "future-fstrings"],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
