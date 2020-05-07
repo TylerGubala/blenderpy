@@ -11,8 +11,7 @@ import shutil
 from blenderpy import BlenderScriptsDirUnknownError,\
                       find_blender_scripts_directory,\
                       get_blender_scripts_install_dir,\
-                      get_python_scripts_directory,\
-                      OSIsUnknownError, SYSTEM_NAME
+                      get_python_scripts_directory
 
 def install_scripts_directory():
 
