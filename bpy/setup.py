@@ -37,7 +37,7 @@ SYSTEM_OS_NAME = platform.system()
 # Change the Blender desired API version variable to build different versions
 # of the Blender API. For instance, 'v2.79b' is the same version of the API
 # as you would get when opening the Blender application at v2.79b
-VERSION = "2.82"
+VERSION = "2.79"
 VERSION_TUPLE = pkg_resources.parse_version(VERSION)
 
 class CMakeExtension(Extension):
