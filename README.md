@@ -47,12 +47,12 @@ python3.7 -m pip install --upgrade pip wheel future-fstrings
 
 **Windows**
 ```bash
-py -3.7-64 -m pip install bpy --no-binary
+py -3.7-64 -m pip install bpy --no-binary :all:
 ```
 
 **Other**
 ```bash
-python3.7 -m pip install bpy --no-binary
+python3.7 -m pip install bpy --no-binary :all:
 ```
 
 #### Build from repo
