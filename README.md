@@ -107,6 +107,10 @@ A. [MacOS support is on its way](https://github.com/TylerGubala/blenderpy/wiki/P
 
 A. Some builds you will have to make yourself if you have a specific version of the API you want. Likewise, if you are contrained to a specific Python version (especially those that aren't shipped by python.org) then you may have to try and build yourself.
 
+### Q. What about my bitness of choice?
+
+A. 32-bit support officially ended with `2.80`. See [the announcement](https://lists.blender.org/pipermail/bf-committers/2019-August/050124.html)
+
 ## Gotchas
 
 I have not tested this for platforms other than Windows Python 3.6.x at the moment. More to come soon.
