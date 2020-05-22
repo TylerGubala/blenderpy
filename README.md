@@ -73,8 +73,11 @@ If you have a specific version of `bpy` you want, you have to change the `VERSIO
 To build, run the below command.
 
 **Windows**
+
 `py bpy_setup.py sdist bdist_wheel`
+
 **Other**
+
 `python3 bpy_setup.py sdist bdist_wheel`
 
 The resultant wheel in the dist folder can be installed using pip.
