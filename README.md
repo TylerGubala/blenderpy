@@ -17,9 +17,13 @@ Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and Ubuntu).
 
 ### Installing
 
-Installing a prebuilt on these platforms is simple.
+~Installing a prebuilt on these platforms is simple.~
 
-`pip install bpy && bpy_post_install`
+~`pip install bpy && bpy_post_install`~
+
+**THIS WILL NOT BE AVAILABLE UNTIL [PYPA INCREASES THE UPLOAD LIMIT](https://github.com/pypa/pypi-support/issues/362)**
+
+Please for the time being either install [wheels on Google Drive](https://drive.google.com/drive/folders/1uSiTQLvlUxu7PDT2TCT4XIrwGwn1WWph?usp=sharing) or build from sources.
 
 ### Self Building
 
