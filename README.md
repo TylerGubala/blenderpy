@@ -21,6 +21,12 @@ Installing a prebuilt on these platforms is simple.
 
 `pip install bpy && bpy_post_install`
 
+### Uninstalling
+
+A unique uninstallation script is required to ensure that all traces of `bpy` are removed from the hard drive, because Blender expects `.dll` and `.so` libraries to be in places that are not part of the Python packaging system.
+
+`bpy_pre_uninstall && pip uninstall bpy`
+
 ### Self Building
 
 Building the Blender API for your own platform can be difficult, however this repo should make it easy enough for you to create your own builds by hand.
