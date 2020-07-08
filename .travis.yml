@@ -1,71 +1,28 @@
-language: python
-python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
-os:
-  - linux
+notifications:
+  email: false
+
 matrix:
   include:
-  - os: linux
-    python: 3.7
-    dist: xenial
-    sudo: true
-  - os: osx
-    language: generic
-    env: TOXENV=py34
-  - os: osx
-    language: generic
-    env: TOXENV=py35
-  - os: osx
-    language: generic
-    env: TOXENV=py36
-  - os: osx
-    language: generic
-    env: TOXENV=py37
-# command to install dependencies
-addons:
-  apt:
-    packages:
-      - build-essential
-      - libfreetype6-dev
-      - libglew-dev
-      - libglu1-mesa-dev
-      - libjpeg-dev
-      - libx11-dev
-      - libxi-dev
-      - libalut-dev
-      - libavcodec-dev
-      - libavdevice-dev
-      - libavformat-dev
-      - libavutil-dev
-      - libfftw3-dev
-      - libjack-dev
-      - libmp3lame-dev
-      - libopenal-dev
-      - libopenexr-dev
-      - libopenjpeg-dev
-      - libsdl1.2-dev
-      - libswscale-dev
-      - libtheora-dev
-      - libtiff5-dev
-      - libvorbis-dev
-      - libx264-dev
-      - libspnav-dev
-before_install:
-  - chmod +x ./.vscode/tasks/unix/dev_install.sh
-  - chmod +x ./.travis/install.sh
+    - sudo: required
+      services:
+        - docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+           PLAT=manylinux1_x86_64
+    - sudo: required
+      services:
+        - docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+           PRE_CMD=linux32
+           PLAT=manylinux1_i686
+    - sudo: required
+      services:
+        - docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
+           PLAT=manylinux2010_x86_64
+
 install:
-  - ./.vscode/tasks/unix/dev_install.sh
-  - ./.travis/install.sh
+  - docker pull $DOCKER_IMAGE
+
 script:
-  - pytest
-deploy:
-  provider: pypi
-  user: "TylerGubala"
-  password: 
-    secure: 
-  on:
-    tags: true
-    branch: master
-  
+  - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh
+  - ls wheelhouse/

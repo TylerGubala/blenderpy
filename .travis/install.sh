@@ -1,30 +1,32 @@
 #!/bin/bash
+set -e -u -x
 
-if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+function repair_wheel {
+    wheel="$1"
+    if ! auditwheel show "$wheel"; then
+        echo "Skipping non-platform wheel $wheel"
+    else
+        auditwheel repair "$wheel" --plat "$PLAT" -w /io/wheelhouse/
+    fi
+}
 
-    # Install some custom requirements on OS X
-    brew install python
 
-    case "${TOXENV}" in
-        py34)
-            # Install some custom Python 3.4 requirements on OS X
-            echo
-            ;;
-        py35)
-            # Install some custom Python 3.5 requirements on OS X
-            echo
-            ;;
-        py36)
-            # Install some custom Python 3.6 requirements on OS X
-            echo
-            ;;
-        py37)
-            # Install some custom Python 3.7 requirements on OS X
-            echo
-            ;;
-    esac
-else
-    # Install some custom requirements on Linux
-    echo
-fi
-python3 setup.py install
+# Install a system package required by our library
+yum install -y atlas-devel
+
+# Compile wheels
+for PYBIN in /opt/python/*/bin; do
+    "${PYBIN}/pip" install -r /io/requirements.txt
+    "${PYBIN}/pip" wheel /io/ --no-deps -w wheelhouse/
+done
+
+# Bundle external shared libraries into the wheels
+for whl in wheelhouse/*.whl; do
+    repair_wheel "$whl"
+done
+
+# Install packages and test
+for PYBIN in /opt/python/*/bin/; do
+    "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/wheelhouse
+    (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
+done
