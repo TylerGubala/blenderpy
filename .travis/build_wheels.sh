@@ -19,9 +19,9 @@ yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXra
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
-    "${PYBIN}/distro"
     PATH=$PATH:${PYBIN}
     "${PYBIN}/pip" install -r /io/requirements.txt
+    "${PYBIN}/distro"
     cp /io/bpy/setup.py /io/setup.py
     "${PYBIN}/pip" wheel /io/ --no-deps -w wheelhouse/
     rm /io/setup.py
