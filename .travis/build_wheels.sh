@@ -12,12 +12,14 @@ function repair_wheel {
 
 
 # Install a system package required by our library
+yum install -y coreutils
 yum install -y gcc g++ make cmake
 yum install -y git subversion cmake
 yum install -y libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
+    PATH=$PATH:${PYBIN}
     "${PYBIN}/pip" install -r /io/requirements.txt
     cp /io/bpy/setup.py /io/setup.py
     "${PYBIN}/pip" wheel /io/ --no-deps -w wheelhouse/
