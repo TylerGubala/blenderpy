@@ -15,7 +15,7 @@ function repair_wheel {
 yum install -y coreutils
 yum install -y gcc gcc-c++ make cmake
 yum install -y git subversion cmake
-yum install -y libx11-devel libxxf86vm-devel libxcursor-devel libxi-devel libxrandr-devel libxinerama-devel
+yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
