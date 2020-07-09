@@ -12,7 +12,9 @@ function repair_wheel {
 
 
 # Install a system package required by our library
-yum install -y atlas-devel
+yum install -y gcc g++ make cmake
+yum install -y git subversion cmake
+yum install -y libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
