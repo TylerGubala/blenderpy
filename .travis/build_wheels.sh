@@ -17,8 +17,7 @@ yum install -y gcc gcc-c++ make
 yum install -y git subversion
 yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel
 
-wget http://ftp.gnu.org/gnu/wget/wget-1.16.tar.gz
-yum -y remove wget
+curl -O http://ftp.gnu.org/gnu/wget/wget-1.16.tar.gz
 tar -xzvf wget-1.16.tar.gz
 cd wget-1.16
 ./configure --with-ssl=openssl --with-libssl-prefix=/usr/lib64/openssl --prefix=/usr
