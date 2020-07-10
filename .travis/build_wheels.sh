@@ -10,13 +10,9 @@ function repair_wheel {
     fi
 }
 
-yum whatprovides src/unix/async.c
-
-# Install a system package required by our library
-yum install -y coreutils
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libuv
+yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libevent-devel
 
 curl -L https://dist.libuv.org/dist/v1.38.1/libuv-v1.38.1.tar.gz -o libuv-v1.38.1.tar.gz
 tar xvzf libuv-v1.38.1.tar.gz
