@@ -24,14 +24,10 @@ make
 make check
 make install
 
-curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3.tar.gz -o cmake-3.17.3.tar.gz
-tar xvzf cmake-3.17.3.tar.gz
+curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
+tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 
-cd cmake-3.17.3
-./bootstrap  --system-libuv
-make
-make install
-cd ..
+PATH=$PATH:cmake-3.17.3-Linux-x86_64/bin
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
