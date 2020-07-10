@@ -10,6 +10,7 @@ function repair_wheel {
     fi
 }
 
+yum whatprovides src/unix/async.c
 
 # Install a system package required by our library
 yum install -y coreutils
