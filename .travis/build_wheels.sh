@@ -15,9 +15,19 @@ function repair_wheel {
 yum install -y coreutils
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libuv-devel
+yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel 
 
-curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3.tar.gz -o cmake-3.17.3.tar.gz
+curl -L https://dist.libuv.org/dist/v1.38.1/libuv-v1.38.1.tar.gz
+tar xvzf libuv-v1.38.1.tar.gz
+
+cd libuv-v1.38.1
+sh autogen.sh
+./configure
+make
+make check
+make install
+
+curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3.tar.gz
 tar xvzf cmake-3.17.3.tar.gz
 
 cd cmake-3.17.3
