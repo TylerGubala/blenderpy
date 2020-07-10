@@ -16,7 +16,7 @@ yum whatprovides src/unix/async.c
 yum install -y coreutils
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel 
+yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libuv
 
 curl -L https://dist.libuv.org/dist/v1.38.1/libuv-v1.38.1.tar.gz -o libuv-v1.38.1.tar.gz
 tar xvzf libuv-v1.38.1.tar.gz
