@@ -15,13 +15,13 @@ function repair_wheel {
 yum install -y coreutils
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel
+yum install -y libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libuv-devel
 
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3.tar.gz -o cmake-3.17.3.tar.gz
 tar xvzf cmake-3.17.3.tar.gz
 
 cd cmake-3.17.3
-./bootstrap
+./bootstrap  --system-libuv
 make
 make install
 cd ..
