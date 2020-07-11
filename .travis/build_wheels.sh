@@ -12,7 +12,7 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel fftw-devel freetype glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel mesa-libGL OpenEXR OpenEXR-devel zlib zlib-devel
+yum install -y boost boost-devel fftw-devel freetype glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel mesa-libGL OpenEXR OpenEXR-devel zlib zlib-devel
 
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
