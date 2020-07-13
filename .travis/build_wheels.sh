@@ -12,9 +12,17 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel fftw-devel freetype freetype-devel glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel mesa-libGL OpenEXR OpenEXR-devel python37 python3-devel python37-devel zlib zlib-devel
+yum install -y boost boost-devel fftw-devel freetype freetype-devel glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libosl libsndfile mesa-libGL OpenEXR OpenEXR-devel SDL SDL_image libSDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel
 
-yum erase -y cmake
+yum erase -y cmake python
+
+curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
+tar xzf Python-3.7.7.tgz
+cd Python-3.7.7
+./configure --enable-optimizations
+make install
+cd ..
+
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 
