@@ -14,7 +14,7 @@ yum install -y gcc gcc-c++ make
 yum install -y git subversion
 yum install -y boost boost-devel fftw-devel freetype freetype-devel glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libosl libsndfile mesa-libGL OpenEXR OpenEXR-devel SDL SDL_image libSDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel
 
-yum erase -y cmake python
+yum erase -y cmake
 
 curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
 tar xzf Python-3.7.7.tgz
