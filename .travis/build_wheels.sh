@@ -33,7 +33,7 @@ cd ..
 
 curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
 tar xjvf ffmpeg-snapshot.tar.bz2
-cd ffmpeg-snapshot
+cd ffmpeg
 ./configure
 make
 make install
