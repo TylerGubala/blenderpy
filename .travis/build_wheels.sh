@@ -12,12 +12,9 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel boost-system dcmtk dcmtk-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase-devel jemalloc libheif libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libosl libsndfile libsquish libtiff libtiff-devel mesa-libGL mesa-libGL-devel OpenEXR OpenEXR-devel SDL SDL_image tbb libSDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
+yum install -y boost boost-devel fftw-devel freetype freetype-devel giflib glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel OpenEXR OpenEXR-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
 
 yum erase -y cmake
-
-yum install http://repo.okay.com.mx/centos/8/x86_64/release/okay-release-1-1.noarch.rpm
-yum install boost-iostreams
 
 curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
 tar xzf Python-3.7.7.tgz
