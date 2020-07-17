@@ -75,6 +75,7 @@ cd build
 cmake ..
 make
 make Install
+cd ../..
 
 git clone https://github.com/uclouvain/openjpeg.git
 cd openjpeg
