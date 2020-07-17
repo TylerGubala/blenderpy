@@ -12,7 +12,7 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel fftw-devel freetype freetype-devel glew glew-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libosl libsndfile mesa-libGL OpenEXR OpenEXR-devel SDL SDL_image libSDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel
+yum install -y boost boost-devel boost-iostreams boost-system dcmtk dcmtk-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase-devel jemalloc libheif libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libosl libsndfile libsquish libtiff libtiff-devel mesa-libGL mesa-libGL-devel OpenEXR OpenEXR-devel SDL SDL_image tbb libSDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel
 
 yum erase -y cmake
 
@@ -23,10 +23,74 @@ cd Python-3.7.7
 make install
 cd ..
 
+curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
+tar xvzf LibRaw-0.19.5.tar.gz
+cd LibRaw-0.19.5
+./configure
+make
+make install
+cd ..
+
+curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+tar xjvf ffmpeg-snapshot.tar.bz2
+cd ffmpeg-snapshot
+./configure
+make
+make install
+cd ..
+
+curl -L https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz -o hdf5-1.12.0.tar.gz
+tar xvzf hdf5-1.12.0.tar.gz
+cd hdf5-1.12.0
+./configure
+make
+make install
+cd ..
+
+git clone https://github.com/imageworks/Field3D.git
+cd Field3D
+scons
+
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 
 PATH=$PATH:cmake-3.17.3-Linux-x86_64/bin
+
+git clone git@github.com:Blosc/c-blosc.git
+cd c-blosc
+git checkout tags/v1.5.0 -b v1.5.0
+mkdir build
+cd build
+cmake ..
+make
+make install
+cd ../..
+
+git clone https://github.com/AcademySoftwareFoundation/openvdb.git
+cd openvdb
+mkdir build
+cd build
+cmake ..
+make
+make Install
+
+git clone https://github.com/uclouvain/openjpeg.git
+cd openjpeg
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+make install
+cd ../..
+
+git clone -b release https://github.com/OpenImageIO/oiio.git
+cd oiio
+mkdir build
+cd build
+cmake ..
+make
+make install
+cd ../..
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
