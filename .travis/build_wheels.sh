@@ -47,11 +47,6 @@ make
 make install
 cd ..
 
-git clone https://github.com/imageworks/Field3D.git
-cd Field3D
-scons
-cd ..
-
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 
