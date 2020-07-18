@@ -52,16 +52,6 @@ tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 
 PATH=$PATH:cmake-3.17.3-Linux-x86_64/bin
 
-git clone git@github.com:Blosc/c-blosc.git
-cd c-blosc
-git checkout tags/v1.5.0 -b v1.5.0
-mkdir build
-cd build
-cmake ..
-make
-make install
-cd ../..
-
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
