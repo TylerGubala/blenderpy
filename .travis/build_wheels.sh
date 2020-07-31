@@ -54,7 +54,7 @@ git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
 cd build
-~/cmake-3.17.3-Linux-x86_64/bin/cmake ..
+../../cmake-3.17.3-Linux-x86_64/bin/cmake ..
 make
 make Install
 cd ../..
@@ -63,7 +63,7 @@ git clone https://github.com/uclouvain/openjpeg.git
 cd openjpeg
 mkdir build
 cd build
-~/cmake-3.17.3-Linux-x86_64/bin/cmake .. -DCMAKE_BUILD_TYPE=Release
+../../cmake-3.17.3-Linux-x86_64/bin/cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 make install
 cd ../..
@@ -72,7 +72,7 @@ git clone -b release https://github.com/OpenImageIO/oiio.git
 cd oiio
 mkdir build
 cd build
-~/cmake-3.17.3-Linux-x86_64/bin/cmake ..
+../../cmake-3.17.3-Linux-x86_64/bin/cmake ..
 make
 make install
 cd ../..
