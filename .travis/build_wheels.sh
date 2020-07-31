@@ -49,12 +49,13 @@ cd ..
 
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
+PATH=$PATH:./cmake-3.17.3-Linux-x86_64/bin/
 
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
 cd build
-../../cmake-3.17.3-Linux-x86_64/bin/cmake ..
+cmake ..
 make
 make Install
 cd ../..
@@ -63,7 +64,7 @@ git clone https://github.com/uclouvain/openjpeg.git
 cd openjpeg
 mkdir build
 cd build
-../../cmake-3.17.3-Linux-x86_64/bin/cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 make install
 cd ../..
@@ -72,7 +73,7 @@ git clone -b release https://github.com/OpenImageIO/oiio.git
 cd oiio
 mkdir build
 cd build
-../../cmake-3.17.3-Linux-x86_64/bin/cmake ..
+cmake ..
 make
 make install
 cd ../..
