@@ -47,6 +47,16 @@ make
 make install
 cd ..
 
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz
+tar zxvf glibc-2.14.tar.gz
+cd glibc-2.14
+mkdir build
+cd build
+../configure
+make
+make install
+cd ../..
+
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
 PATH=$PATH:$(pwd)/cmake-3.17.3-Linux-x86_64/bin/
@@ -57,7 +67,7 @@ mkdir build
 cd build
 cmake ..
 make
-make Install
+make install
 cd ../..
 
 git clone https://github.com/uclouvain/openjpeg.git
