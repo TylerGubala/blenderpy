@@ -47,7 +47,7 @@ make
 make install
 cd ..
 
-wget http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz
+curl -L http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz -o glibc-2.14.tar.gz
 tar zxvf glibc-2.14.tar.gz
 cd glibc-2.14
 mkdir build
