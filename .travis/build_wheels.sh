@@ -20,7 +20,7 @@ curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7
 tar xzf Python-3.7.7.tgz
 cd Python-3.7.7
 ./configure --enable-optimizations
-make install
+make install -s
 cd ..
 
 curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
@@ -28,23 +28,23 @@ tar xzf LibRaw-0.19.5.tar.gz
 cd LibRaw-0.19.5
 ./configure
 make
-make install
+make install -s
 cd ..
 
 curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
 tar xjf ffmpeg-snapshot.tar.bz2
 cd ffmpeg
 ./configure --disable-x86asm
-make
-make install
+make -s
+make install -s
 cd ..
 
 curl -L https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz -o hdf5-1.12.0.tar.gz
 tar xzf hdf5-1.12.0.tar.gz
 cd hdf5-1.12.0
 ./configure
-make
-make install
+make -s
+make install -s
 cd ..
 
 curl -L http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz -o glibc-2.14.tar.gz
@@ -53,8 +53,8 @@ cd glibc-2.14
 mkdir build
 cd build
 ../configure --prefix=/opt/glibc-2.14
-make
-make install
+make -s
+make install -s
 cd ../..
 
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
@@ -66,8 +66,8 @@ cd openvdb
 mkdir build
 cd build
 cmake ..
-make
-make install
+make -s
+make install -s
 cd ../..
 
 git clone https://github.com/uclouvain/openjpeg.git
@@ -75,8 +75,8 @@ cd openjpeg
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make
-make install
+make -s
+make install -s
 cd ../..
 
 git clone -b release https://github.com/OpenImageIO/oiio.git
@@ -84,8 +84,8 @@ cd oiio
 mkdir build
 cd build
 cmake ..
-make
-make install
+make -s
+make install -s
 cd ../..
 
 # Compile wheels
