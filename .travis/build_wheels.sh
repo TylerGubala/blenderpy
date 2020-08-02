@@ -24,7 +24,7 @@ make install
 cd ..
 
 curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
-tar xvzf LibRaw-0.19.5.tar.gz
+tar xzf LibRaw-0.19.5.tar.gz
 cd LibRaw-0.19.5
 ./configure
 make
@@ -32,7 +32,7 @@ make install
 cd ..
 
 curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
-tar xjvf ffmpeg-snapshot.tar.bz2
+tar xjf ffmpeg-snapshot.tar.bz2
 cd ffmpeg
 ./configure --disable-x86asm
 make
@@ -40,7 +40,7 @@ make install
 cd ..
 
 curl -L https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz -o hdf5-1.12.0.tar.gz
-tar xvzf hdf5-1.12.0.tar.gz
+tar xzf hdf5-1.12.0.tar.gz
 cd hdf5-1.12.0
 ./configure
 make
@@ -48,7 +48,7 @@ make install
 cd ..
 
 curl -L http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz -o glibc-2.14.tar.gz
-tar zxvf glibc-2.14.tar.gz
+tar zxf glibc-2.14.tar.gz
 cd glibc-2.14
 mkdir build
 cd build
@@ -58,7 +58,7 @@ make install
 cd ../..
 
 curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
-tar xvzf cmake-3.17.3-Linux-x86_64.tar.gz
+tar xzf cmake-3.17.3-Linux-x86_64.tar.gz
 PATH=$PATH:$(pwd)/cmake-3.17.3-Linux-x86_64/bin/
 
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
