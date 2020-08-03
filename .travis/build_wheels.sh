@@ -20,7 +20,7 @@ curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7
 tar xzf Python-3.7.7.tgz
 cd Python-3.7.7
 ./configure --enable-optimizations
-make install -s
+make install
 cd ..
 
 curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
@@ -28,7 +28,7 @@ tar xzf LibRaw-0.19.5.tar.gz
 cd LibRaw-0.19.5
 ./configure
 make
-make install -s
+make install
 cd ..
 
 curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
@@ -47,12 +47,12 @@ make -s
 make install -s
 cd ..
 
-curl -L http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz -o glibc-2.14.tar.gz
-tar zxf glibc-2.14.tar.gz
-cd glibc-2.14
+curl -L http://ftp.gnu.org/gnu/glibc/glibc-2.9.tar.gz -o glibc-2.9.tar.gz
+tar zxf glibc-2.9.tar.gz
+cd glibc-2.9
 mkdir build
 cd build
-../configure --prefix=/opt/glibc-2.14
+../configure --prefix=/opt/glibc-2.9
 make -s
 make install -s
 cd ../..
