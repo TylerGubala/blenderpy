@@ -53,7 +53,7 @@ PATH=$PATH:$(pwd)/cmake-3.17.3-Linux-x86_64/bin/
 
 curl -L https://github.com/AcademySoftwareFoundation/openexr/tarball/v2.5.1 -o openexr-v2.5.1.tar.gz
 tar xzf openexr-v2.5.1.tar.gz
-cd openexr-openexr-*
+cd AcademySoftwareFoundation-openexr-*
 mkdir build
 cd build
 cmake .. >> openexr_install.log
