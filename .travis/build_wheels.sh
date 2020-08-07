@@ -51,7 +51,7 @@ curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-
 tar xzf cmake-3.17.3-Linux-x86_64.tar.gz
 PATH=$PATH:$(pwd)/cmake-3.17.3-Linux-x86_64/bin/
 
-curl -L https://github.com/AcademySoftwareFoundation/openexr/tarball/v2.5.1 | tar xv
+curl -L https://github.com/AcademySoftwareFoundation/openexr/tarball/v2.5.1 | tar xzf
 cd openexr-openexr-*
 mkdir build
 cd build
