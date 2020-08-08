@@ -61,6 +61,10 @@ make -s >> openexr_install.log
 make install -s >> openexr_install.log
 cd ../..
 
+curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz
+tar xzf tbb-2020.3-lin.tgz
+./tbb/bin/tbbvars.sh
+
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
