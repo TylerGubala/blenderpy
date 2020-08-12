@@ -70,12 +70,6 @@ sed -i 's;TBBROOT=SUBSTITUTE_INSTALL_DIR_HERE;TBBROOT=/opt/intel/tbb;g' ./tbb/bi
 chmod u+x ./tbb/bin/tbbvars.sh
 ./tbb/bin/tbbvars.sh intel64 linux
 
-mkdir /opt/intel/compilers_and_libraries_2020.3
-cp -Rf ./pstl /opt/intel/compilers_and_libraries_2020.3
-sed -i 's;PSTLROOT=SUBSTITUTE_INSTALL_DIR_HERE;PSTLROOT=/opt/intel/compilers_and_libraries_2020.3/pstl;g' ./pstl/bin/pstlvars.sh
-chmod u+x ./pstl/bin/pstlvars.sh
-./pstl/bin/pstlvars.sh intel64
-
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
