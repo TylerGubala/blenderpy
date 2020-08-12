@@ -64,15 +64,15 @@ cd ../..
 curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz
 tar xzf tbb-2020.3-lin.tgz
 
-sed -i 's;TBBROOT=SUBSTITUTE_INSTALL_DIR_HERE;TBBROOT=/opt/intel/;g' ./tbb/bin/tbbvars.sh
 mkdir /opt/intel
 cp -Rf ./tbb /opt/intel
+sed -i 's;TBBROOT=SUBSTITUTE_INSTALL_DIR_HERE;TBBROOT=/opt/intel;g' ./tbb/bin/tbbvars.sh
 chmod u+x ./tbb/bin/tbbvars.sh
 ./tbb/bin/tbbvars.sh intel64 linux
 
-sed -i 's;PSTLROOT=SUBSTITUTE_INSTALL_DIR_HERE;PSTLROOT=/opt/intel/compilers_and_libraries_2020.3;g' ./pstl/bin/pstlvars.sh
 mkdir /opt/intel/compilers_and_libraries_2020.3
 cp -Rf ./pstl /opt/intel/compilers_and_libraries_2020.3
+sed -i 's;PSTLROOT=SUBSTITUTE_INSTALL_DIR_HERE;PSTLROOT=/opt/intel/compilers_and_libraries_2020.3;g' ./pstl/bin/pstlvars.sh
 chmod u+x ./pstl/bin/pstlvars.sh
 ./pstl/bin/pstlvars.sh intel64
 
