@@ -70,7 +70,7 @@ cp -Rf ./tbb /opt/intel
 chmod u+x ./tbb/bin/tbbvars.sh
 ./tbb/bin/tbbvars.sh intel64 linux
 
-sed -i 's;PSTLROOT=SUBSTITUTE_INSTALL_DIR_HERE;PSTLROOT=/opt/intel/compilers_and_libraries_2020.3;g' ./tbb/bin/tbbvars.sh
+sed -i 's;PSTLROOT=SUBSTITUTE_INSTALL_DIR_HERE;PSTLROOT=/opt/intel/compilers_and_libraries_2020.3;g' ./pstl/bin/pstlvars.sh
 mkdir /opt/intel/compilers_and_libraries_2020.3
 cp -Rf ./pstl /opt/intel/compilers_and_libraries_2020.3
 chmod u+x ./pstl/bin/pstlvars.sh
