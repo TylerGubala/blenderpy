@@ -72,7 +72,7 @@ cd ..
 
 mkdir build
 cd build
-cmake .. >> openvdb_install.log
+cmake .. -DTBB_LIBRARY_DIR=../lib/tbb/lib >> openvdb_install.log
 make -s >> openvdb_install.log
 make install -s >> openvdb_install.log
 cd ../..
