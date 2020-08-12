@@ -12,7 +12,7 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image tbb tbb-devel zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
+yum install -y boost boost-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
 
 yum erase -y cmake
 
@@ -63,8 +63,9 @@ cd ../..
 
 curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz
 tar xzf tbb-2020.3-lin.tgz
+sed -i 's;TBBROOT=SUBSTITUTE_INSTALL_DIR_HERE;TBBROOT=/opt/intel/;g' ./tbb/bin/tbbvars.sh
 chmod u+x ./tbb/bin/tbbvars.sh
-./tbb/bin/tbbvars.sh intel64 linux auto_tbbroot
+./tbb/bin/tbbvars.sh intel64 linux
 
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
