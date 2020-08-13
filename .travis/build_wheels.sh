@@ -61,15 +61,14 @@ make -s >> openexr_install.log
 make install -s >> openexr_install.log
 cd ../..
 
-git clone https://github.com/AcademySoftwareFoundation/openvdb.git
-cd openvdb
-
-mkdir lib
-cd lib
+mkdir /opt/intel
+cd /opt/intel
 curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz
 tar xzf tbb-2020.3-lin.tgz
-cd ..
+cd ~
 
+git clone https://github.com/AcademySoftwareFoundation/openvdb.git
+cd openvdb
 mkdir build
 cd build
 cmake .. -DTBB_LIBRARY_DIR=../lib/tbb/lib/intel64/gcc4.8 -DTBB_INCLUDE_DIR=../lib/tbb/include/tbb -DTBB_LIB_COMPONENTS=../lib/tbb/lib/intel64/gcc4.8/libtbb.so >> openvdb_install.log
