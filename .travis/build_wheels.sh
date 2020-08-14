@@ -16,14 +16,7 @@ yum install -y blosc blosc-devel fftw-devel freetype freetype-devel giflib glew 
 
 yum erase -y cmake
 
-curl -L https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz -o Python-2.7.18.tgz
-tar xzf Python-2.7.18.tgz
-cd Python-2.7.18
-./configure --enable-optimizations >> python_install.log
-make install >> python_install.log
-cd ..
-
-yum install -y python-pip
+yum install -y python2 python2-pip
 
 python2.7 -m pip install -U pip
 python2.7 -m pip install numpy
