@@ -12,7 +12,7 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y boost boost-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc jemalloc-devel libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
+yum install -y blosc boost boost-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc jemalloc-devel libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
 
 yum erase -y cmake
 
