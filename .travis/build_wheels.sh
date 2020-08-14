@@ -71,8 +71,10 @@ tar xzf tbb-2020.3-lin.tgz
 cd ~
 
 mkdir boost
-curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0_rc1.tar.gz -o boost_1_74_0_rc1.tar.gz
-tar xzf boost_1_74_0_rc1.tar.gz
+cd boost
+curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz
+tar xzf boost_1_74_0.tar.gz
+cd boost_1_74_0
 ./bootstrap.sh
 ./b2 install
 cd ..
