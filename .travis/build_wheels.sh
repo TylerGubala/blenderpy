@@ -73,6 +73,8 @@ cd ~
 mkdir boost
 curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0_rc1.tar.gz -o boost_1_74_0_rc1.tar.gz
 tar xzf boost_1_74_0_rc1.tar.gz
+./bootstrap.sh
+./b2 install
 cd ..
 
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
