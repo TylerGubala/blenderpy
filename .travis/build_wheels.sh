@@ -16,6 +16,16 @@ yum install -y blosc blosc-devel fftw-devel freetype freetype-devel giflib glew 
 
 yum erase -y cmake
 
+curl -L https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz -o Python-2.7.18.tgz
+tar xzf Python-2.7.18.tgz
+cd Python-2.7.18
+./configure --enable-optimizations >> python_install.log
+make install >> python_install.log
+cd ..
+
+python2.7 -m pip install -U pip
+python2.7 -m pip install numpy
+
 mkdir boost
 cd boost
 curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz
@@ -32,8 +42,8 @@ cd Python-3.7.7
 make install >> python_install.log
 cd ..
 
-python3 -m pip install -U pip
-python3 -m pip install numpy
+python3.7 -m pip install -U pip
+python3.7 -m pip install numpy
 
 curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
 tar xzf LibRaw-0.19.5.tar.gz
