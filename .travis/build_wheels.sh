@@ -70,11 +70,16 @@ curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.
 tar xzf tbb-2020.3-lin.tgz
 cd ~
 
+mkdir boost
+curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0_rc1.tar.gz -o boost_1_74_0_rc1.tar.gz
+tar xzf boost_1_74_0_rc1.tar.gz
+cd ..
+
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
 cd build
-cmake .. -DTBB_LIBRARYDIR=/opt/intel/tbb/lib/intel64/gcc4.8 -DTBB_INCLUDEDIR=/opt/intel/tbb/include >> openvdb_install.log
+cmake .. -DBOOST_ROOT=../boost -DTBB_LIBRARYDIR=/opt/intel/tbb/lib/intel64/gcc4.8 -DTBB_INCLUDEDIR=/opt/intel/tbb/include >> openvdb_install.log
 make -s >> openvdb_install.log
 make install -s >> openvdb_install.log
 cd ../..
