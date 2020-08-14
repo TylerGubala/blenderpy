@@ -74,7 +74,7 @@ git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
 mkdir build
 cd build
-cmake .. -DTBB_LIBRARY_DIR=/opt/intel/tbb/lib/intel64/gcc4.8 -DTbb_INCLUDE_DIR=/opt/intel/tbb/include/tbb -DTbb_LIB_COMPONENTS=/opt/intel/tbb/lib/intel64/gcc4.8/libtbb.so -Dtbb=/opt/intel/tbb/lib/intel64/gcc4.8/libtbb.so >> openvdb_install.log
+cmake .. >> openvdb_install.log
 make -s >> openvdb_install.log
 make install -s >> openvdb_install.log
 cd ../..
