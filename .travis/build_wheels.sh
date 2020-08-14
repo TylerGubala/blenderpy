@@ -23,6 +23,9 @@ cd Python-3.7.7
 make install >> python_install.log
 cd ..
 
+python3 -m pip install -U pip
+python3 -m pip install numpy
+
 curl -L https://www.libraw.org/data/LibRaw-0.19.5.tar.gz -o LibRaw-0.19.5.tar.gz
 tar xzf LibRaw-0.19.5.tar.gz
 cd LibRaw-0.19.5
