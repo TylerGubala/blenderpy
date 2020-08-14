@@ -16,7 +16,7 @@ yum install -y blosc blosc-devel fftw-devel freetype freetype-devel giflib glew 
 
 yum erase -y cmake
 
-yum install -y python2 python2-pip
+yum install -y python2 python2-pip python-devel=2.7
 
 python2.7 -m pip install -U pip
 python2.7 -m pip install numpy
