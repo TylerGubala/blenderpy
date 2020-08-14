@@ -23,6 +23,8 @@ cd Python-2.7.18
 make install >> python_install.log
 cd ..
 
+yum install -y python-pip
+
 python2.7 -m pip install -U pip
 python2.7 -m pip install numpy
 
