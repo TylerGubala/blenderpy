@@ -12,9 +12,18 @@ function repair_wheel {
 
 yum install -y gcc gcc-c++ make
 yum install -y git subversion
-yum install -y blosc blosc-devel boost boost-devel boost-iostreams boost-system fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc jemalloc-devel libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
+yum install -y blosc blosc-devel fftw-devel freetype freetype-devel giflib glew glew-devel ilmbase ilmbase-devel jemalloc jemalloc-devel libX11-devel libXxf86vm-devel libXcursor-devel libXi-devel libXrandr-devel libXinerama-devel libjpeg-devel libpng-devel libsndfile libtiff libtiff-devel mesa-libGL mesa-libGL-devel SDL SDL_image zlib zlib-devel openssl-devel bzip2-devel libffi-devel yasm
 
 yum erase -y cmake
+
+mkdir boost
+cd boost
+curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz
+tar xzf boost_1_74_0.tar.gz
+cd boost_1_74_0
+./bootstrap.sh >> boost_install.log
+./b2 install >> boost_install.log
+cd ..
 
 curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
 tar xzf Python-3.7.7.tgz
@@ -69,15 +78,6 @@ cd /opt/intel
 curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz
 tar xzf tbb-2020.3-lin.tgz
 cd ~
-
-mkdir boost
-cd boost
-curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz
-tar xzf boost_1_74_0.tar.gz
-cd boost_1_74_0
-./bootstrap.sh
-./b2 install
-cd ..
 
 git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 cd openvdb
