@@ -22,7 +22,7 @@ curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.g
 tar xzf boost_1_74_0.tar.gz
 cd boost_1_74_0
 ./bootstrap.sh >> boost_install.log
-./b2 install
+./b2 install -q
 cd ..
 
 curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
