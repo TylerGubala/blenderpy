@@ -118,10 +118,6 @@ RUN cd openjpeg && \
     make install -s
 RUN rm -Rf openjpeg
 
-COPY ./bpy /blenderpy
-COPY ./bpy-cuda /blenderpy
-COPY ./bpy-optix /blenderpy
-COPY ./blenderpy /blenderpy
-COPY ./.travis/install.sh /blenderpy
+COPY . /blenderpy
 
-CMD [ "install.sh" ]
+CMD [ "/blenderpy/.travis/install.sh" ]

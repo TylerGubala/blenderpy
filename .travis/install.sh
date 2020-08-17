@@ -6,25 +6,19 @@ function repair_wheel {
     if ! auditwheel show "$wheel"; then
         echo "Skipping non-platform wheel $wheel"
     else
-        auditwheel repair "$wheel" --plat "$PLAT" -w /io/wheelhouse/
+        auditwheel repair "$wheel" --plat "$PLAT" -w /blenderpy/wheelhouse/
     fi
 }
 
 # Compile wheels
-for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install -r /io/requirements.txt
-    cp /io/bpy/setup.py /io/setup.py
-    "${PYBIN}/pip" wheel /io/setup.py --no-deps -w wheelhouse/
-    rm /io/setup.py
+for PYBIN in /opt/python/cp37*/bin; do
+    "${PYBIN}/pip" install -r /blenderpy/requirements.txt
+    cp /blenderpy/bpy/setup.py /blenderpy/setup.py
+    "${PYBIN}/pip" wheel /blenderpy --no-deps -v -w wheelhouse/
+    rm /blenderpy/setup.py
 done
 
 # Bundle external shared libraries into the wheels
 for whl in wheelhouse/*.whl; do
     repair_wheel "$whl"
-done
-
-# Install packages and test
-for PYBIN in /opt/python/*/bin/; do
-    "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/wheelhouse
-    (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
 done
