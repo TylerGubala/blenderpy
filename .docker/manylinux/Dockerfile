@@ -109,6 +109,7 @@ RUN cd /opt/intel && \
     tar xzf tbb-2020.3-lin.tgz
 RUN chmod u+x /opt/intel/tbb/bin/tbbvars.sh
 RUN /opt/intel/tbb/bin/tbbvars.sh intel64 linux auto_tbbroot
+ENV TBB_LIBRARIES=/opt/intel/tbb/lib/intel64/gcc4.8
 
 RUN git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 RUN cd openvdb && \
