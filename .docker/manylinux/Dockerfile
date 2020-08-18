@@ -35,6 +35,7 @@ RUN yum install -y \
     mesa-libGL \
     mesa-libGL-devel \
     OpenImageIO \
+    OpenImageIO-devel \
     OpenImageIO-utils \
     openssl-devel \
     python2 \
@@ -50,6 +51,13 @@ RUN yum erase -y cmake
 
 RUN python2.7 -m pip install -U pip
 RUN python2.7 -m pip install numpy
+
+RUN curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
+RUN tar xzf Python-3.7.7.tgz
+RUN cd Python-3.7.7 && \
+    ./configure --enable-optimizations && \
+    make install >> python_install.log
+RUN rm -Rf Python-3.7.7
 
 RUN curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz
 RUN tar xzf boost_1_74_0.tar.gz
@@ -99,6 +107,8 @@ RUN mkdir /opt/intel
 RUN cd /opt/intel && \
     curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz -o tbb-2020.3-lin.tgz && \
     tar xzf tbb-2020.3-lin.tgz
+RUN chmod u+x /opt/intel/tbb/bin/tbbvars.sh
+RUN /opt/intel/tbb/bin/tbbvars.sh intel64 linux auto_tbbroot
 
 RUN git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 RUN cd openvdb && \

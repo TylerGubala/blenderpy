@@ -12,6 +12,7 @@ function repair_wheel {
 
 # Compile wheels
 for PYBIN in /opt/python/cp37*/bin; do
+    "${PYBIN}/pip" install -U pip
     "${PYBIN}/pip" install -r /blenderpy/requirements.txt
     cp /blenderpy/bpy/setup.py /blenderpy/setup.py
     "${PYBIN}/pip" wheel /blenderpy --no-deps -v -w wheelhouse/
