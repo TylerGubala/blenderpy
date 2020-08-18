@@ -132,6 +132,7 @@ RUN rm -Rf openjpeg
 RUN curl -L https://github.com/ispc/ispc/releases/download/v1.12.0/ispc-v1.12.0b-linux.tar.gz -o ispc-v1.12.0b-linux.tar.gz
 RUN tar xzf ispc-v1.12.0b-linux.tar.gz
 
+RUN git lfs install
 RUN git clone --recursive https://github.com/OpenImageDenoise/oidn.git
 RUN cd oidn && \
     mkdir build && \
