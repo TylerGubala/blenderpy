@@ -13,9 +13,10 @@ RUN yum install -y \
     gcc \
     gcc-c++ \
     giflib \
+    git \
+    git-lfs \
     glew \
     glew-devel \
-    git \
     ilmbase \
     ilmbase-devel \
     jemalloc \
@@ -109,7 +110,6 @@ RUN cd /opt/intel && \
     tar xzf tbb-2020.3-lin.tgz
 RUN chmod u+x /opt/intel/tbb/bin/tbbvars.sh
 RUN /opt/intel/tbb/bin/tbbvars.sh intel64 linux auto_tbbroot
-ENV TBB_LIBRARIES=/opt/intel/tbb/lib/intel64/gcc4.8
 
 RUN git clone https://github.com/AcademySoftwareFoundation/openvdb.git
 RUN cd openvdb && \
@@ -128,6 +128,17 @@ RUN cd openjpeg && \
     make -s && \
     make install -s
 RUN rm -Rf openjpeg
+
+RUN curl -L https://github.com/ispc/ispc/releases/download/v1.12.0/ispc-v1.12.0b-linux.tar.gz -o ispc-v1.12.0b-linux.tar.gz
+RUN tar xzf ispc-v1.12.0b-linux.tar.gz
+
+RUN git clone --recursive https://github.com/OpenImageDenoise/oidn.git
+RUN cd oidn && \
+    mkdir build && \
+    cd build && \
+    ../../cmake-3.17.3-Linux-x86_64/bin/cmake .. && \
+    make
+RUN rm -Rf oidn
 
 COPY . /blenderpy
 

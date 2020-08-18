@@ -35,9 +35,9 @@ PYTHON_EXE_DIR = os.path.dirname(sys.executable)
 SYSTEM_OS_NAME = platform.system()
 
 # Change the Blender desired API version variable to build different versions
-# of the Blender API. For instance, 'v2.79b' is the same version of the API
-# as you would get when opening the Blender application at v2.79b
-VERSION = "2.82"
+# of the Blender API. For instance, '2.79' is the same version of the API
+# as you would get when opening the Blender application at 2.79
+VERSION = "2.83"
 VERSION_TUPLE = pkg_resources.parse_version(VERSION)
 
 class CMakeExtension(Extension):
