@@ -168,7 +168,7 @@ RUN git clone https://github.com/KhronosGroup/OpenCOLLADA.git
 RUN cd OpenCOLLADA && \
     mkdir build && \
     cd build && \
-    ../../cmake-3.17.3-Linux-x86_64/bin/cmake .. && \
+    cmake .. && \
     make && \
     make install
 RUN rm -Rf OpenCOLLADA
@@ -221,11 +221,15 @@ RUN rm -Rf pybind11
 
 RUN git clone https://github.com/OpenImageIO/oiio.git
 RUN cd oiio && \
+    git checkout tags/Release-2.1.18.1 -b master && \
+    make
+
+RUN git clone -b v2.82 https://git.blender.org/blender.git
+RUN svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib
+
+RUN cd blender && \
+    mkdir build && \
+    cd build && \ 
+    cmake -DOPENIMAGEIO_LIBRARY=oiio/dist/linux64/lib64 -DOPENIMAGEIO_INCLUDE_DIR=oiio/dist/linux64/include -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_PLAYER=OFF .. && \
+    make && \
     make install
-RUN ls oiio/dist
-
-COPY . /blenderpy
-
-#RUN /blenderpy/.docker/manylinux/build_manylinux_wheels.sh
-
-CMD [ "ls", "oiio/dist/linux64" ]

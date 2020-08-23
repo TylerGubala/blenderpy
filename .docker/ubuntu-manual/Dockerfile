@@ -1,4 +1,4 @@
-FROM ubuntu:groovy-20200812
+FROM ubuntu:20.04
 
 WORKDIR /blenderpy
 
@@ -12,10 +12,9 @@ RUN cd Python-3.7.4 && \
     make && \
     make install
 
-RUN python3.7 -m pip install -U pip
-RUN python3.7 -m pip install wheel
+RUN git clone -b v2.82 https://git.blender.org/blender.git
+RUN svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib
 
-COPY . /blenderpy
-
-RUN cp /blenderpy/bpy/setup.py /blenderpy
-RUN python3.7 setup.py
+RUN cd blender && \
+    make update && \
+    make bpy

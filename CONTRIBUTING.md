@@ -11,32 +11,31 @@ Your contributions are most welcome! This is a somewhat informal repository, in 
 # Get started
 `blenderpy` is somewhat of a complicated solution. This repository actually doesn't do much on its own; it mostly exists so that we can control how the `bpy` required files get distributed (more [here](https://github.com/TylerGubala/blenderpy/issues/13)). For the building of the `bpy` files, the `bpy-build` repository is used (a requirement of this repository) and for the final placement of all the files, `bpy-ensure` is used (places the `/Scripts` file in the correct location, which has been an [issue](https://github.com/TylerGubala/blenderpy/issues/13) before).
 
-Therefore in order to contribute to the project as a whole, you are going to want to check out three repos. Follow the steps below:
+Therefore in order to contribute to the project as a whole, you are going to want to check out two repos. Follow the steps below:
  1. Clone the repository `git clone https://github.com/TylerGubala/blenderpy` into the directory of your choice
  2. Clone the repository `git clone https://github.com/TylerGubala/bpy-build` into the directory of your choice
- 3. Clone the repository `git clone https://github.com/TylerGubala/bpy-ensure` into the directory of your choice
- 4. `cd blenderpy`
- 5. `mkdir venv`
- 6. `cd venv`
- 7. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
- 8. `cd ..`
- 9. `venv/3.6-32/Scripts/activate`
-10. `(3.6-32)py -m pip install -r requirements.txt`
-11. `cd bpy-build`
-12. `mkdir venv`
-13. `cd venv`
-14. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
-15. `cd ..`
-16. `venv/3.6-32/Scripts/activate`
-17. `(3.6-32)py -m pip install -r requirements.txt`
-18. `cd bpy-ensure`
-19. `mkdir venv`
-20. `cd venv`
-21. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
-22. `cd ..`
-23. `venv/3.6-32/Scripts/activate`
-24. `(3.6-32)py -m pip install -r requirements.txt`
-25. _optional_: To watch the build process, run `bpy-build/setup.py` in your preferred coding environment with a debugger attached
+ 3. `cd blenderpy`
+ 4. `mkdir venv`
+ 5. `cd venv`
+ 6. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
+ 7. `cd ..`
+ 8. `venv/3.6-32/Scripts/activate`
+ 9. `(3.6-32)py -m pip install -r requirements.txt`
+10. `cd bpy-build`
+11. `mkdir venv`
+12. `cd venv`
+13. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
+14. `cd ..`
+15. `venv/3.6-32/Scripts/activate`
+16. `(3.6-32)py -m pip install -r requirements.txt`
+17. `cd bpy-ensure`
+18. `mkdir venv`
+19. `cd venv`
+20. `py -3.6-32 -m venv 3.6-32` _optional_: replace 3.6-32 with your preferred python version
+21. `cd ..`
+22. `venv/3.6-32/Scripts/activate`
+23. `(3.6-32)py -m pip install -r requirements.txt`
+24. _optional_: To watch the build process, run `bpy-build/setup.py` in your preferred coding environment with a debugger attached
 
 # Submit a bug report
 
