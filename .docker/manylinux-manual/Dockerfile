@@ -36,5 +36,6 @@ RUN cd lib && \
     svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib/linux_centos7_x86_64
 
 RUN cd blender && \
-    make update && \
+    make update
+RUN cd blender && \
     make bpy
