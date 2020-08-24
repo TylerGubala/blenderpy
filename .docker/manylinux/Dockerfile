@@ -47,6 +47,9 @@ RUN yum install -y \
     mesa-libGL-devel \
     OpenColorIO \
     OpenColorIO-devel \
+    OpenImageIO \
+    OpenImageIO-devel \
+    OpenImageIO-utils \
     openjpeg \
     openjpeg-libs \
     openssl-devel \
@@ -207,25 +210,6 @@ RUN yum install -y \
     tbb-devel
 #Can't install tbb from old Centos using yum earlier otherwise we get "tbb version too low" error
 
-RUN python3.7 -m pip install -U pip
-RUN python3.7 -m pip install pytest
-
-RUN git clone https://github.com/pybind/pybind11.git
-RUN cd pybind11 && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make && \
-    make install
-RUN rm -Rf pybind11
-
-RUN git clone https://github.com/OpenImageIO/oiio.git
-RUN cd oiio && \
-    make install
-RUN ls oiio/dist
-
 COPY . /blenderpy
 
-#RUN /blenderpy/.docker/manylinux/build_manylinux_wheels.sh
-
-CMD [ "ls", "oiio/dist/linux64" ]
+RUN /blenderpy/.docker/manylinux/build_manylinux_wheels.sh

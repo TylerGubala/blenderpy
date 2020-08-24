@@ -224,7 +224,9 @@ RUN cd oiio && \
     git checkout tags/Release-2.1.18.1 -b master && \
     make
 
-RUN git clone -b v2.82 https://git.blender.org/blender.git
+RUN git clone https://git.blender.org/blender.git
+RUN cd blender && \
+    git checkout tags/v2.82
 RUN svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib
 
 RUN cd blender && \

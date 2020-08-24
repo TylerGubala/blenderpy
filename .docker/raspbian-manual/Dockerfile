@@ -4,9 +4,11 @@ WORKDIR /blenderpy
 
 RUN apt-get -y install cmake g++ gcc git make libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev subversion
 
+RUN git clone https://git.blender.org/blender.git
 # As of v2.80, 32 bit is no longer supported
 # See https://developer.blender.org/T67184
-RUN git clone -b v2.79 https://git.blender.org/blender.git
+RUN cd blender && \
+    git checkout tags/v2.79
 RUN svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.79-release/lib/
 
 RUN mkdir build && \
