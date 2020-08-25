@@ -16,7 +16,7 @@ RUN cd Python-3.7.4 && \
 
 RUN git clone https://git.blender.org/blender.git
 RUN cd blender &&\
-    git checkout tags/v2.82
+    git checkout tags/v2.82 -b origin/master
 RUN svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib
 
 RUN cd blender && \
