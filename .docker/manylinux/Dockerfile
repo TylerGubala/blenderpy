@@ -81,7 +81,7 @@ RUN curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
     ./configure --enable-optimizations && \
-    make install >> python_install.log
+    make install
 RUN rm -Rf Python-3.7.7
 
 RUN curl -L https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz -o boost_1_74_0.tar.gz

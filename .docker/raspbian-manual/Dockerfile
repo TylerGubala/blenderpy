@@ -4,6 +4,12 @@ WORKDIR /blenderpy
 
 RUN apt-get -y install cmake g++ gcc git make libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev subversion
 
+ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
+RUN tar xzf Python-3.7.7.tgz
+RUN cd Python-3.7.7 && \
+    ./configure --enable-optimizations && \
+    make install
+
 RUN git clone https://git.blender.org/blender.git
 # As of v2.80, 32 bit is no longer supported
 # See https://developer.blender.org/T67184

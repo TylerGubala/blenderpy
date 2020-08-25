@@ -17,12 +17,11 @@ RUN yum install -y \
     make \
     subversion
 
-RUN curl -L https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz -o Python-3.7.7.tgz
+ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
     ./configure --enable-optimizations && \
-    make install >> python_install.log
-RUN rm -Rf Python-3.7.7
+    make install
 
 RUN curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
 RUN tar xzf cmake-3.17.3-Linux-x86_64.tar.gz
