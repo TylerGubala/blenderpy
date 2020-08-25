@@ -7,6 +7,7 @@ RUN yum install -y \
     gcc-c++ \
     git \
     git-lfs \
+    glew-devel \
     libX11-devel \
     libXcursor-devel \
     libXi-devel \
@@ -29,11 +30,11 @@ ENV PATH="/blenderpy/cmake-3.17.3-Linux-x86_64/bin:${PATH}"
 
 RUN git clone https://git.blender.org/blender.git
 RUN cd blender && \
-    git checkout tags/v2.82 -b master
+    git checkout tags/v2.82 -b origin/master
 
 RUN mkdir lib
 RUN cd lib && \
-    svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-2.82-release/lib/linux_centos7_x86_64
+    svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
 RUN cd blender && \
     make update
