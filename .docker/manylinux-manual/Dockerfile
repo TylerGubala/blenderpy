@@ -29,7 +29,7 @@ ENV PATH="/blenderpy/cmake-3.17.3-Linux-x86_64/bin:${PATH}"
 
 RUN git clone https://git.blender.org/blender.git
 RUN cd blender && \
-    git checkout -t v2.82 -b origin/master
+    git checkout -t tags/v2.82 -b origin/master
     
 RUN mkdir lib
 RUN cd lib && \
