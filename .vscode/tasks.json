@@ -205,7 +205,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build Linux Only",
+            "label": "Docker - Build All Linux",
             "type": "shell",
             "dependsOn":["Docker - Build Debian", 
                 "Docker - Build Debian Manual", 
@@ -219,7 +219,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build Windows Only",
+            "label": "Docker - Build All Windows",
             "type": "shell",
             "dependsOn":["Docker - Build Windows",
                 "Docker - Build Windows Manual"],
