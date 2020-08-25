@@ -14,8 +14,6 @@ RUN cd Python-3.7.7 && \
     make install
 
 RUN git clone https://git.blender.org/blender.git
-RUN cd blender &&\
-    git checkout tags/v2.82 -b origin/master
     
 RUN mkdir lib
 RUN cd lib && \
