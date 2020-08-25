@@ -20,9 +20,7 @@ RUN mkdir lib
 RUN cd lib && \
     svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
-RUN mkdir build && \
-    cd build && \
-    cmake ../blender -DWITH_MEM_JEMALLOC=OFF -DWITH_PLAYER=OFF -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON && \
-    make update && \
-    make && \
-    make install
+RUN cd blender && \
+    make update
+RUN cd blender && \
+    make bpy

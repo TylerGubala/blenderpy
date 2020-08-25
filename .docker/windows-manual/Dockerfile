@@ -30,5 +30,6 @@ RUN cd lib && \
     svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15
 
 RUN cd blender && \
-    make update && \
+    make update
+RUN cd blender && \
     make bpy

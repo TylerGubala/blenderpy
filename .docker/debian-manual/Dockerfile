@@ -22,5 +22,6 @@ RUN cd lib && \
     svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
 RUN cd blender && \
-    make update && \
+    make update
+RUN cd blender && \
     make bpy
