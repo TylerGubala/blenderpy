@@ -15,6 +15,7 @@ RUN git clone https://git.blender.org/blender.git
 # See https://developer.blender.org/T67184
 RUN cd blender && \
     git checkout tags/v2.79 -b origin/master
+
 RUN mkdir lib
 RUN cd lib && \
     svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
