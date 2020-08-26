@@ -3,7 +3,7 @@ FROM fedora:rawhide
 WORKDIR /blenderpy
 
 RUN sudo dnf -y update
-RUN sudo dnf -y install cmake gcc gcc-c++ git glew-devel libX11-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel libstdc++-static make subversion
+RUN sudo dnf -y install cmake gcc gcc-c++ git glew-devel libX11-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel libstdc++-static make subversion zlib-devel
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz

@@ -2,6 +2,7 @@ FROM arm32v5/debian:buster-20200803
 
 WORKDIR /blenderpy
 
+RUN apt-get -y update
 RUN apt-get -y install cmake g++ gcc git make libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev subversion
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
