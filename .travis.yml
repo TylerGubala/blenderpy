@@ -10,7 +10,7 @@ matrix:
            PLAT=manylinux2014_x86_64
 
 install:
-  - docker build -t blenderpy/manylinux .docker/manylinux/Dockerfile
+  - docker build -t blenderpy/manylinux -f .docker/manylinux/Dockerfile .
 
 script:
   - docker run blenderpy/manylinux
