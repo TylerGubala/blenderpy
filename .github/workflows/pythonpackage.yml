@@ -32,7 +32,7 @@ jobs:
       run: |
         if [ -f setup.py ]; then rm setup.py; fi
         cp "bpy/setup.py" .
-        python setup.py install --user
+        python setup.py
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
