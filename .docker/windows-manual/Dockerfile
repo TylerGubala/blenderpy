@@ -2,6 +2,9 @@ FROM winamd64/python:3.7.9-windowsservercore-1809
 
 WORKDIR /blenderpy
 
+# Restore the default Windows shell for correct batch processing.
+SHELL ["cmd", "/S", "/C"]
+
 # Download the Build Tools bootstrapper.
 ADD https://aka.ms/vs/16/release/vs_buildtools.exe vs_buildtools.exe
 
