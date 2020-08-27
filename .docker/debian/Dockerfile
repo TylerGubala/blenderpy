@@ -1,4 +1,4 @@
-FROM debian:buster-20200803
+FROM debian:sid-20200803
 
 WORKDIR /blenderpy
 
