@@ -5,7 +5,20 @@ WORKDIR /blenderpy
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
-RUN apt-get -y install build-essential cmake curl git libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev subversion zlib1g-dev
+RUN apt-get -y install \
+    build-essential \
+    cmake \
+    curl \
+    git \
+    libx11-dev \
+    libxxf86vm-dev \
+    libxcursor-dev \
+    libxi-dev \
+    libxrandr-dev \
+    libxinerama-dev \
+    libglew-dev \
+    subversion \
+    zlib1g-dev
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
