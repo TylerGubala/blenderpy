@@ -37,3 +37,7 @@ RUN cd blender && \
     make update
 RUN cd blender && \
     make bpy
+	
+RUN cp /blenderpy/build_linux_bpy/bin/bpy.so /usr/local/lib/python3.7/site-packages
+RUN cd /blenderpy/build_linux_bpy && \
+	find bin -maxdepth 1 -type d -exec cp -R {} /usr/local/lib/python3.7/site-packages \;
