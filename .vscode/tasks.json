@@ -111,15 +111,7 @@
         {
             "label": "Docker - Full Clean",
             "type": "shell",
-            "linux":{
-                "command": ".vscode/tasks/unix/docker_full_clean.sh"
-            },
-            "osx":{
-                "command": ".vscode/tasks/unix/docker_full_clean.sh"
-            },
-            "windows":{
-                "command": ".vscode/tasks/windows/docker_full_clean.ps1"
-            },
+            "command": "docker prune --all --force --volumes",
             "problemMatcher": []
         },
         {
