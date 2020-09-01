@@ -111,7 +111,7 @@
         {
             "label": "Docker - Full Clean",
             "type": "shell",
-            "command": "docker prune --all --force --volumes",
+            "command": "docker system prune --all --force --volumes",
             "problemMatcher": []
         },
         {
