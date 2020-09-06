@@ -3,21 +3,7 @@ FROM fedora:rawhide
 WORKDIR /blenderpy
 
 RUN sudo dnf -y update
-RUN sudo dnf -y install \
-    cmake \
-    gcc \
-    gcc-c++ \
-    git \
-    glew-devel \
-    libX11-devel \
-    libXi-devel \
-    libXcursor-devel \
-    libXrandr-devel \
-    libXinerama-devel \
-    libstdc++-static \
-    make \
-    subversion \
-    zlib-devel
+RUN sudo dnf -y install cmake findutils gcc gcc-c++ git glew-devel libX11-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel libXxf86vm-devel libstdc++-static make subversion zlib-devel
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
@@ -37,5 +23,6 @@ RUN cd blender && \
     make bpy
 	
 RUN cp /blenderpy/build_linux_bpy/bin/bpy.so /usr/local/lib/python3.7/site-packages
-RUN cd /blenderpy/build_linux_bpy && \
-	find bin -maxdepth 1 -type d -exec cp -R {} /usr/local/lib/python3.7/site-packages \;
+RUN mv /blenderpy/lib/linux_centos7_x86_64/python/lib/python3.7/site-packages/2.91 /usr/local/lib/python3.7/site-packages/
+	
+CMD python3 -c "import bpy;print(dir(bpy.types));"
