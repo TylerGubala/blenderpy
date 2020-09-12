@@ -21,7 +21,8 @@ RUN vs_buildtools.exe --quiet --wait --norestart --nocache \
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations
+RUN cd Python-3.7.7 && \
     make install
 
 RUN py -m pip install -U pip
@@ -30,6 +31,6 @@ COPY . /blenderpy
 
 RUN py -m pip install -r requirements.txt
 RUN cp /blenderpy/bpy/setup.py /blenderpy
-RUN py setup.py -v
+RUN py -m pip install . -v
 
 CMD [ "py", "-c", '"import bpy"' ]

@@ -21,7 +21,8 @@ RUN vs_buildtools.exe --quiet --wait --norestart --nocache \
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations
+RUN cd Python-3.7.7 && \
     make install
 
 RUN git clone https://git.blender.org/blender.git

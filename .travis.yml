@@ -1,16 +1,24 @@
+language: python
+
 notifications:
   email: false
 
-matrix:
+jobs:
   include:
     - sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
            PLAT=manylinux2014_x86_64
+    - os: osx
+      language: generic
+      env: TOXENV=py37
+
+before_install:
+  - .travis/before_install.sh
 
 install:
-  - docker build -t blenderpy/manylinux -f .docker/manylinux/Dockerfile .
+  - .travis/install.sh
 
 script:
-  - docker run blenderpy/manylinux
+  - .travis/script.sh

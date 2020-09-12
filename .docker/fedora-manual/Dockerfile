@@ -3,12 +3,31 @@ FROM fedora:rawhide
 WORKDIR /blenderpy
 
 RUN sudo dnf -y update
-RUN sudo dnf -y install cmake findutils gcc gcc-c++ git glew-devel libX11-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel libXxf86vm-devel libstdc++-static make subversion zlib-devel
+RUN sudo dnf -y install \
+    cmake \
+    findutils \
+    gcc \
+    gcc-c++ \
+    git \
+    glew-devel \
+    libffi-devel \
+    libstdc++-static \
+    libX11-devel \
+    libXi-devel \
+    libXcursor-devel \
+    libXrandr-devel \
+    libXinerama-devel \
+    libXxf86vm-devel \
+    make \
+    openssl-devel \
+    subversion \
+    zlib-devel
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations
+RUN cd Python-3.7.7 && \
     make install
 
 RUN git clone https://git.blender.org/blender.git

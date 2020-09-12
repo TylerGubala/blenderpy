@@ -208,7 +208,6 @@
                 "Docker - Build Raspbian Manual", 
                 "Docker - Build Ubuntu", 
                 "Docker - Build Ubuntu Manual"],
-            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {
@@ -216,7 +215,6 @@
             "type": "shell",
             "dependsOn":["Docker - Build Windows",
                 "Docker - Build Windows Manual"],
-            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {
@@ -224,7 +222,6 @@
             "type": "shell",
             "dependsOn": ["Docker - Build All Linux",
                 "Docker - Build All Windows"],
-            "dependsOrder": "sequence",
             "problemMatcher": []
         }
     ]

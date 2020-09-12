@@ -8,6 +8,8 @@ RUN apt-get -y install \
     cmake \
     curl \
     git \
+    libffi-dev \
+    libssl-dev \
     libx11-dev \
     libxxf86vm-dev \
     libxcursor-dev \
@@ -21,13 +23,14 @@ RUN apt-get -y install \
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations
+RUN cd Python-3.7.7 && \
     make install
 
 RUN python3.7 -m pip install -U pip
-RUN python3.7 -m pip install wheel
+RUN python3.7 -m pip install wheel future-fstrings
 
 COPY . /blenderpy
 
 RUN cp /blenderpy/bpy/setup.py /blenderpy
-RUN python3.7 setup.py
+RUN python3.7 -m pip install . -v

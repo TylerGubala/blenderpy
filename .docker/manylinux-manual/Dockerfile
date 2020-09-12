@@ -8,6 +8,7 @@ RUN yum install -y \
     git \
     git-lfs \
     glew-devel \
+    libffi-devel \
     libX11-devel \
     libXcursor-devel \
     libXi-devel \
@@ -15,12 +16,14 @@ RUN yum install -y \
     libxml2-devel \
     libXrandr-devel \
     make \
+    openssl-devel \
     subversion
 
 ADD https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz Python-3.7.7.tgz
 RUN tar xzf Python-3.7.7.tgz
 RUN cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations
+RUN cd Python-3.7.7 && \
     make install
 
 RUN curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz -o cmake-3.17.3-Linux-x86_64.tar.gz
