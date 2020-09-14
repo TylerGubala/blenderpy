@@ -240,15 +240,10 @@ class BuildCMakeExt(build_ext):
 
         git_repo.checkout(blender_path) # Clones into 'blender'
 
-        if SYSTEM_OS_NAME == "Windows": # Only use svn on windows 
-                                        # (other platforms have 
-                                        # `make update` command)
+        self.announce("Cloning precompiled libs from svn "
+                      "(this will take a while)", level=3)
 
-            svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
-
-            self.announce("Configuring cmake project "
-                          "and building binaries "
-                          "(this will take a while)", level=3)
+        svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
 
         self.announce("Configuring cmake project "
                       "and building binaries "

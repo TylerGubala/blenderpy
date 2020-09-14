@@ -235,15 +235,11 @@ class BuildCMakeExt(build_ext):
         self.announce("Cloning precompiled libs from svn "
                       "(this will take a while)", level=3)
 
-        if SYSTEM_OS_NAME == "Windows": # Only use svn on windows 
-                                        # (other platforms have 
-                                        # `make update` command)
+        svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
 
-            svn_repo.checkout(setup_root_path) # Checkout into 'lib' (automatic)
-
-            self.announce("Configuring cmake project "
-                          "and building binaries "
-                          "(this will take a while)", level=3)
+        self.announce("Configuring cmake project "
+                      "and building binaries "
+                      "(this will take a while)", level=3)
 
         for command in bpybuild.make.get_make_commands(source_location= blender_path,
                                                       build_location= build_path):

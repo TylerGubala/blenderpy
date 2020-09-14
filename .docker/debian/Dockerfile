@@ -13,8 +13,12 @@ RUN apt-get -y install \
     gcc \
     git \
     libffi-dev \
+    libfreetype6-dev \
     libglew-dev \
+    libjpeg-dev \
+    libpng-dev \
     libssl-dev \
+    libtbb-dev \
     libx11-dev \
     libxxf86vm-dev \
     libxcursor-dev \
