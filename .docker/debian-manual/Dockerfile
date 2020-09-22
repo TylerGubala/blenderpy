@@ -43,7 +43,6 @@ RUN cd blender && \
     make bpy
 	
 RUN cp /blenderpy/build_linux_bpy/bin/bpy.so /usr/local/lib/python3.7/site-packages
-RUN cd /blenderpy/lib/linux_centos7_x86_64/python/lib/python3.7/site-packages && \
-    find -maxdepth 1 -type d -exec cp -R {} /usr/local/lib/python3.7/site-packages/
+RUN mv /blenderpy/lib/linux_centos7_x86_64/python/lib/python3.7/site-packages/2.91 /usr/local/lib/python3.7/site-packages/
 	
 CMD python3 -c "import bpy;print(dir(bpy.types));"

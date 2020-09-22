@@ -13,12 +13,8 @@ RUN apt-get -y install \
     gcc \
     git \
     libffi-dev \
-    libfreetype6-dev \
     libglew-dev \
-    libjpeg-dev \
-    libpng-dev \
     libssl-dev \
-    libtbb-dev \
     libx11-dev \
     libxxf86vm-dev \
     libxcursor-dev \
@@ -36,7 +32,7 @@ RUN cd Python-3.7.7 && \
     make install
 
 RUN python3.7 -m pip install -U pip
-RUN python3.7 -m pip install wheel future-fstrings
+RUN python3.7 -m pip install wheel future-fstrings bpy-build==1.6.1
 
 COPY . /blenderpy
 
