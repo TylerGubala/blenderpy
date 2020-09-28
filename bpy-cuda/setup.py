@@ -37,7 +37,7 @@ SYSTEM_OS_NAME = platform.system()
 # Change the Blender desired API version variable to build different versions
 # of the Blender API. For instance, '2.79b' is the same version of the API
 # as you would get when opening the Blender application at v2.79b
-VERSION = "2.82"
+VERSION = "2.90"
 VERSION_TUPLE = pkg_resources.parse_version(VERSION)
 
 # CUDA render is only supported with versions greater than 2.81! (I think?)
