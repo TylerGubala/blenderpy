@@ -6,13 +6,13 @@
         {
             "label": "Publish to PyPI",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/publish.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/publish.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/publish.bat"
             },
             "problemMatcher": []
@@ -20,13 +20,13 @@
         {
             "label": "Publish to PyPI [TEST]",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/publish_test.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/publish_test.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/publish_test.bat"
             },
             "problemMatcher": []
@@ -34,13 +34,13 @@
         {
             "label": "Install Dev Dependencies",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/dev_install.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/dev_install.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/dev_install.bat"
             },
             "problemMatcher": []
@@ -48,13 +48,13 @@
         {
             "label": "Build All",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/build_all.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/build_all.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/build_all.bat"
             },
             "problemMatcher": [],
@@ -66,13 +66,13 @@
         {
             "label": "Build Normal",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/build_normal.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/build_normal.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/build_normal.bat"
             },
             "group": "build",
@@ -81,13 +81,13 @@
         {
             "label": "Build CUDA",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/build_cuda.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/build_cuda.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/build_cuda.bat"
             },
             "group": "build",
@@ -96,13 +96,13 @@
         {
             "label": "Build Optix",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/build_optix.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/build_optix.sh"
             },
-            "windows":{
+            "windows": {
                 "command": ".vscode/tasks/windows/build_optix.bat"
             },
             "group": "build",
@@ -115,113 +115,97 @@
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build Debian",
+            "label": "Docker - Build Builder Only",
             "type": "shell",
-            "command": "docker build -t blenderpy/debian -f .docker/debian/Dockerfile .",
+            "command": "docker build --target builder -t blenderpy/builder .",
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build Debian Manual",
+            "label": "Docker - Build Debian",
             "type": "shell",
-            "command": "docker build -t blenderpy/debian-manual -f .docker/debian-manual/Dockerfile .",
+            "command": "docker build --target blenderpy-debian -t blenderpy/debian .",
             "problemMatcher": []
         },
         {
             "label": "Docker - Build Fedora",
             "type": "shell",
-            "command": "docker build -t blenderpy/fedora -f .docker/fedora/Dockerfile .",
+            "command": "docker build --target blenderpy-fedora -t blenderpy/fedora .",
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build Fedora Manual",
+            "label": "Docker - Build CentOS",
             "type": "shell",
-            "command": "docker build -t blenderpy/fedora-manual -f .docker/fedora-manual/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Manylinux",
-            "type": "shell",
-            "command": "docker build -t blenderpy/manylinux -f .docker/manylinux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Manylinux Manual",
-            "type": "shell",
-            "command": "docker build -t blenderpy/manylinux-manual -f .docker/manylinux-manual/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Raspbian Manual",
-            "type": "shell",
-            "command": "docker build -t blenderpy/raspbian-manual -f .docker/raspbian-manual/Dockerfile .",
+            "command": "docker build --target blenderpy-centos -t blenderpy/manylinux .",
             "problemMatcher": []
         },
         {
             "label": "Docker - Build Ubuntu",
             "type": "shell",
-            "command": "docker build -t blenderpy/ubuntu -f .docker/ubuntu/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Ubuntu Manual",
-            "type": "shell",
-            "command": "docker build -t blenderpy/ubuntu-manual -f .docker/ubuntu-manual/Dockerfile .",
+            "command": "docker build --target blenderpy-ubuntu -t blenderpy/ubuntu .",
             "problemMatcher": []
         },
         {
             "label": "Docker - Build Windows",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": ".vscode/tasks/unix/docker_build_windows.sh"
             },
-            "osx":{
+            "osx": {
                 "command": ".vscode/tasks/unix/docker_build_windows.sh"
             },
-            "windows":{
-                "command": "docker build -t blenderpy/windows -f .docker/windows/Dockerfile ."
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Windows Manual",
-            "type": "shell",
-            "linux":{
-                "command": ".vscode/tasks/unix/docker_build_all.sh"
-            },
-            "osx":{
-                "command": ".vscode/tasks/unix/docker_build_all.sh"
-            },
-            "windows":{
-                "command": "docker build -t blenderpy/windows-manual -f .docker/windows-manual/Dockerfile ."
+            "windows": {
+                "command": "docker build --target blenderpy-windows -t blenderpy/windows ."
             },
             "problemMatcher": []
         },
         {
             "label": "Docker - Build All Linux",
             "type": "shell",
-            "dependsOn":["Docker - Build Debian", 
-                "Docker - Build Debian Manual", 
-                "Docker - Build Fedora", 
-                "Docker - Build Fedora Manual", 
-                "Docker - Build Manylinux", 
-                "Docker - Build Manylinux Manual", 
-                "Docker - Build Raspbian Manual", 
-                "Docker - Build Ubuntu", 
-                "Docker - Build Ubuntu Manual"],
+            "dependsOn": [
+                "Docker - Build Debian",
+                "Docker - Build Fedora",
+                "Docker - Build Manylinux",
+                "Docker - Build Ubuntu"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Docker - Build All Windows",
             "type": "shell",
-            "dependsOn":["Docker - Build Windows",
-                "Docker - Build Windows Manual"],
+            "dependsOn": [
+                "Docker - Build Windows",
+                "Docker - Build Windows Manual"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Docker - Build All",
             "type": "shell",
-            "dependsOn": ["Docker - Build All Linux",
-                "Docker - Build All Windows"],
+            "dependsOn": [
+                "Docker - Build All Linux",
+                "Docker - Build All Windows"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker - Delete All Containers & Volumes",
+            "type": "shell",
+            "command": "docker rm -vf $(docker ps -a -q)"
+        },
+        {
+            "label": "Docker - Delete All Images",
+            "type": "shell",
+            "command": "docker rmi -f $(docker images -a -q)",
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker - Delete EVERYTHING",
+            "type": "shell",
+            "dependsOn": [
+                "Docker - Delete All Containers & Volumes",
+                "Docker - Delete All Images"
+            ],
+            "dependsOrder": "sequence",
             "problemMatcher": []
         }
     ]

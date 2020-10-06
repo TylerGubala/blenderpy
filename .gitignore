@@ -1,6 +1,8 @@
-# setup.py is copied from bpy, bpy-cuda or bpy-optix just for build
-# setup.py in the root dir is not valid
-setup.py
+# Docker uses source code located at `./Blender/` for build
+Blender/
+
+# To build with optix support we need the linux optix installer here
+Optix/
 
 # VSCode stuff people will probably find annoying
 .vscode/settings.json
