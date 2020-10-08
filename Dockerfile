@@ -6,7 +6,8 @@ RUN yum-config-manager --add-repo https://developer.download.nvidia.com/compute/
     yum -y clean all
 
 RUN yum -y install \
-    cuda-toolkit-11-1.x86_64  \
+    centos-release-scl \
+    cuda-toolkit-10-1.x86_64  \
     gcc \
     gcc-c++ \
     glew-devel \
@@ -20,6 +21,10 @@ RUN yum -y install \
     make \
     openssl-devel && \
     yum -y clean all
+RUN yum -y install devtoolset-7 && \
+    yum -y clean all
+# installs to /opt/rh/devtoolset-7/root/bin/gcc
+RUN ln -sf /opt/rh/devtoolset-7/root/bin/gcc /usr/local/cuda/bin/gcc
 
 ADD https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz cmake-3.17.3-Linux-x86_64.tar.gz
 RUN tar xzf cmake-3.17.3-Linux-x86_64.tar.gz

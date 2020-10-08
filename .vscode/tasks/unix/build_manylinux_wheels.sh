@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -e -u -x
 
 function repair_wheel {
