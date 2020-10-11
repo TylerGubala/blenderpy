@@ -1,5 +1,8 @@
-# no point in copying .docker directory
-.docker/
+# no point in copying .containers directory
+.containers/
+.github/
+.travis/
+Blender/
 
 # VSCode stuff people will probably find annoying
 .vscode/settings.json
