@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: ./.containers/Docker/Linux/Dockerfile
+      target: builder
+    command: bash -c "/blenderpy/.vscode/tasks/unix/build.sh /Blender/blender && /blenderpy/.vscode/tasks/unix/build_manylinux_wheels.sh"
+    container_name: blenderpy-wheel-builder
+    volumes: 
+        - ./Blender:/Blender:delegated
+        - ./dist:/blenderpy/dist:delegated
