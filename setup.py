@@ -224,7 +224,7 @@ class BuildCMakeExt(build_ext):
         # different place. See comments above for additional information
 
 setup(name='bpy',
-      version="2.91",
+      version="2.91a0",
       packages=find_packages(),
       ext_modules=[CMakeExtension(name="bpy")],
       entry_points={
