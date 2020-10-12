@@ -23,6 +23,6 @@ for whl in wheelhouse/*.whl; do
     rm "$whl"
 done
 
-for whl in wheelhouse/*.whl; do
+for whl in /blenderpy/wheelhouse/*.whl; do
     cp "$whl" /blenderpy/dist/
 done

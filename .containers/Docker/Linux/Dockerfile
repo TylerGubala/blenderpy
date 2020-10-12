@@ -31,7 +31,7 @@ ENV PATH="/blenderpy/cmake-3.17.3-Linux-x86_64/bin:${PATH}"
 
 COPY . /blenderpy
 
-RUN /Optix/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64.sh --include-subdir --skip-license
+RUN /blenderpy/Optix/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64.sh --include-subdir --skip-license
 
 FROM centos:centos8 AS blenderpy-centos
 
