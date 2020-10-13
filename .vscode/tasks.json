@@ -4,44 +4,288 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Publish to PyPI",
+            "label": "Python - Publish to PyPI",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "-m",
+                "twine",
+                "upload",
+                "${workspaceFolder}/dist/*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Publish to PyPI [TEST]",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "-m",
+                "twine",
+                "upload",
+                "--repository",
+                "pypitest",
+                "${workspaceFolder}/dist/*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Upgrade pip",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "-m",
+                "pip",
+                "install",
+                "-U",
+                "pip"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Install Dependencies",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "-m",
+                "pip",
+                "install",
+                "-r",
+                "${workspaceFolder}/requirements.txt"
+            ],
+            "dependsOn": [
+                "Python - Upgrade pip"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Make Blender Source & Libs Folder",
             "type": "shell",
             "linux": {
-                "command": ".vscode/tasks/unix/publish.sh"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "osx": {
-                "command": ".vscode/tasks/unix/publish.sh"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "windows": {
-                "command": ".vscode/tasks/windows/publish.bat"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "problemMatcher": []
         },
         {
-            "label": "Publish to PyPI [TEST]",
+            "label": "Make Build Folder",
             "type": "shell",
             "linux": {
-                "command": ".vscode/tasks/unix/publish_test.sh"
+                "command": "mkdir -p ${workspaceFolder}/build/linux"
             },
             "osx": {
-                "command": ".vscode/tasks/unix/publish_test.sh"
+                "command": "mkdir -p ${workspaceFolder}/build/osx"
             },
             "windows": {
-                "command": ".vscode/tasks/windows/publish_test.bat"
+                "command": "mkdir -p ${workspaceFolder}/build/windows"
             },
             "problemMatcher": []
         },
         {
-            "label": "Install Dev Dependencies",
+            "label": "Make OptiX Folder",
             "type": "shell",
             "linux": {
-                "command": ".vscode/tasks/unix/dev_install.sh"
+                "command": "mkdir -p ${workspaceFolder}/OptiX"
             },
             "osx": {
-                "command": ".vscode/tasks/unix/dev_install.sh"
+                "command": "mkdir -p ${workspaceFolder}/OptiX"
             },
             "windows": {
-                "command": ".vscode/tasks/windows/dev_install.bat"
+                "command": "mkdir -p ${workspaceFolder}/OptiX"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Browser - Get OptiX [Requires Registration]",
+            "type": "shell",
+            "linux": {
+                "command": "open https://developer.nvidia.com/designworks/optix/download"
+            },
+            "osx": {
+                "command": "open https://developer.nvidia.com/designworks/optix/download"
+            },
+            "windows": {
+                "command": "start https://developer.nvidia.com/designworks/optix/download"
+            },
+            "dependsOn": [
+                "Make OptiX Folder"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Clone Blender Sources",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "clone",
+                "git://git.blender.org/blender.git"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender"
+            },
+            "dependsOn": [
+                "Make Blender Source & Libs Folder"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Fetch Blender Commits",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "fetch"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Pull Blender Commits",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "pull"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Checkout Blender Tag",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "checkout",
+                "tags/${input:BfGitTag}",
+                "-b",
+                "origin/master"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Fetch Blender Commits"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Checkout Blender Master",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "checkout",
+                "master"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Fetch Blender Commits"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Switch To Blender Master [Checkout & Pull]",
+            "dependsOn": [
+                "Git - Checkout Blender Master",
+                "Git - Pull Blender Commits"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Update Blender Sources [Checks out master branch]",
+            "type": "shell",
+            "command": "./make update",
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Checkout Blender Master"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "SVN - Checkout Blender Precompiled Libs Trunk",
+            "type": "process",
+            "command": "svn",
+            "linux": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64/"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/"
+                ]
+            },
+            "windows": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/${input:BfSvnTrunkNTPlatform}"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/lib"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "SVN - Checkout Blender Precompiled Libs Tag",
+            "type": "process",
+            "command": "svn",
+            "linux": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/linux_centos7_x86_64/"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/darwin/"
+                ]
+            },
+            "windows": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/${input:BfSvnTagNTPlatform}"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/lib"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "linux": {
+                "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON -DOPTIX_ROOT_DIR=/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/linux"
+                }
+            },
+            "osx": {
+                "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/osx"
+                }
+            },
+            "windows": {
+                "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON -DOPTIX_ROOT_DIR=/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/windows"
+                }
             },
             "problemMatcher": []
         },
@@ -49,13 +293,22 @@
             "label": "Build",
             "type": "shell",
             "linux": {
-                "command": ".vscode/tasks/unix/build.sh"
+                "command": "./make install",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/linux"
+                }
             },
             "osx": {
-                "command": ".vscode/tasks/unix/build.sh"
+                "command": "./make install",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/osx"
+                }
             },
             "windows": {
-                "command": ".vscode/tasks/windows/build.bat"
+                "command": "./make install",
+                "options": {
+                    "cwd": "${workspaceFolder}/build/windows"
+                }
             },
             "problemMatcher": [],
             "group": {
@@ -65,88 +318,46 @@
         },
         {
             "label": "Docker - Full Clean",
-            "type": "shell",
-            "command": "docker system prune --all --force --volumes",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Linux Builder Only",
-            "type": "shell",
-            "command": "docker build --target builder -t blenderpy/builder -f ./.containers/Docker/Linux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build CentOS",
-            "type": "shell",
-            "command": "docker build --target blenderpy-centos -t blenderpy/centos -f ./.containers/Docker/Linux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Debian",
-            "type": "shell",
-            "command": "docker build --target blenderpy-debian -t blenderpy/debian -f ./.containers/Docker/Linux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Fedora",
-            "type": "shell",
-            "command": "docker build --target blenderpy-fedora -t blenderpy/fedora -f ./.containers/Docker/Linux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Ubuntu",
-            "type": "shell",
-            "command": "docker build --target blenderpy-ubuntu -t blenderpy/ubuntu -f ./.containers/Docker/Linux/Dockerfile .",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build Linux Non-Builders",
-            "type": "shell",
-            "dependsOn":[
-                "Docker - Build CentOS",
-                "Docker - Build Debian",
-                "Docker - Build Fedora",
-                "Docker - Build Ubuntu"
-            ]
-        },
-        {
-            "label": "Docker - Build Windows",
-            "type": "shell",
-            "linux": {
-                "command": ".vscode/tasks/unix/docker_build_windows.sh"
-            },
-            "osx": {
-                "command": ".vscode/tasks/unix/docker_build_windows.sh"
-            },
-            "windows": {
-                "command": "docker build --target blenderpy-windows -t blenderpy/windows -f ./.containers/Docker/Windows/Dockerfile ."
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build All Linux",
-            "type": "shell",
-            "dependsOn":[
-                "Docker - Build Linux Builder Only",
-                "Docker - Build Linux Non-Builders"
-            ],
-            "dependsOrder": "sequence",
-            "problemMatcher": []
-        },
-        {
-            "label": "Docker - Build All Windows",
-            "type": "shell",
-            "dependsOn": [
-                "Docker - Build Windows"
+            "type": "process",
+            "command": "docker",
+            "args": [
+                "system",
+                "prune",
+                "--all",
+                "--force",
+                "--volumes"
             ],
             "problemMatcher": []
         },
         {
-            "label": "Docker - Build All",
-            "type": "shell",
-            "dependsOn": [
-                "Docker - Build All Linux",
-                "Docker - Build All Windows"
+            "label": "Docker - Create Manylinux Wheel Build Environment",
+            "type": "process",
+            "command": "docker",
+            "args": [
+                "build",
+                "--target",
+                "blenderpy-manylinux-wheel-builder",
+                "-t",
+                "blenderpy/manylinux-wheel-builder",
+                "-f",
+                "${workspaceFolder}/.containers/Dockerfile",
+                "."
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker - Create Windows Wheel Build Environment",
+            "type": "process",
+            "command": "docker",
+            "args": [
+                "build",
+                "--target",
+                "blenderpy-windows-wheel-builder",
+                "-t",
+                "blenderpy/windows-wheel-builder",
+                "-f",
+                "${workspaceFolder}/.containers/Dockerfile",
+                "."
             ],
             "problemMatcher": []
         },
@@ -171,6 +382,40 @@
             ],
             "dependsOrder": "sequence",
             "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "BfGitTag",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "cd Blender/blender && git tag"
+            }
+        },
+        {
+            "id": "BfSvnTag",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "svn ls https://svn.blender.org/svnroot/bf-blender/tags/"
+            }
+        },
+        {
+            "id": "BfSvnTrunkNTPlatform",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "svn ls https://svn.blender.org/svnroot/bf-blender/trunk/lib/ | findstr \"^win\""
+            }
+        },
+        {
+            "id": "BfSvnTagNTPlatform",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "svn ls https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/ | findstr \"^win\""
+            }
         }
     ]
 }
