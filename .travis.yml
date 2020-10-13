@@ -10,10 +10,13 @@ jobs:
       env: TOXENV=py37
 
 before_install:
+  - chmod u+x .travis/before_install.sh
   - .travis/before_install.sh
 
 install:
+  - chmod u+x .travis/install.sh
   - .travis/install.sh
 
 script:
+  - chmod u+x .travis/script.sh
   - .travis/script.sh
