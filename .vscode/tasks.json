@@ -59,21 +59,21 @@
             "problemMatcher": []
         },
         {
-            "label": "Make Blender Folder",
+            "label": "Make Blender Source & Libs Folder",
             "type": "shell",
             "linux": {
-                "command": "mkdir -p ${workspaceFolder}/Blender"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "osx": {
-                "command": "mkdir -p ${workspaceFolder}/Blender"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "windows": {
-                "command": "mkdir -p ${workspaceFolder}/Blender"
+                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "problemMatcher": []
         },
         {
-            "label": "Make Build Folders",
+            "label": "Make Build Folder",
             "type": "shell",
             "linux": {
                 "command": "mkdir -p ${workspaceFolder}/build/linux"
@@ -112,6 +112,9 @@
             "windows": {
                 "command": "start https://developer.nvidia.com/designworks/optix/download"
             },
+            "dependsOn": [
+                "Make OptiX Folder"
+            ],
             "problemMatcher": []
         },
         {
@@ -124,6 +127,142 @@
             ],
             "options": {
                 "cwd": "${workspaceFolder}/Blender"
+            },
+            "dependsOn": [
+                "Make Blender Source & Libs Folder"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Fetch Blender Commits",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "fetch"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Pull Blender Commits",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "pull"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Checkout Blender Tag",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "checkout",
+                "tags/${input:BfGitTag}",
+                "-b",
+                "origin/master"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Fetch Blender Commits"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Checkout Blender Master",
+            "type": "process",
+            "command": "git",
+            "args": [
+                "checkout",
+                "master"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Fetch Blender Commits"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Git - Switch To Blender Master [Checkout & Pull]",
+            "dependsOn": [
+                "Git - Checkout Blender Master",
+                "Git - Pull Blender Commits"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Update Blender Sources [Checks out master branch]",
+            "type": "shell",
+            "command": "./make update",
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/blender"
+            },
+            "dependsOn": [
+                "Git - Checkout Blender Master"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "SVN - Checkout Blender Precompiled Libs Trunk",
+            "type": "process",
+            "command": "svn",
+            "linux": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64/"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/"
+                ]
+            },
+            "windows": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/trunk/lib/${input:BfSvnTrunkNTPlatform}"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/lib"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "SVN - Checkout Blender Precompiled Libs Tag",
+            "type": "process",
+            "command": "svn",
+            "linux": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/linux_centos7_x86_64/"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/darwin/"
+                ]
+            },
+            "windows": {
+                "args": [
+                    "checkout",
+                    "https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/${input:BfSvnTagNTPlatform}"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/Blender/lib"
             },
             "problemMatcher": []
         },
@@ -251,15 +390,7 @@
             "type": "command",
             "command": "shellCommand.execute",
             "args": {
-                "command": "git ls-remote --tags git://git.blender.org/blender.git"
-            }
-        },
-        {
-            "id": "BfGitBranch",
-            "type": "command",
-            "command": "shellCommand.execute",
-            "args": {
-                "command": "git ls-remote --heads git://git.blender.org/blender.git"
+                "command": "cd Blender/blender && git tag"
             }
         },
         {
@@ -268,6 +399,22 @@
             "command": "shellCommand.execute",
             "args": {
                 "command": "svn ls https://svn.blender.org/svnroot/bf-blender/tags/"
+            }
+        },
+        {
+            "id": "BfSvnTrunkNTPlatform",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "svn ls https://svn.blender.org/svnroot/bf-blender/trunk/lib/ | findstr \"^win\""
+            }
+        },
+        {
+            "id": "BfSvnTagNTPlatform",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "svn ls https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/ | findstr \"^win\""
             }
         }
     ]
