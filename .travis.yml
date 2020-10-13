@@ -5,11 +5,6 @@ notifications:
 
 jobs:
   include:
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-           PLAT=manylinux2014_x86_64
     - os: osx
       language: generic
       env: TOXENV=py37
