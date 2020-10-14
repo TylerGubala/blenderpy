@@ -1,5 +1,5 @@
 # Docker uses source code located at `./Blender/` for build
-Blender/
+Blender/lib/
 
 # To build with optix support we need the linux optix installer here
 Optix/

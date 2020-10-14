@@ -59,7 +59,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Make Blender Source & Libs Folder",
+            "label": "Make Blender Libs Folder",
             "type": "shell",
             "linux": {
                 "command": "mkdir -p ${workspaceFolder}/Blender/lib"
@@ -118,18 +118,17 @@
             "problemMatcher": []
         },
         {
-            "label": "Git - Clone Blender Sources",
+            "label": "Git - Initialize Submodules",
             "type": "process",
             "command": "git",
             "args": [
-                "clone",
-                "git://git.blender.org/blender.git"
+                "submodule",
+                "update",
+                "--init",
+                "--recursive"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}/Blender"
-            },
             "dependsOn": [
-                "Make Blender Source & Libs Folder"
+                "Make Blender Libs Folder"
             ],
             "problemMatcher": []
         },
@@ -146,11 +145,11 @@
             "problemMatcher": []
         },
         {
-            "label": "Git - Pull Blender Commits",
+            "label": "Git - Merge Blender Commits",
             "type": "process",
             "command": "git",
             "args": [
-                "pull"
+                "merge"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/Blender/blender"
@@ -195,7 +194,7 @@
             "label": "Git - Switch To Blender Master [Checkout & Pull]",
             "dependsOn": [
                 "Git - Checkout Blender Master",
-                "Git - Pull Blender Commits"
+                "Git - Merge Blender Commits"
             ],
             "dependsOrder": "sequence",
             "problemMatcher": []
@@ -237,6 +236,9 @@
             "options": {
                 "cwd": "${workspaceFolder}/Blender/lib"
             },
+            "dependsOn": [
+                "Make Blender Libs Folder"
+            ],
             "problemMatcher": []
         },
         {
@@ -264,6 +266,17 @@
             "options": {
                 "cwd": "${workspaceFolder}/Blender/lib"
             },
+            "dependsOn": [
+                "Make Blender Libs Folder"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "First Time - Git & SVN Checkout",
+            "dependsOn": [
+                "Git - Initialize Submodules",
+                "SVN - Checkout Blender Precompiled Libs Trunk"
+            ],
             "problemMatcher": []
         },
         {
