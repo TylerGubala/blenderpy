@@ -186,22 +186,17 @@ class BuildCMakeExt(build_ext):
         if SYSTEM_OS_NAME == "Windows":
 
             bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build_windows_bpy", 'bin', 'Release')
+                                   "build", "windows", 'bin', 'Release')
 
         elif SYSTEM_OS_NAME == "Linux":
 
             bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build_linux_bpy", 'bin')
+                                   "build", "linux", 'bin')
 
         elif SYSTEM_OS_NAME == "Darwin":
 
             bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build_darwin_bpy", 'bin')
-
-        elif SYSTEM_OS_NAME == "SunOS":
-
-            bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build_sunos_bpy", 'bin')
+                                   "build", "darwin", 'bin')
             
         self.distribution.bin_dir = bin_dir
 
