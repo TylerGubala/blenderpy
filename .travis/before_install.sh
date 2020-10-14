@@ -25,4 +25,6 @@ elif [ $TRAVIS_OS_NAME = 'linux' ]; then
 
     # Install linux based dependencies
 
+    echo linux not supported
+
 fi

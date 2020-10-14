@@ -12,4 +12,6 @@ elif [ $TRAVIS_OS_NAME = 'linux' ]; then
 
     # Install blenderpy on linux
 
+    echo linux not supported
+
 fi
