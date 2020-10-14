@@ -82,7 +82,7 @@
                 "command": "mkdir -p ${workspaceFolder}/build/osx"
             },
             "windows": {
-                "command": "mkdir -p ${workspaceFolder}/build/windows"
+                "command": "New-Item -ItemType Directory -Force -Path ${workspaceFolder}/build/windows | Out-Null"
             },
             "problemMatcher": []
         },
@@ -300,6 +300,9 @@
                     "cwd": "${workspaceFolder}/build/windows"
                 }
             },
+            "dependsOn": [
+                "Make Build Folder"
+            ],
             "problemMatcher": []
         },
         {
@@ -323,6 +326,9 @@
                     "cwd": "${workspaceFolder}/build/windows"
                 }
             },
+            "dependsOn":[
+                "Configure"
+            ],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
