@@ -68,7 +68,7 @@
                 "command": "mkdir -p ${workspaceFolder}/Blender/lib"
             },
             "windows": {
-                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
+                "command": "New-Item -ItemType Directory -Force -Path ${workspaceFolder}\\Blender\\lib | Out-Null"
             },
             "problemMatcher": []
         },
