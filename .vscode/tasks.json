@@ -311,6 +311,7 @@
             "linux": {
                 "command": "./make",
                 "args": [
+                    "-j$((`nproc`+1))",
                     "install"
                 ],
                 "options": {
@@ -320,6 +321,7 @@
             "osx": {
                 "command": "./make",
                 "args": [
+                    "-j$((`nproc`+1))",
                     "install"
                 ],
                 "options": {
@@ -357,7 +359,7 @@
                 "up", 
                 "blenderpy-manylinux-wheel-builder"
             ]
-        }
+        },
         {
             "label": "Docker - Full Clean",
             "type": "process",
