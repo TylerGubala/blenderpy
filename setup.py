@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# -*- coding: future_fstrings -*-
+# -*- coding: utf-8 -*-
 """
 Build blender into a python module
 """
@@ -20,7 +20,25 @@ import struct
 import sys
 from typing import List, Set
 
+# Monkey-patch 3.4 and below
+
+if sys.version_info < (3,5):
+
+    def home_path() -> pathlib.Path:
+
+        return pathlib.Path(os.path.expanduser("~"))
+
+    pathlib.Path.home = home_path
+
+PYTHON_EXE_DIR = os.path.dirname(sys.executable)
+
 SYSTEM_OS_NAME = platform.system()
+
+# Change the Blender desired API version variable to build different versions
+# of the Blender API. For instance, 'v2.79b' is the same version of the API
+# as you would get when opening the Blender application at v2.79b
+VERSION = "2.82"
+VERSION_TUPLE = pkg_resources.parse_version(VERSION)
 
 class CMakeExtension(Extension):
     """
@@ -139,7 +157,7 @@ class InstallBlenderScripts(install_scripts):
 
                     os.remove(dst_dir)
 
-            shutil.move(scripts_dir,
+            shutil.copy(scripts_dir,
                         os.path.join(self.build_dir,
                                      os.path.basename(scripts_dir)))
 
@@ -155,58 +173,145 @@ class BuildCMakeExt(build_ext):
     """
     Builds using cmake instead of the python setuptools implicit build
     """
+    user_options = build_ext.user_options + [
+        ("bpy-prebuilt=", None, "Location of prebuilt bpy binaries"),
+        ("cuda-cycles", None, "Install with CUDA Cycles"),
+        ("optix-cycles", None, "Install with Optix Cycles"),
+        ("optix-root-dir=", None, "Custom OptiX install location")
+    ]
+
+    def initialize_options(self):
+        """Allows for `cmake_extension_prebuild_dir`
+        """
+
+        build_ext.initialize_options(self)
+        self.bpy_prebuilt = None
+        self.cuda_cycles = False
+        self.optix_cycles = False
+        self.optix_root_dir = None
+
+    def finalize_options(self):
+        """Gather `bpybindir` info, if necessary
+        """
+        build_ext.finalize_options(self)
 
     def run(self):
         """
         Perform build_cmake before doing the 'normal' stuff
         """
 
+        os.makedirs(str(pathlib.Path(self.build_temp).absolute()), 
+                    exist_ok=True)
+
         for extension in self.extensions:
+
+            extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
+
+            if isinstance(extension,CMakeExtension):
+
+                self.announce(f"Preparing the build environment for CMake "
+                              f"xxtension: \"{extension.name}\"", level=3)
+
+                os.makedirs(str(extension_path.parent.absolute()),
+                            exist_ok=True)
 
             if extension.name == "bpy":
 
-                self.copy_bpy(extension)
+                if self.bpy_prebuilt: # user assumes responsibility for built files
+
+                    self.announce(f"Using supplied prebuilt path "
+                                  f"{self.bpy_prebuilt}", level=3)
+
+                    self.copy_bpy(self.bpy_prebuilt, extension_path)
+
+                else: # we assume responsibility for built files
+
+                    git_checkout_path = pathlib.Path(os.path.join(self.build_temp, "blender"))
+                    build_path = pathlib.Path(os.path.join(self.build_temp, "build"))
+
+                    os.makedirs(str(git_checkout_path), exist_ok=True)
+                    os.makedirs(str(build_path), exist_ok=True)
+
+                    self.build_bpy(git_checkout_path, self.build_temp, build_path)
 
         super().run()
 
-    def copy_bpy(self, extension: Extension):
+    def build_bpy(self, git_checkout_path: pathlib.Path, 
+                  svn_checkout_path: pathlib.Path, build_path: pathlib.Path):
         """
-        Just move the bpy files
+        The steps required to build the extension
+        """
+        # Import bpy-make here because otherwise the script will 
+        # fail before bpy-make is retrieved
+
+        import bpybuild.sources
+        import bpybuild.make
+
+        self.announce("Searching for compatible Blender online "
+                      "(this will take a while)", level=3)
+
+        compatible_bpy = bpybuild.sources.get_compatible_sources()
+
+        if not VERSION_TUPLE in compatible_bpy:
+
+            raise Exception(f"{VERSION} bpy is not compatible with "
+                            f"{SYSTEM_OS_NAME} Python {sys.version} "
+                            f"{bpybuild.BITNESS}bit")
+
+        self.announce(f"Found compatible Blender version {VERSION}", level=3)
+
+        git_repo = compatible_bpy[VERSION_TUPLE][0][0]
+        svn_repo = compatible_bpy[VERSION_TUPLE][1][0]
+        # When using compatible_sources you always get a git and svn repo object
+
+        self.announce("Cloning Blender source from git "
+                      "(this will take a while)", level=3)
+
+        git_repo.checkout(git_checkout_path) # Clones into 'blender'
+
+        self.announce("Cloning precompiled libs from svn "
+                      "(this will take a while)", level=3)
+
+        svn_repo.checkout(svn_checkout_path) # Checkout into 'lib' (automatic)
+
+        self.announce("Configuring cmake project and building binaries "
+                      "(this will take a while)", level=3)
+
+        for command in bpybuild.make.get_make_commands(source_location= git_checkout_path,
+                                                       build_location= build_path,
+                                                       with_cuda=self.cuda_cycles,
+                                                       with_optix=self.optix_cycles,
+                                                       optix_sdk_path=self.optix_root_dir):
+
+            self.spawn(command)
+
+        # Build finished, now copy the files into the copy directory
+        # The copy directory is the parent directory of the extension (.pyd)
+
+    def copy_bpy(self, source_path: pathlib.Path, dest_path: pathlib.Path):
+        """
+        Move the bpy files
         """
 
-        self.announce("Preparing the build environment", level=3)
+        self.announce("Searching for Blender python module", level=3)
 
-        extension_path = pathlib.Path(self.get_ext_fullpath(extension.name))
-        os.makedirs(str(extension_path.parent.absolute()), exist_ok=True)
+        bpy_canidates = [os.path.join(source_path, _bpy) for _bpy in
+                         os.listdir(source_path) if
+                         os.path.isfile(os.path.join(source_path, _bpy)) and
+                         os.path.splitext(_bpy)[0].startswith('bpy') and
+                         os.path.splitext(_bpy)[1] in [".pyd", ".so"]]
+
+        if not bpy_canidates:
+
+            raise Exception(f"Could not find Blender python module in {source_path}")
+
+        bpy_path = bpy_canidates[0]
+            
+        self.distribution.bin_dir = source_path
 
         self.announce("Moving Blender python module", level=3)
 
-        bin_dir = None
-
-        if SYSTEM_OS_NAME == "Windows":
-
-            bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build", "windows", 'bin', 'Release')
-
-        elif SYSTEM_OS_NAME == "Linux":
-
-            bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build", "linux", 'bin')
-
-        elif SYSTEM_OS_NAME == "Darwin":
-
-            bin_dir = os.path.join(os.path.dirname(__file__),
-                                   "build", "darwin", 'bin')
-            
-        self.distribution.bin_dir = bin_dir
-
-        bpy_path = [os.path.join(bin_dir, _bpy) for _bpy in
-                    os.listdir(bin_dir) if
-                    os.path.isfile(os.path.join(bin_dir, _bpy)) and
-                    os.path.splitext(_bpy)[0].startswith('bpy') and
-                    os.path.splitext(_bpy)[1] in [".pyd", ".so"]][0]
-
-        shutil.copy(str(bpy_path), str(extension_path))
+        shutil.copy(str(bpy_path), str(dest_path))
 
         # After build_ext is run, the following commands will run:
         # 

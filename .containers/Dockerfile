@@ -31,7 +31,7 @@ ENV PATH="/blenderpy/cmake-3.17.3-Linux-x86_64/bin:${PATH}"
 
 COPY . /blenderpy
 
-RUN /blenderpy/OptiX/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64.sh --include-subdir --skip-license
+RUN /blenderpy/Optix/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64.sh --include-subdir --skip-license
 
 FROM winamd64/python:3.7.9-windowsservercore-1809 AS blenderpy-windows-wheel-builder
 

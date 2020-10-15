@@ -275,7 +275,7 @@
             "label": "First Time - Git & SVN Checkout",
             "dependsOn": [
                 "Git - Initialize Submodules",
-                "SVN - Checkout Blender Precompiled Libs Trunk"
+                "Update Blender Sources [Checks out master branch]"
             ],
             "problemMatcher": []
         },
@@ -309,19 +309,33 @@
             "label": "Build",
             "type": "shell",
             "linux": {
-                "command": "./make install",
+                "command": "./make",
+                "args": [
+                    "install"
+                ],
                 "options": {
                     "cwd": "${workspaceFolder}/build/linux"
                 }
             },
             "osx": {
-                "command": "./make install",
+                "command": "./make",
+                "args": [
+                    "install"
+                ],
                 "options": {
                     "cwd": "${workspaceFolder}/build/osx"
                 }
             },
             "windows": {
-                "command": "./make install",
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    ".",
+                    "--target",
+                    "INSTALL",
+                    "--config",
+                    "Release"
+                ],
                 "options": {
                     "cwd": "${workspaceFolder}/build/windows"
                 }
@@ -335,6 +349,15 @@
                 "isDefault": true
             }
         },
+        {
+            "label": "Build Manylinux Wheels [Requires Docker]",
+            "type": "process",
+            "command": "docker-compose",
+            "args": [
+                "up", 
+                "blenderpy-manylinux-wheel-builder"
+            ]
+        }
         {
             "label": "Docker - Full Clean",
             "type": "process",
