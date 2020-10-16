@@ -210,7 +210,7 @@ class BuildCMakeExt(build_ext):
             if isinstance(extension,CMakeExtension):
 
                 self.announce(f"Preparing the build environment for CMake "
-                              f"xxtension: \"{extension.name}\"", level=3)
+                              f"extension: \"{extension.name}\"", level=3)
 
                 os.makedirs(str(extension_path.parent.absolute()),
                             exist_ok=True)
@@ -370,5 +370,8 @@ setup(name='bpy',
           'install_data': InstallCMakeLibsData,
           'install_lib': InstallCMakeLibs,
           'install_scripts': InstallBlenderScripts
-          }
+          },
+      setup_requires=[
+          "bpy-build"
+      ]
      )
