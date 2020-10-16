@@ -342,7 +342,7 @@
                     "cwd": "${workspaceFolder}/build/windows"
                 }
             },
-            "dependsOn":[
+            "dependsOn": [
                 "Configure"
             ],
             "problemMatcher": [],
@@ -353,12 +353,13 @@
         },
         {
             "label": "Build Manylinux Wheels [Requires Docker]",
-            "type": "process",
+            "type": "shell",
             "command": "docker-compose",
             "args": [
-                "up", 
+                "up",
                 "blenderpy-manylinux-wheel-builder"
-            ]
+            ],
+            "problemMatcher": []
         },
         {
             "label": "Docker - Full Clean",
