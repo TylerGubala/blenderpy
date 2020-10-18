@@ -174,10 +174,10 @@ class BuildCMakeExt(build_ext):
     Builds using cmake instead of the python setuptools implicit build
     """
     user_options = build_ext.user_options + [
-        ("bpy-prebuilt=", None, "Location of prebuilt bpy binaries"),
-        ("cuda-cycles", None, "Install with CUDA Cycles"),
-        ("optix-cycles", None, "Install with Optix Cycles"),
-        ("optix-root-dir=", None, "Custom OptiX install location")
+        ("builtbpy=", None, "Location of prebuilt bpy binaries"),
+        ("cuda", None, "Install with CUDA Cycles"),
+        ("optix", None, "Install with Optix Cycles"),
+        ("optixroot=", None, "Custom OptiX install location")
     ]
 
     def initialize_options(self):
@@ -185,15 +185,10 @@ class BuildCMakeExt(build_ext):
         """
 
         build_ext.initialize_options(self)
-        self.bpy_prebuilt = None
-        self.cuda_cycles = False
-        self.optix_cycles = False
-        self.optix_root_dir = None
-
-    def finalize_options(self):
-        """Gather `bpybindir` info, if necessary
-        """
-        build_ext.finalize_options(self)
+        self.builtbpy = None
+        self.cuda = None
+        self.optix = None
+        self.optixroot = None
 
     def run(self):
         """
@@ -217,12 +212,12 @@ class BuildCMakeExt(build_ext):
 
             if extension.name == "bpy":
 
-                if self.bpy_prebuilt: # user assumes responsibility for built files
+                if self.builtbpy: # user assumes responsibility for built files
 
                     self.announce(f"Using supplied prebuilt path "
-                                  f"{self.bpy_prebuilt}", level=3)
+                                  f"{self.builtbpy}", level=3)
 
-                    self.copy_bpy(self.bpy_prebuilt, extension_path)
+                    self.copy_bpy(self.builtbpy, extension_path)
 
                 else: # we assume responsibility for built files
 
@@ -279,9 +274,9 @@ class BuildCMakeExt(build_ext):
 
         for command in bpybuild.make.get_make_commands(source_location= git_checkout_path,
                                                        build_location= build_path,
-                                                       with_cuda=self.cuda_cycles,
-                                                       with_optix=self.optix_cycles,
-                                                       optix_sdk_path=self.optix_root_dir):
+                                                       with_cuda=self.cuda,
+                                                       with_optix=self.optix,
+                                                       optix_sdk_path=self.optixroot):
 
             self.spawn(command)
 
@@ -336,7 +331,7 @@ setup(name='bpy',
           ]
       },
       description='Blender as a python module',
-      long_description=open("./README.md", 'r').read(),
+      long_description=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"README.md"), 'r').read(),
       long_description_content_type="text/markdown",
       keywords="Blender, 3D, Animation, Renderer, Rendering",
       classifiers=["Development Status :: 3 - Alpha",

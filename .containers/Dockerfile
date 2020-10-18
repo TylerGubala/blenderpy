@@ -8,6 +8,7 @@ RUN yum -y install \
     cuda-toolkit-10-1.x86_64  \
     gcc \
     gcc-c++ \
+    git \
     glew-devel \
     libffi-devel \
     libX11-devel \
@@ -17,7 +18,8 @@ RUN yum -y install \
     libxml2-devel \
     libXrandr-devel \
     make \
-    openssl-devel && \
+    openssl-devel \
+    subversion && \
     yum -y clean all
 RUN yum -y install devtoolset-7 && \
     yum -y clean all
@@ -32,6 +34,8 @@ ENV PATH="/blenderpy/cmake-3.17.3-Linux-x86_64/bin:${PATH}"
 COPY . /blenderpy
 
 RUN /blenderpy/Optix/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64.sh --include-subdir --skip-license
+
+RUN /blenderpy/.vscode/tasks/Docker/manylinux/update_python_requirements.sh
 
 FROM winamd64/python:3.7.9-windowsservercore-1809 AS blenderpy-windows-wheel-builder
 
