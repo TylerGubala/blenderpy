@@ -11,6 +11,7 @@ import pkg_resources
 import platform
 import re
 from setuptools import find_packages, setup, Extension
+from setuptools.command.build_py import build_py
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.install_lib import install_lib
@@ -169,6 +170,27 @@ class InstallBlenderScripts(install_scripts):
 
         super().run()
 
+class CMakeBuild(build_py):
+    """Create custom build 
+    """
+
+    user_options = build_py.user_options + [
+        ("builtbpy=", None, "Location of prebuilt bpy binaries"),
+        ("cuda", None, "Install with CUDA Cycles"),
+        ("optix", None, "Install with Optix Cycles"),
+        ("optixroot=", None, "Custom OptiX install location")
+    ]
+
+    def initialize_options(self):
+        """Allows for `cmake_extension_prebuild_dir`
+        """
+
+        super().initialize_options()
+        self.builtbpy = None
+        self.cuda = None
+        self.optix = None
+        self.optixroot = None
+
 class BuildCMakeExt(build_ext):
     """
     Builds using cmake instead of the python setuptools implicit build
@@ -184,11 +206,27 @@ class BuildCMakeExt(build_ext):
         """Allows for `cmake_extension_prebuild_dir`
         """
 
-        build_ext.initialize_options(self)
+        super().initialize_options()
         self.builtbpy = None
         self.cuda = None
         self.optix = None
         self.optixroot = None
+
+    def finalize_options(self):
+        """Grab options from previous call to `build`
+
+        This is required to get the options passed into --build-options
+        during bdist_wheel creation
+        """
+
+        super().finalize_options()
+
+        self.set_undefined_options('build_py',
+                                   ('builtbpy', 'builtbpy'),
+                                   ('cuda', 'cuda'),
+                                   ('optix', 'optix'),
+                                   ('optixroot', 'optixroot')
+                                   )
 
     def run(self):
         """
@@ -361,6 +399,7 @@ setup(name='bpy',
       install_requires=["numpy"],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
+          'build': CMakeBuild,
           'build_ext': BuildCMakeExt,
           'install_data': InstallCMakeLibsData,
           'install_lib': InstallCMakeLibs,

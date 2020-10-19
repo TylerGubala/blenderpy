@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ./.containers/Dockerfile
       target: blenderpy-manylinux-wheel-builder
-    command: bash -c "/blenderpy/.vscode/tasks/Docker/manylinux/build.sh"
+    command: bash -c "/blenderpy/.vscode/tasks/Docker/manylinux/build.sh && /blenderpy/.vscode/tasks/Docker/manylinux/build_wheels.sh"
     container_name: blenderpy-manylinux-wheel-builder
     volumes: 
       - ./build:/build
