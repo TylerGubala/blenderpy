@@ -14,6 +14,16 @@
             "problemMatcher": []
         },
         {
+            "label": "Python - Build Source Distribution",
+            "type": "shell",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "setup.py",
+                "sdist"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Python - Build Local Wheel File From Prebuilt Binaries",
             "type": "shell",
             "linux":{

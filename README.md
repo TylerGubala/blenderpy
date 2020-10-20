@@ -13,13 +13,21 @@ For more information, please see:
 
 ## Getting Started
 
-Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and Ubuntu). Prebuilds include "normal" installation (`bpy`), CUDA (`bpy-cuda`) and Optix (`bpy-optix`). Choosing the correct version depends on your use-case and hardware but in general `bpy` should be just fine for non-rendering automation tasks while `bpy-optix` has the best performance but requires a NVIDIA RTX Card and up to date drivers.
+Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and `manylinux`). Prebuilds are complete builds with audio, CUDA, and Optix functionality, like you would expect with installing the complete application.
+
+## Prerequisites
+
+Both building the Python package from sources and installing the `wheel` files require [the bare minimum dependencies listed on the Blender 3D wiki for building Blender](https://wiki.blender.org/wiki/Building_Blender). **Get these first before opening a new issue**.
 
 ### Installing
 
-Installing a prebuilt on these platforms is simple.
+Installing from `pypi`:
 
 `pip install bpy && bpy_post_install`
+
+Installing from `wheel` file (see [Releases](https://github.com/TylerGubala/blenderpy/releases) page):
+
+`pip install <PATH_TO_WHEEL_FILE> && bpy_post_install`
 
 ### Uninstalling
 
@@ -27,68 +35,9 @@ A unique uninstallation script is required to ensure that all traces of `bpy` ar
 
 `bpy_pre_uninstall && pip uninstall bpy`
 
-### Self Building
+### Building
 
-Building the Blender API for your own platform can be difficult, however this repo should make it easy enough for you to create your own builds by hand.
-
-#### Build from `sdist`
-
-You can build from a source distribution using `pip`.
-
-##### Prerequisites
-
-Performing a build from `sdist` requires at least the prerequisites for building Blender. See the wiki for [the list of prerequisite applications](https://github.com/TylerGubala/blenderpy/wiki#prerequisites-1).
-
-**Windows**
-```bash
-py -3.7-64 -m pip install --upgrade pip wheel future-fstrings
-```
-
-**Other**
-```bash
-python3.7 -m pip install --upgrade pip wheel future-fstrings
-```
-
-##### Build
-
-**Windows**
-```bash
-py -3.7-64 -m pip install bpy --no-binary :all:
-```
-
-**Other**
-```bash
-python3.7 -m pip install bpy --no-binary :all:
-```
-
-#### Build from repo
-
-You can also build after cloning the repository, this is helpful during development.
-
-##### Prerequisites
-
-```bash
-python3 -m pip install --upgrade pip wheel future-fstrings
-git clone https://github.com/TylerGubala/blenderpy.git
-```
-
-##### Build
-
-If you have a specific version of `bpy` you want, you have to change the `VERSION` string at the beginning of the `bpy_<optional extra>_setup.py` file.
-
-To build, run the below command.
-
-**Windows**
-
-`py bpy_setup.py sdist bdist_wheel`
-
-**Other**
-
-`python3 bpy_setup.py sdist bdist_wheel`
-
-The resultant wheel in the dist folder can be installed using pip.
-
-Post any errors you have as an issue.
+See more about building `bpy` [on the wiki page](https://github.com/TylerGubala/blenderpy/wiki/Building).
 
 ## FAQ
 
@@ -110,7 +59,7 @@ A. Blender runtime usage and compatibility with `multiprocessing` is limited, se
 
 ### Q. What about my operating system of choice?
 
-A. [MacOS support is on its way](https://github.com/TylerGubala/blenderpy/wiki/Platform---MacoOS#build-script). After that is Ubuntu.
+A. Please file a new issue if you are having trouble installing on your operating system of choice.
 
 ### Q. What about my Python version of choice?
 
