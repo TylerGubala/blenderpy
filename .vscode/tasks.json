@@ -4,6 +4,45 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Python - Build Local Wheel File From Sources",
+            "type": "shell",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "setup.py",
+                "bdist_wheel"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Build Local Wheel File From Prebuilt Binaries",
+            "type": "shell",
+            "linux":{
+                "command": "${config:python.pythonPath}",
+                "args": [
+                    "setup.py",
+                    "bdist_wheel",
+                    "--builtbpy=build/linux/bin/"
+                ],
+            },
+            "osx":{
+                "command": "${config:python.pythonPath}",
+                "args": [
+                    "setup.py",
+                    "bdist_wheel",
+                    "--builtbpy=build/darwin/bin/"
+                ],
+            },
+            "windows":{
+                "command": "${config:python.pythonPath}",
+                "args": [
+                    "setup.py",
+                    "bdist_wheel",
+                    "--builtbpy=build/windows/bin/Release"
+                ],
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Python - Publish to PyPI",
             "type": "process",
             "command": "${config:python.pythonPath}",
@@ -79,7 +118,7 @@
                 "command": "mkdir -p ${workspaceFolder}/build/linux"
             },
             "osx": {
-                "command": "mkdir -p ${workspaceFolder}/build/osx"
+                "command": "mkdir -p ${workspaceFolder}/build/darwin"
             },
             "windows": {
                 "command": "New-Item -ItemType Directory -Force -Path ${workspaceFolder}/build/windows | Out-Null"
@@ -291,7 +330,7 @@
             "osx": {
                 "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON",
                 "options": {
-                    "cwd": "${workspaceFolder}/build/osx"
+                    "cwd": "${workspaceFolder}/build/darwin"
                 }
             },
             "windows": {
@@ -325,7 +364,7 @@
                     "install"
                 ],
                 "options": {
-                    "cwd": "${workspaceFolder}/build/osx"
+                    "cwd": "${workspaceFolder}/build/darwin"
                 }
             },
             "windows": {
