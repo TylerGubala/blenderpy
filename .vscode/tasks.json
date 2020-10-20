@@ -357,6 +357,7 @@
             "command": "docker-compose",
             "args": [
                 "up",
+                "--build",
                 "blenderpy-manylinux-wheel-builder"
             ],
             "problemMatcher": []

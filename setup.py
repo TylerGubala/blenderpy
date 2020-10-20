@@ -11,7 +11,6 @@ import pkg_resources
 import platform
 import re
 from setuptools import find_packages, setup, Extension
-from setuptools.command.build_py import build_py
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.install_lib import install_lib
@@ -20,6 +19,7 @@ import shutil
 import struct
 import sys
 from typing import List, Set
+from wheel.bdist_wheel import bdist_wheel
 
 # Monkey-patch 3.4 and below
 
@@ -158,8 +158,10 @@ class InstallBlenderScripts(install_scripts):
 
                     os.remove(dst_dir)
 
-            shutil.copy(scripts_dir,
-                        os.path.join(self.build_dir,
+            # Copy the blender scripts directory
+
+            shutil.copytree(scripts_dir,
+                            os.path.join(self.build_dir,
                                      os.path.basename(scripts_dir)))
 
         # Mark the scripts for installation, adding them to 
@@ -170,11 +172,11 @@ class InstallBlenderScripts(install_scripts):
 
         super().run()
 
-class CMakeBuild(build_py):
+class CMakeBuild(bdist_wheel):
     """Create custom build 
     """
 
-    user_options = build_py.user_options + [
+    user_options = bdist_wheel.user_options + [
         ("builtbpy=", None, "Location of prebuilt bpy binaries"),
         ("cuda", None, "Install with CUDA Cycles"),
         ("optix", None, "Install with Optix Cycles"),
@@ -221,7 +223,7 @@ class BuildCMakeExt(build_ext):
 
         super().finalize_options()
 
-        self.set_undefined_options('build_py',
+        self.set_undefined_options('bdist_wheel',
                                    ('builtbpy', 'builtbpy'),
                                    ('cuda', 'cuda'),
                                    ('optix', 'optix'),
@@ -399,13 +401,14 @@ setup(name='bpy',
       install_requires=["numpy"],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
-          'build': CMakeBuild,
+          'bdist_wheel': CMakeBuild,
           'build_ext': BuildCMakeExt,
           'install_data': InstallCMakeLibsData,
           'install_lib': InstallCMakeLibs,
           'install_scripts': InstallBlenderScripts
           },
       setup_requires=[
-          "bpy-build"
+          "bpy-build",
+          "wheel"
       ]
      )
