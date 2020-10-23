@@ -6,18 +6,15 @@ if [ $TRAVIS_OS_NAME = 'osx' ]; then
 
     brew install cmake git svn
 
-    mkdir -p /Blender
-    mkdir -p /build/osx
+    mkdir -p /build/darwin
 
     cd /Blender
-
-    git clone https://git.blender.org/blender.git
 
     cd blender
 
     ./make update
 
-    cd /build/osx
+    cd /build/darwin
 
     cmake /Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF
     
