@@ -15,15 +15,11 @@ before_install:
   - if [ $TRAVIS_OS_NAME = 'osx' ]; then  mkdir -p build/darwin; fi
   - if [ $TRAVIS_OS_NAME = 'linux' ]; then apt -y install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev; fi
   - if [ $TRAVIS_OS_NAME = 'linux' ]; then  mkdir -p build/linux; fi
-  - cd Blender/blender
-  - chmod u+x ./make
-  - ./make update
+  - cd Blender/blender && chmod u+x ./make && ./make update
 
 install:
-  - if [ $TRAVIS_OS_NAME = 'osx' ]; then cd ../../build/darwin; fi
-  - if [ $TRAVIS_OS_NAME = 'linux' ]; then cd ../../build/linux; fi
-  - cmake ../../Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF
-  - ./make install -j$((`nproc`+1))
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then cd ../../build/darwin && cmake ../../Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF && ./make install -j$((`nproc`+1)); fi
+  - if [ $TRAVIS_OS_NAME = 'linux' ]; then cd ../../build/linux && cmake ../../Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF && ./make install -j$((`nproc`+1)); fi
 
 script:
   - chmod u+x .travis/script.sh
