@@ -6,6 +6,7 @@ notifications:
 jobs:
   include:
     - os: osx
+      osx_image: xcode12.2
       language: generic
       env: TOXENV=py37
 
