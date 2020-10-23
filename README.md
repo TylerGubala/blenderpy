@@ -71,4 +71,4 @@ A. 32-bit support officially ended with `2.80`. See [the announcement](https://l
 
 ## Gotchas
 
-I have not tested this for platforms other than Windows Python 3.6.x at the moment. More to come soon.
+Some unique hardware and software configurations may not work, and there is no extant list of things that don't work in the Python standalone module.

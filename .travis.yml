@@ -11,12 +11,28 @@ jobs:
       env: TOXENV=py37
 
 before_install:
-  - chmod u+x .travis/before_install.sh
-  - .travis/before_install.sh
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then
+      brew install svn
+      mkdir -p build/darwin
+  
+    elif [ $TRAVIS_OS_NAME = 'linux' ]; then
+      echo linux not supported
+
+    fi
+
+  - cd Blender/blender
+  - chmod u+x ./make
+  - ./make update
 
 install:
-  - chmod u+x .travis/install.sh
-  - .travis/install.sh
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then
+      cd ../../build/darwin
+
+    elif [ $TRAVIS_OS_NAME = 'linux' ]; then
+      cd ../../build/linux
+    fi
+  - cmake ../../Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF
+  - ./make install -j$((`nproc`+1))
 
 script:
   - chmod u+x .travis/script.sh
