@@ -14,6 +14,8 @@ Much of the Blender as a Python module build orchestration is provided by VS Cod
 3. [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) - (If on Windows) For faster Docker builds, otherwise Docker produces a warning
 4. [Blender build requirements](https://wiki.blender.org/wiki/Building_Blender) - See your operating system's requirements here
 
+To see how to build, head over to [the wiki](https://github.com/TylerGubala/blenderpy/wiki).
+
 # Submit a bug report
 
 If you find something that may be wrong with the code, please feel free to submit a bug report. Try and follow the guidelines outlined [here](https://github.com/TylerGubala/blenderpy/blob/master/.github/ISSUE_TEMPLATE/bug_report.md). I will get back with you.
