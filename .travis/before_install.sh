@@ -19,7 +19,7 @@ if [ $TRAVIS_OS_NAME = 'osx' ]; then
 
     cd /build/osx
 
-    cmake /Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON
+    cmake /Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF
     
 elif [ $TRAVIS_OS_NAME = 'linux' ]; then
 
