@@ -20,12 +20,8 @@ before_install:
   - ./make update
 
 install:
-  - if [ $TRAVIS_OS_NAME = 'osx' ]; then
-      cd ../../build/darwin
-
-    elif [ $TRAVIS_OS_NAME = 'linux' ]; then
-      cd ../../build/linux
-    fi
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then cd ../../build/darwin fi
+  - if [ $TRAVIS_OS_NAME = 'linux' ]; then cd ../../build/linux fi
   - cmake ../../Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_MEM_JEMALLOC=OFF
   - ./make install -j$((`nproc`+1))
 
