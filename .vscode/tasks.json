@@ -108,6 +108,20 @@
             "problemMatcher": []
         },
         {
+            "label": "Python - Install Custom bpy",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "-m",
+                "pip",
+                "install",
+                "${workspaceFolder}",
+                "--global-option=\"build_ext\"",
+                "--global-option=\"--builtbpy=${input:PrebuiltBinariesDirectory}\"",
+                "-v"
+            ]
+        },
+        {
             "label": "Make Blender Libs Folder",
             "type": "shell",
             "linux": {
@@ -511,6 +525,12 @@
             "args": {
                 "command": "svn ls https://svn.blender.org/svnroot/bf-blender/tags/${input:BfSvnTag}lib/ | findstr \"^win\""
             }
+        },
+        {
+
+            "id": "PrebuiltBinariesDirectory",
+            "type": "promptString",
+            "description": "The location of the built blender binaries"
         }
     ]
 }
