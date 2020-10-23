@@ -11,15 +11,10 @@ jobs:
       env: TOXENV=py37
 
 before_install:
-  - if [ $TRAVIS_OS_NAME = 'osx' ]; then
-      brew install svn
-      mkdir -p build/darwin
-  
-    elif [ $TRAVIS_OS_NAME = 'linux' ]; then
-      echo linux not supported
-
-    fi
-
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install svn fi
+  - if [ $TRAVIS_OS_NAME = 'osx' ]; then  mkdir -p build/darwin fi
+  - if [ $TRAVIS_OS_NAME = 'linux' ]; then apt -y install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev fi
+  - if [ $TRAVIS_OS_NAME = 'linux' ]; then  mkdir -p build/linux fi
   - cd Blender/blender
   - chmod u+x ./make
   - ./make update
