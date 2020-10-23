@@ -3,11 +3,16 @@ Thank you for visiting the `blenderpy` repository, and viewing the contribution 
 
 # Getting Started
 
+Much of the Blender as a Python module build orchestration is provided by VS Code tasks. Some extensions are required to run some of the tasks. Please see the prerequisites.
+
 ## Prerequisites
 
 1. [Visual Studio Code](https://code.visualstudio.com/)
-    1. VS Code Python Extension
+    1. [VS Code Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+    2. [VS Code Tasks Shell Input](https://marketplace.visualstudio.com/items?itemName=augustocdias.tasks-shell-input)
 2. [Docker](https://www.docker.com/)
+3. [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) - (If on Windows) For faster Docker builds, otherwise Docker produces a warning
+4. [Blender build requirements](https://wiki.blender.org/wiki/Building_Blender) - See your operating system's requirements here
 
 # Submit a bug report
 
