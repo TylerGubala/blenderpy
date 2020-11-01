@@ -204,7 +204,7 @@ class BuildCMakeExt(build_ext):
 
         super().initialize_options()
         self.bpy_prebuilt = None
-        self.bpy_cmakeconfigureargs = None
+        self.bpy_cmake_configure_args = None
 
     def finalize_options(self):
         """Grab options from previous call to `build`
