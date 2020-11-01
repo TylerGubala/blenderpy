@@ -217,8 +217,8 @@ class BuildCMakeExt(build_ext):
 
         self.set_undefined_options('bdist_wheel',
                                    ('bpy_prebuilt', 'bpy_prebuilt'),
-                                   ('bpy_cmake_configureargs',
-                                    'bpy_cmake_configureargs')
+                                   ('bpy_cmake_configure_args',
+                                    'bpy_cmake_configure_args')
                                    )
 
     def run(self):
