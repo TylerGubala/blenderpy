@@ -177,8 +177,8 @@ class CMakeBuild(bdist_wheel):
     """
 
     user_options = bdist_wheel.user_options + [
-        ("bpy_prebuilt=", None, "Location of prebuilt bpy binaries"),
-        ("bpy_cmake_configure_args=", None, "Custom CMake options")
+        ("bpy-prebuilt=", None, "Location of prebuilt bpy binaries"),
+        ("bpy-cmake-configure-args=", None, "Custom CMake options")
     ]
 
     def initialize_options(self):
@@ -194,8 +194,8 @@ class BuildCMakeExt(build_ext):
     Builds using cmake instead of the python setuptools implicit build
     """
     user_options = build_ext.user_options + [
-        ("bpy_prebuilt=", None, "Location of prebuilt bpy binaries"),
-        ("bpy_cmake_configure_args=", None, "Custom CMake options")
+        ("bpy-prebuilt=", None, "Location of prebuilt bpy binaries"),
+        ("bpy-cmake-configure-args=", None, "Custom CMake options")
     ]
 
     def initialize_options(self):
@@ -243,13 +243,13 @@ class BuildCMakeExt(build_ext):
 
             if extension.name == "bpy":
 
-                if self.bpyprebuilt: # user assumes responsibility
+                if self.bpy_prebuilt: # user assumes responsibility
                                      # for built files
 
                     self.announce(f"Using supplied prebuilt path "
-                                  f"{self.bpyprebuilt}", level=3)
+                                  f"{self.bpy_prebuilt}", level=3)
 
-                    self.copy_bpy(self.bpyprebuilt, extension_path)
+                    self.copy_bpy(self.bpy_prebuilt, extension_path)
 
                 else: # we assume responsibility for built files
 
