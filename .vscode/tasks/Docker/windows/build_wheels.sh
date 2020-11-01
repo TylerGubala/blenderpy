@@ -1,2 +1,2 @@
-py /blenderpy/setup.y sdist bdist_wheel
+py /blenderpy/setup.py sdist bdist_wheel
 cp dist/*.whl /dist

@@ -9,7 +9,7 @@
             "command": "${config:python.pythonPath}",
             "args": [
                 "setup.py",
-                "bdist_wheel"
+                "bdist_wheel",
             ],
             "problemMatcher": []
         },
@@ -265,7 +265,8 @@
         {
             "label": "Update Blender Sources [Checks out master branch]",
             "type": "shell",
-            "command": "./make update",
+            "command": "make",
+            "args": ["update"],
             "options": {
                 "cwd": "${workspaceFolder}/Blender/blender"
             },
@@ -340,6 +341,7 @@
                 "Git - Initialize Submodules",
                 "Update Blender Sources [Checks out master branch]"
             ],
+            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {

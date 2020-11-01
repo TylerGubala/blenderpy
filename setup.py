@@ -38,7 +38,7 @@ SYSTEM_OS_NAME = platform.system()
 # Change the Blender desired API version variable to build different versions
 # of the Blender API. For instance, 'v2.79b' is the same version of the API
 # as you would get when opening the Blender application at v2.79b
-VERSION = "2.82"
+VERSION = "2.91"
 VERSION_TUPLE = pkg_resources.parse_version(VERSION)
 
 class CMakeExtension(Extension):
@@ -177,10 +177,8 @@ class CMakeBuild(bdist_wheel):
     """
 
     user_options = bdist_wheel.user_options + [
-        ("builtbpy=", None, "Location of prebuilt bpy binaries"),
-        ("cuda", None, "Install with CUDA Cycles"),
-        ("optix", None, "Install with Optix Cycles"),
-        ("optixroot=", None, "Custom OptiX install location")
+        ("bpy_prebuilt=", None, "Location of prebuilt bpy binaries"),
+        ("bpy_cmake_configure_args=", None, "Custom CMake options")
     ]
 
     def initialize_options(self):
@@ -188,20 +186,16 @@ class CMakeBuild(bdist_wheel):
         """
 
         super().initialize_options()
-        self.builtbpy = None
-        self.cuda = None
-        self.optix = None
-        self.optixroot = None
+        self.bpy_prebuilt = None
+        self.bpy_cmake_configure_args = None
 
 class BuildCMakeExt(build_ext):
     """
     Builds using cmake instead of the python setuptools implicit build
     """
     user_options = build_ext.user_options + [
-        ("builtbpy=", None, "Location of prebuilt bpy binaries"),
-        ("cuda", None, "Install with CUDA Cycles"),
-        ("optix", None, "Install with Optix Cycles"),
-        ("optixroot=", None, "Custom OptiX install location")
+        ("bpy_prebuilt=", None, "Location of prebuilt bpy binaries"),
+        ("bpy_cmake_configure_args=", None, "Custom CMake options")
     ]
 
     def initialize_options(self):
@@ -209,10 +203,8 @@ class BuildCMakeExt(build_ext):
         """
 
         super().initialize_options()
-        self.builtbpy = None
-        self.cuda = None
-        self.optix = None
-        self.optixroot = None
+        self.bpy_prebuilt = None
+        self.bpy_cmakeconfigureargs = None
 
     def finalize_options(self):
         """Grab options from previous call to `build`
@@ -224,10 +216,9 @@ class BuildCMakeExt(build_ext):
         super().finalize_options()
 
         self.set_undefined_options('bdist_wheel',
-                                   ('builtbpy', 'builtbpy'),
-                                   ('cuda', 'cuda'),
-                                   ('optix', 'optix'),
-                                   ('optixroot', 'optixroot')
+                                   ('bpy_prebuilt', 'bpy_prebuilt'),
+                                   ('bpy_cmake_configureargs',
+                                    'bpy_cmake_configureargs')
                                    )
 
     def run(self):
@@ -252,12 +243,13 @@ class BuildCMakeExt(build_ext):
 
             if extension.name == "bpy":
 
-                if self.builtbpy: # user assumes responsibility for built files
+                if self.bpyprebuilt: # user assumes responsibility
+                                     # for built files
 
                     self.announce(f"Using supplied prebuilt path "
-                                  f"{self.builtbpy}", level=3)
+                                  f"{self.bpyprebuilt}", level=3)
 
-                    self.copy_bpy(self.builtbpy, extension_path)
+                    self.copy_bpy(self.bpyprebuilt, extension_path)
 
                 else: # we assume responsibility for built files
 
@@ -276,8 +268,8 @@ class BuildCMakeExt(build_ext):
         """
         The steps required to build the extension
         """
-        # Import bpy-make here because otherwise the script will 
-        # fail before bpy-make is retrieved
+        # Import bpybuild here because otherwise the script will 
+        # fail before bpybuilt is retrieved
 
         import bpybuild.sources
         import bpybuild.make
@@ -314,9 +306,7 @@ class BuildCMakeExt(build_ext):
 
         for command in bpybuild.make.get_make_commands(source_location= git_checkout_path,
                                                        build_location= build_path,
-                                                       with_cuda=self.cuda,
-                                                       with_optix=self.optix,
-                                                       optix_sdk_path=self.optixroot):
+                                                       cmake_configure_args = self.cmake_configure_args):
 
             self.spawn(command)
 
