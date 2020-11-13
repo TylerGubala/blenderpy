@@ -40,17 +40,6 @@ PYTHON_SCRIPTS_DIR_UNIX = str(EXECUTABLE_DIR.parent.parent.absolute())
 
 SYSTEM_NAME = platform.system()
 
-class OSIsUnknownError(Exception):
-    """Error for when we cannot determine the OS
-    """
-    pass
-
-class BlenderScriptsDirUnknownError(Exception):
-    """Error for when we can't find the Blender scripts dir
-    """
-
-    pass
-
 def find_blender_scripts_directory(search_root: str) -> Optional[str]:
 
     for _dir, _dirs, _files in os.walk(search_root):
@@ -84,7 +73,7 @@ def get_python_scripts_directory() -> str:
 
     else:
 
-        raise OSIsUnknownError("Cannot determine system type: "+SYSTEM_NAME)
+        raise Exception("Cannot determine system type: "+SYSTEM_NAME)
 
 def get_blender_scripts_install_dir() -> str:
     if SYSTEM_NAME == "Darwin":
@@ -101,4 +90,4 @@ def get_blender_scripts_install_dir() -> str:
 
     else:
 
-        raise OSIsUnknownError("Cannot determine system type: "+SYSTEM_NAME)
+        raise Exception("Cannot determine system type: "+SYSTEM_NAME)

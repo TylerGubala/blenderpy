@@ -8,8 +8,7 @@ import pathlib
 import shutil
 
 # Relative imports
-from blenderpy import BlenderScriptsDirUnknownError,\
-                      find_blender_scripts_directory,\
+from blenderpy import find_blender_scripts_directory,\
                       get_blender_scripts_install_dir,\
                       get_python_scripts_directory
 
@@ -38,9 +37,8 @@ def install_scripts_directory():
 
     else:
 
-        raise BlenderScriptsDirUnknownError("Could not find Blender scripts "
-                                            "directory in "
-                                            +blender_scripts_search_root_dir)
+        raise Exception("Could not find Blender scripts directory in "
+                        +blender_scripts_search_root_dir)
 
 def post_install():
 
