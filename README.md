@@ -13,7 +13,7 @@ For more information, please see:
 
 ## Getting Started
 
-Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and `manylinux`). Prebuilds are complete builds with audio, CUDA, and Optix functionality, like you would expect with installing the complete application.
+Prebuilt wheels are provided for popular Platforms (MacOS, Windows, and `manylinux`). Prebuilds are complete builds with audio, CUDA, and Optix functionality (except for MacOS, which is missing those three), like you would expect with installing the complete application.
 
 ## Prerequisites
 
