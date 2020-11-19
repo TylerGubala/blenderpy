@@ -31,7 +31,7 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--builtbpy=build/linux/bin/"
+                    "--bpy-prebuilt=build/linux/bin/"
                 ],
             },
             "osx":{
@@ -39,7 +39,7 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--builtbpy=build/darwin/bin/"
+                    "--bpy-prebuilt=build/darwin/bin/"
                 ],
             },
             "windows":{
@@ -47,7 +47,7 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--builtbpy=build/windows/bin/Release"
+                    "--bpy-prebuilt=build/windows/bin/Release"
                 ],
             },
             "problemMatcher": []
@@ -117,7 +117,7 @@
                 "install",
                 "${workspaceFolder}",
                 "--global-option=\"build_ext\"",
-                "--global-option=\"--builtbpy=${input:PrebuiltBinariesDirectory}\"",
+                "--global-option=\"--bpy-prebuilt=${input:PrebuiltBinariesDirectory}\"",
                 "-v"
             ]
         },
@@ -360,7 +360,7 @@
                 }
             },
             "windows": {
-                "command": "cmake ${workspaceFolder}\\Blender\\blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON",
+                "command": "cmake ${workspaceFolder}\\Blender\\blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON -DWITH_WINDOWS_BUNDLE_CRT=OFF",
                 "options": {
                     "cwd": "${workspaceFolder}\\build\\windows"
                 }
