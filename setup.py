@@ -388,7 +388,7 @@ setup(name='bpy',
       author_email='gubalatyler@gmail.com',
       license='GPL-3.0',
       python_requires=">=3.7, <3.8",
-      install_requires=["numpy"],
+      install_requires=["numpy==1.19.3"],
       url="https://github.com/TylerGubala/blenderpy",
       cmdclass={
           'bdist_wheel': CMakeBuild,
