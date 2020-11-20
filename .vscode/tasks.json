@@ -4,12 +4,96 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Clean Python Build Folder",
+            "type": "shell",
+            "linux":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/build"
+                ]
+            },
+            "osx":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/build"
+                ]
+            },
+            "windows":{
+                "command": "Remove-Item",
+                "args": [
+                    "-Recurse",
+                    "-Force",
+                    "-Path",
+                    "${workspaceFolder}\\build"
+                ]
+            }
+        },
+        {
+            "label": "Clean Python Distribution Folder",
+            "type": "shell",
+            "linux":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/dist"
+                ]
+            },
+            "osx":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/dist"
+                ]
+            },
+            "windows":{
+                "command": "Remove-Item",
+                "args": [
+                    "-Recurse",
+                    "-Force",
+                    "-Path",
+                    "${workspaceFolder}\\dist"
+                ]
+            }
+        },
+        {
+            "label": "Clean Blender Build Folder",
+            "type": "shell",
+            "linux":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/Blender/build"
+                ]
+            },
+            "osx":{
+                "command": "rm",
+                "args": [
+                    "-Rf",
+                    "${workspaceFolder}/Blender/build"
+                ]
+            },
+            "windows":{
+                "command": "Remove-Item",
+                "args": [
+                    "-Recurse",
+                    "-Force",
+                    "-Path",
+                    "${workspaceFolder}\\Blender\\build"
+                ]
+            }
+        },
+        {
             "label": "Python - Build Local Wheel File From Sources",
             "type": "shell",
             "command": "${config:python.pythonPath}",
             "args": [
                 "setup.py",
                 "bdist_wheel",
+            ],
+            "dependsOn":[
+                "Clean Python Build Folder"
             ],
             "problemMatcher": []
         },
@@ -21,6 +105,9 @@
                 "setup.py",
                 "sdist"
             ],
+            "dependsOn":[
+                "Clean Python Build Folder"
+            ],
             "problemMatcher": []
         },
         {
@@ -31,7 +118,7 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--bpy-prebuilt=build/linux/bin/"
+                    "--bpy-prebuilt=${workspaceFolder}/Blender/build/linux/bin/"
                 ],
             },
             "osx":{
@@ -39,7 +126,7 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--bpy-prebuilt=build/darwin/bin/"
+                    "--bpy-prebuilt=${workspaceFolder}/Blender/build/darwin/bin/"
                 ],
             },
             "windows":{
@@ -47,13 +134,16 @@
                 "args": [
                     "setup.py",
                     "bdist_wheel",
-                    "--bpy-prebuilt=build/windows/bin/Release"
+                    "--bpy-prebuilt=${workspaceFolder}/Blender/build/windows/bin/Release"
                 ],
             },
+            "dependsOn":[
+                "Clean Python Build Folder"
+            ],
             "problemMatcher": []
         },
         {
-            "label": "Python - Publish to PyPI",
+            "label": "Python - Twine Upload to PyPI",
             "type": "process",
             "command": "${config:python.pythonPath}",
             "args": [
@@ -65,7 +155,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Python - Publish to PyPI [TEST]",
+            "label": "Python - Twine Upload to PyPI [TEST]",
             "type": "process",
             "command": "${config:python.pythonPath}",
             "args": [
@@ -76,6 +166,24 @@
                 "pypitest",
                 "${workspaceFolder}/dist/*"
             ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Publish to PyPI",
+            "dependsOn":[
+                "Python - Twine Upload to PyPI",
+                "Clean Python Distribution Folder"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Python - Publish to PyPI [TEST]",
+            "dependsOn":[
+                "Python - Twine Upload to PyPI",
+                "Clean Python Distribution Folder"
+            ],
+            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {
@@ -119,19 +227,39 @@
                 "--global-option=\"build_ext\"",
                 "--global-option=\"--bpy-prebuilt=${input:PrebuiltBinariesDirectory}\"",
                 "-v"
+            ],
+            "dependsOn":[
+                "Clean Python Build Folder"
             ]
         },
         {
             "label": "Make Blender Libs Folder",
             "type": "shell",
             "linux": {
-                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/Blender/lib"
+                ]
             },
             "osx": {
-                "command": "mkdir -p ${workspaceFolder}/Blender/lib"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/Blender/lib"
+                ]
             },
             "windows": {
-                "command": "New-Item -ItemType Directory -Force -Path ${workspaceFolder}\\Blender\\lib | Out-Null"
+                "command": "New-Item",
+                "args": [
+                    "-ItemType",
+                    "Directory",
+                    "-Force",
+                    "-Path",
+                    "${workspaceFolder}\\Blender\\lib",
+                    "|",
+                    "Out-Null"
+                ]
             },
             "problemMatcher": []
         },
@@ -139,13 +267,30 @@
             "label": "Make Build Folder",
             "type": "shell",
             "linux": {
-                "command": "mkdir -p ${workspaceFolder}/build/linux"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/Blender/build/linux"
+                ]
             },
             "osx": {
-                "command": "mkdir -p ${workspaceFolder}/build/darwin"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/Blender/build/darwin"
+                ]
             },
             "windows": {
-                "command": "New-Item -ItemType Directory -Force -Path ${workspaceFolder}/build/windows | Out-Null"
+                "command": "New-Item",
+                "args": [
+                    "-ItemType",
+                    "Directory",
+                    "-Force",
+                    "-Path",
+                    "${workspaceFolder}\\Blender\\build\\windows",
+                    "|",
+                    "Out-Null"
+                ]
             },
             "problemMatcher": []
         },
@@ -153,13 +298,25 @@
             "label": "Make OptiX Folder",
             "type": "shell",
             "linux": {
-                "command": "mkdir -p ${workspaceFolder}/OptiX"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/OptiX"
+                ]
             },
             "osx": {
-                "command": "mkdir -p ${workspaceFolder}/OptiX"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/OptiX"
+                ]
             },
             "windows": {
-                "command": "mkdir -p ${workspaceFolder}/OptiX"
+                "command": "mkdir",
+                "args": [
+                    "-p",
+                    "${workspaceFolder}/OptiX"
+                ]
             },
             "problemMatcher": []
         },
@@ -167,13 +324,22 @@
             "label": "Browser - Get OptiX [Requires Registration]",
             "type": "shell",
             "linux": {
-                "command": "open https://developer.nvidia.com/designworks/optix/download"
+                "command": "open",
+                "args": [
+                    "https://developer.nvidia.com/designworks/optix/download"
+                ]
             },
             "osx": {
-                "command": "open https://developer.nvidia.com/designworks/optix/download"
+                "command": "open",
+                "args": [
+                    "https://developer.nvidia.com/designworks/optix/download"
+                ]
             },
             "windows": {
-                "command": "start https://developer.nvidia.com/designworks/optix/download"
+                "command": "start",
+                "args": [
+                    "https://developer.nvidia.com/designworks/optix/download"
+                ]
             },
             "dependsOn": [
                 "Make OptiX Folder"
@@ -350,24 +516,26 @@
             "linux": {
                 "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON -DOPTIX_ROOT_DIR=/NVIDIA-OptiX-SDK-7.1.0-linux64-x86_64",
                 "options": {
-                    "cwd": "${workspaceFolder}/build/linux"
+                    "cwd": "${workspaceFolder}/Blender/build/linux"
                 }
             },
             "osx": {
                 "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON",
                 "options": {
-                    "cwd": "${workspaceFolder}/build/darwin"
+                    "cwd": "${workspaceFolder}/Blender/build/darwin"
                 }
             },
             "windows": {
                 "command": "cmake ${workspaceFolder}\\Blender\\blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON -DWITH_CYCLES_CUDA_BINARIES=ON -DWITH_CYCLES_DEVICE_OPTIX=ON -DWITH_WINDOWS_BUNDLE_CRT=OFF",
                 "options": {
-                    "cwd": "${workspaceFolder}\\build\\windows"
+                    "cwd": "${workspaceFolder}\\Blender\\build\\windows"
                 }
             },
             "dependsOn": [
+                "Clean Blender Build Folder",
                 "Make Build Folder"
             ],
+            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {
@@ -380,7 +548,7 @@
                     "install"
                 ],
                 "options": {
-                    "cwd": "${workspaceFolder}/build/linux"
+                    "cwd": "${workspaceFolder}/Blender/build/linux"
                 }
             },
             "osx": {
@@ -390,7 +558,7 @@
                     "install"
                 ],
                 "options": {
-                    "cwd": "${workspaceFolder}/build/darwin"
+                    "cwd": "${workspaceFolder}/Blender/build/darwin"
                 }
             },
             "windows": {
@@ -404,7 +572,7 @@
                     "Release"
                 ],
                 "options": {
-                    "cwd": "${workspaceFolder}/build/windows"
+                    "cwd": "${workspaceFolder}\\Blender\\build\\windows"
                 }
             },
             "dependsOn": [
