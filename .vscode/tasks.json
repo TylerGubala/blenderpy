@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Clean Python Build Folder",
+            "label": "Delete Python Build Folder",
             "type": "shell",
             "linux":{
                 "command": "rm",
@@ -31,7 +31,7 @@
             }
         },
         {
-            "label": "Clean Python Distribution Folder",
+            "label": "Delete Python Distribution Folder",
             "type": "shell",
             "linux":{
                 "command": "rm",
@@ -58,7 +58,7 @@
             }
         },
         {
-            "label": "Clean Blender Build Folder",
+            "label": "Delete Blender Build Folder",
             "type": "shell",
             "linux":{
                 "command": "rm",
@@ -85,6 +85,14 @@
             }
         },
         {
+            "label": "Clean Blender Build Folder",
+            "dependsOn":[
+                "Delete Blender Build Folder",
+                "Make Blender Build Folder"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
             "label": "Python - Build Local Wheel File From Sources",
             "type": "shell",
             "command": "${config:python.pythonPath}",
@@ -93,7 +101,7 @@
                 "bdist_wheel",
             ],
             "dependsOn":[
-                "Clean Python Build Folder"
+                "Delete Python Build Folder"
             ],
             "problemMatcher": []
         },
@@ -106,7 +114,7 @@
                 "sdist"
             ],
             "dependsOn":[
-                "Clean Python Build Folder"
+                "Delete Python Build Folder"
             ],
             "problemMatcher": []
         },
@@ -138,7 +146,7 @@
                 ],
             },
             "dependsOn":[
-                "Clean Python Build Folder"
+                "Delete Python Build Folder"
             ],
             "problemMatcher": []
         },
@@ -172,7 +180,7 @@
             "label": "Python - Publish to PyPI",
             "dependsOn":[
                 "Python - Twine Upload to PyPI",
-                "Clean Python Distribution Folder"
+                "Delete Python Distribution Folder"
             ],
             "dependsOrder": "sequence",
             "problemMatcher": []
@@ -181,7 +189,7 @@
             "label": "Python - Publish to PyPI [TEST]",
             "dependsOn":[
                 "Python - Twine Upload to PyPI",
-                "Clean Python Distribution Folder"
+                "Delete Python Distribution Folder"
             ],
             "dependsOrder": "sequence",
             "problemMatcher": []
@@ -229,7 +237,7 @@
                 "-v"
             ],
             "dependsOn":[
-                "Clean Python Build Folder"
+                "Delete Python Build Folder"
             ]
         },
         {
@@ -264,7 +272,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Make Build Folder",
+            "label": "Make Blender Build Folder",
             "type": "shell",
             "linux": {
                 "command": "mkdir",
@@ -532,10 +540,8 @@
                 }
             },
             "dependsOn": [
-                "Clean Blender Build Folder",
-                "Make Build Folder"
+                "Make Blender Build Folder"
             ],
-            "dependsOrder": "sequence",
             "problemMatcher": []
         },
         {

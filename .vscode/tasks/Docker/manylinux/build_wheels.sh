@@ -14,7 +14,7 @@ function repair_wheel {
 for PYBIN in /opt/python/cp37*/bin; do
 # to install, uncomment the below line
 #    "${PYBIN}/pip" install /blenderpy --global-option="build_ext" --global-option="--bpy-prebuilt=/build/linux/bin/" -v
-    "${PYBIN}/pip" wheel /blenderpy --build-option="--bpy-prebuilt=/build/linux/bin/" --no-deps -v -w wheelhouse/
+    "${PYBIN}/pip" wheel /blenderpy --build-option="--bpy-prebuilt=/Blender/build/linux/bin/" --no-deps -v -w wheelhouse/
 done
 
 # Bundle external shared libraries into the wheels

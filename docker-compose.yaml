@@ -8,7 +8,7 @@ services:
     command: bash -c "/blenderpy/.vscode/tasks/Docker/manylinux/build.sh && /blenderpy/.vscode/tasks/Docker/manylinux/build_wheels.sh"
     container_name: blenderpy-manylinux-wheel-builder
     volumes: 
-      - ./build:/build
+      - ./Blender/build:/build
       - ./Blender:/Blender:delegated
       - ./dist:/blenderpy/dist:delegated
   blenderpy-windows-wheel-builder:
@@ -19,6 +19,6 @@ services:
     command: bash -c "/blenderpy/.vscode/tasks/Docker/windows/build.sh && /blenderpy/.vscode/tasks/Docker/windows/build_wheels.sh"
     container_name: blenderpy-windows-wheel-builder
     volumes: 
-      - ./build:/build
+      - ./Blender/build:/build
       - ./Blender:/Blender:delegated
       - ./dist:/blenderpy/dist:delegated
