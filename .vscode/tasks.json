@@ -6,21 +6,21 @@
         {
             "label": "Delete Python Build Folder",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/build"
                 ]
             },
-            "osx":{
+            "osx": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/build"
                 ]
             },
-            "windows":{
+            "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
@@ -33,21 +33,21 @@
         {
             "label": "Delete Python Distribution Folder",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/dist"
                 ]
             },
-            "osx":{
+            "osx": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/dist"
                 ]
             },
-            "windows":{
+            "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
@@ -60,21 +60,21 @@
         {
             "label": "Delete Blender Build Folder",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/Blender/build"
                 ]
             },
-            "osx":{
+            "osx": {
                 "command": "rm",
                 "args": [
                     "-Rf",
                     "${workspaceFolder}/Blender/build"
                 ]
             },
-            "windows":{
+            "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
@@ -86,11 +86,12 @@
         },
         {
             "label": "Clean Blender Build Folder",
-            "dependsOn":[
+            "dependsOn": [
                 "Delete Blender Build Folder",
                 "Make Blender Build Folder"
             ],
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "problemMatcher": []
         },
         {
             "label": "Python - Build Local Wheel File From Sources",
@@ -98,9 +99,9 @@
             "command": "${config:python.pythonPath}",
             "args": [
                 "setup.py",
-                "bdist_wheel",
+                "bdist_wheel"
             ],
-            "dependsOn":[
+            "dependsOn": [
                 "Delete Python Build Folder"
             ],
             "problemMatcher": []
@@ -113,7 +114,7 @@
                 "setup.py",
                 "sdist"
             ],
-            "dependsOn":[
+            "dependsOn": [
                 "Delete Python Build Folder"
             ],
             "problemMatcher": []
@@ -121,31 +122,31 @@
         {
             "label": "Python - Build Local Wheel File From Prebuilt Binaries",
             "type": "shell",
-            "linux":{
+            "linux": {
                 "command": "${config:python.pythonPath}",
                 "args": [
                     "setup.py",
                     "bdist_wheel",
                     "--bpy-prebuilt=${workspaceFolder}/Blender/build/linux/bin/"
-                ],
+                ]
             },
-            "osx":{
+            "osx": {
                 "command": "${config:python.pythonPath}",
                 "args": [
                     "setup.py",
                     "bdist_wheel",
                     "--bpy-prebuilt=${workspaceFolder}/Blender/build/darwin/bin/"
-                ],
+                ]
             },
-            "windows":{
+            "windows": {
                 "command": "${config:python.pythonPath}",
                 "args": [
                     "setup.py",
                     "bdist_wheel",
                     "--bpy-prebuilt=${workspaceFolder}/Blender/build/windows/bin/Release"
-                ],
+                ]
             },
-            "dependsOn":[
+            "dependsOn": [
                 "Delete Python Build Folder"
             ],
             "problemMatcher": []
@@ -178,7 +179,7 @@
         },
         {
             "label": "Python - Publish to PyPI",
-            "dependsOn":[
+            "dependsOn": [
                 "Python - Twine Upload to PyPI",
                 "Delete Python Distribution Folder"
             ],
@@ -187,7 +188,7 @@
         },
         {
             "label": "Python - Publish to PyPI [TEST]",
-            "dependsOn":[
+            "dependsOn": [
                 "Python - Twine Upload to PyPI",
                 "Delete Python Distribution Folder"
             ],
@@ -236,7 +237,7 @@
                 "--global-option=\"--bpy-prebuilt=${input:PrebuiltBinariesDirectory}\"",
                 "-v"
             ],
-            "dependsOn":[
+            "dependsOn": [
                 "Delete Python Build Folder"
             ]
         },
@@ -440,7 +441,9 @@
             "label": "Update Blender Sources [Checks out master branch]",
             "type": "shell",
             "command": "make",
-            "args": ["update"],
+            "args": [
+                "update"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/Blender/blender"
             },
@@ -528,7 +531,7 @@
                 }
             },
             "osx": {
-                "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON",
+                "command": "cmake ${workspaceFolder}/Blender/blender -DWITH_OPENMP=OFF -DWITH_PYTHON_INSTALL=OFF -DWITH_PYTHON_MODULE=ON",
                 "options": {
                     "cwd": "${workspaceFolder}/Blender/build/darwin"
                 }
