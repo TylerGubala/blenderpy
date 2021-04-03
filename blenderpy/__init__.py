@@ -42,7 +42,7 @@ SYSTEM_NAME = platform.system()
 
 def find_blender_scripts_directory(search_root: str) -> Optional[str]:
 
-    for _dir, _dirs, _files in os.walk(search_root):
+    for _dir, _dirs, _files in os.walk(search_root, followlinks=True):
 
         if re.match(BLENDER_SCRIPTS_DIR_REGEX, os.path.basename(_dir)) and\
            all([entry in _dirs for entry in ["datafiles", "scripts"]]):

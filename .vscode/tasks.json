@@ -440,7 +440,7 @@
         {
             "label": "Update Blender Sources [Checks out master branch]",
             "type": "shell",
-            "command": "make",
+            "command": "./make",
             "args": [
                 "update"
             ],
