@@ -49,6 +49,10 @@ A. Please see [issue #13](https://github.com/TylerGubala/blenderpy/issues/13)
 
 A. Please see [issue #15](https://github.com/TylerGubala/blenderpy/issues/15)
 
+### Q.I am getting ` SyntaxError: unknown encoding for '/tmp/pip-install-4xewwd47/bpy/setup.py': future_fstrings`
+
+A. Run ``` python -m pip install --upgrade pip wheel future-fstrings ``` then run pip install with python version 3.7.x
+
 ### Q. How do I import addons?
 
 A. Addons (Blender internal and third party) can be imported using the code [referenced here](https://github.com/TylerGubala/blenderpy/wiki/Caveat---Importing-Addons).
