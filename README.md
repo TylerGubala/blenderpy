@@ -3,7 +3,7 @@ Blender as a python module with easy-install
 
 ## About
 
-Meant for installation into a virtualenv or wherever, for unit testing of Blender extensions being authored, or developement of a Blender 3d-enabled Python application.
+Meant for installation into a virtualenv or wherever, for unit testing of Blender extensions being authored, or development of a Blender 3d-enabled Python application.
 
 Depends upon the `bpy-build` module to make sure the Blender `bpy` module environment is correct.
 
