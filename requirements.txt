@@ -19,7 +19,7 @@ mccabe==0.6.1
 nose==1.3.7
 packaging==20.3
 pkginfo==1.5.0.1
-Pygments==2.6.1
+Pygments==2.7.4
 pylint==2.5.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
