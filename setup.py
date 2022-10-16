@@ -320,17 +320,17 @@ class BuildCMakeExt(build_ext):
 
         self.announce("Searching for Blender python module", level=3)
 
-        bpy_canidates = [os.path.join(source_path, _bpy) for _bpy in
+        bpy_candidates = [os.path.join(source_path, _bpy) for _bpy in
                          os.listdir(source_path) if
                          os.path.isfile(os.path.join(source_path, _bpy)) and
                          os.path.splitext(_bpy)[0].startswith('bpy') and
                          os.path.splitext(_bpy)[1] in [".pyd", ".so"]]
 
-        if not bpy_canidates:
+        if not bpy_candidates:
 
             raise Exception(f"Could not find Blender python module in {source_path}")
 
-        bpy_path = bpy_canidates[0]
+        bpy_path = bpy_candidates[0]
             
         self.distribution.bin_dir = source_path
 
